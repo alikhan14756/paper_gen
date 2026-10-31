@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.core.database import Base, engine, SessionLocal
-from app.core.security import hash_password, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER
+from app.core.security import hash_password, ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER
 from app.models.core_entities import School, User, SchoolMembership, SubscriptionPlan, SchoolSubscription
 from app.models.paper_entities import ExamTemplate
 
@@ -39,6 +39,12 @@ def init_db():
                     conn.exec_driver_sql("ALTER TABLE users ADD COLUMN verification_code VARCHAR(32)")
                 if "verification_code_expires_at" not in u_cols:
                     conn.exec_driver_sql("ALTER TABLE users ADD COLUMN verification_code_expires_at DATETIME")
+                if "phone_number" not in u_cols:
+                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN phone_number VARCHAR(50)")
+                if "principal_name" not in u_cols:
+                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN principal_name VARCHAR(255)")
+                if "verification_method" not in u_cols:
+                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN verification_method VARCHAR(20) DEFAULT 'email'")
 
                 s_cols = [r[1] for r in conn.exec_driver_sql("PRAGMA table_info(schools)").fetchall()]
                 if "subscription_tier" not in s_cols:
@@ -47,6 +53,10 @@ def init_db():
                     conn.exec_driver_sql("ALTER TABLE schools ADD COLUMN is_paid BOOLEAN DEFAULT 0")
                 if "free_papers_per_subject" not in s_cols:
                     conn.exec_driver_sql("ALTER TABLE schools ADD COLUMN free_papers_per_subject INTEGER DEFAULT 2")
+                if "principal_name" not in s_cols:
+                    conn.exec_driver_sql("ALTER TABLE schools ADD COLUMN principal_name VARCHAR(255)")
+                if "phone_number" not in s_cols:
+                    conn.exec_driver_sql("ALTER TABLE schools ADD COLUMN phone_number VARCHAR(50)")
 
                 b_cols = [r[1] for r in conn.exec_driver_sql("PRAGMA table_info(books)").fetchall()]
                 if "is_global" not in b_cols:
@@ -120,7 +130,21 @@ def init_db():
         )
         db.add(sub)
 
-        # 4. Seed Super Admin
+        # 4. Seed Super Owner / Site Architect & Super Admin
+        super_owner = User(
+            email="alikhanwebdeveloper@gmail.com",
+            hashed_password=hash_password("OwnerPass2026!"),
+            full_name="Muhammad Ali (AliBuild - Owner)",
+            principal_name="Muhammad Ali",
+            phone_number="+923215423874",
+            role=ROLE_SUPER_OWNER,
+            is_active=True,
+            is_email_verified=True,
+            verification_method="email",
+            school_id=None,
+        )
+        db.add(super_owner)
+
         super_admin = User(
             email="superadmin@examforge.ai",
             hashed_password=hash_password("Admin@1234"),

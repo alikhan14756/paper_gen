@@ -4,10 +4,14 @@ export interface User {
   id: string;
   email: string;
   full_name: string;
-  role: "super_admin" | "school_admin" | "teacher";
+  role: "super_owner" | "super_admin" | "school_admin" | "teacher";
   school_id: string | null;
   school_name: string | null;
+  phone_number?: string | null;
+  principal_name?: string | null;
   is_active: boolean;
+  is_email_verified?: boolean;
+  is_verified?: boolean;
 }
 
 export interface Chapter {
@@ -234,6 +238,98 @@ export class ApiClient {
     return this.request<{ access_token: string; user: User }>("/auth/register-teacher", {
       method: "POST",
       body: JSON.stringify(data),
+    });
+  }
+
+  // Automatic OTP Verification Architecture
+  static async registerInitiate(data: {
+    school_name: string;
+    principal_name: string;
+    email: string;
+    phone_number: string;
+    password: string;
+    verification_method: "email" | "whatsapp";
+  }) {
+    return this.request<{
+      message: string;
+      identifier: string;
+      school_id: string;
+      user_id: string;
+      school_name: string;
+      principal_name: string;
+      verification_method: string;
+      resend_cooldown_seconds: number;
+      expires_in_seconds: number;
+    }>("/auth/register-initiate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  }
+
+  static async verifyOTP(
+    identifierOrData: string | { identifier: string; otp_code: string; school_name?: string; principal_name?: string; password?: string },
+    otp_code?: string
+  ) {
+    const payload = typeof identifierOrData === "string"
+      ? { identifier: identifierOrData, otp_code }
+      : identifierOrData;
+
+    return this.request<{ access_token: string; token_type: string; user: User }>("/auth/verify-otp", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  static async resendOTP(identifier: string) {
+    return this.request<{
+      message: string;
+      identifier: string;
+      resend_cooldown_seconds: number;
+      expires_in_seconds: number;
+    }>("/auth/resend-otp", {
+      method: "POST",
+      body: JSON.stringify({ identifier }),
+    });
+  }
+
+  // Owner / Site Coder Management Interface
+  static async getOwnerVerifications(params?: { channel?: string; status?: string; query?: string }) {
+    const q = new URLSearchParams();
+    if (params?.channel && params.channel !== "all") q.append("channel", params.channel);
+    if (params?.status && params.status !== "all") q.append("status", params.status);
+    if (params?.query) q.append("query", params.query);
+    const qs = q.toString() ? `?${q.toString()}` : "";
+    return this.request<{
+      items: Array<{
+        id: string;
+        identifier: string;
+        school_name: string | null;
+        principal_name: string | null;
+        delivery_channel: string;
+        status: string;
+        attempts: number;
+        created_at: string;
+        expires_at: string;
+        is_locked: boolean;
+        user_id?: string;
+        school_id?: string;
+      }>;
+      total_schools: number;
+      verified_schools: number;
+      pending_verifications: number;
+      locked_accounts: number;
+    }>(`/auth/owner/verifications${qs}`);
+  }
+
+  static async ownerManualVerify(otpId: string) {
+    return this.request<{ message: string }>(`/auth/owner/verify-manual/${otpId}`, {
+      method: "POST",
+    });
+  }
+
+  static async ownerResendOTP(otpId: string) {
+    return this.request<{ message: string }>(`/auth/owner/resend-otp/${otpId}`, {
+      method: "POST",
     });
   }
 

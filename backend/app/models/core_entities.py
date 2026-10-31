@@ -14,6 +14,7 @@ class School(Base):
     address = Column(Text, nullable=True)
     contact_email = Column(String(255), nullable=True)
     phone_number = Column(String(50), nullable=True)
+    principal_name = Column(String(255), nullable=True)
     default_language = Column(String(10), default="en")  # "en", "ur", "bilingual"
     status = Column(String(50), default="active", index=True)  # active, suspended, archived
     is_active = Column(Boolean, default=True)
@@ -51,14 +52,25 @@ class User(Base):
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
-    role = Column(String(50), nullable=False, default="teacher")  # super_admin, school_admin, teacher
+    principal_name = Column(String(255), nullable=True)
+    phone_number = Column(String(50), nullable=True, index=True)
+    role = Column(String(50), nullable=False, default="teacher")  # super_owner, super_admin, school_admin, teacher
     is_active = Column(Boolean, default=True)
     is_email_verified = Column(Boolean, default=False, index=True)
+    verification_method = Column(String(20), default="email")  # "email" | "whatsapp"
     verification_code = Column(String(32), nullable=True)
     verification_code_expires_at = Column(DateTime, nullable=True)
     
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    @property
+    def is_verified(self) -> bool:
+        return bool(self.is_email_verified)
+
+    @is_verified.setter
+    def is_verified(self, value: bool):
+        self.is_email_verified = bool(value)
 
     # Relationships
     school = relationship("School", foreign_keys=[school_id])
@@ -142,3 +154,25 @@ class PaymentRecord(Base):
     transaction_id = Column(String(255), unique=True, index=True, nullable=True)
     receipt_url = Column(String(500), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+class VerificationOTP(Base):
+    __tablename__ = "verification_otps"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    identifier = Column(String(255), index=True, nullable=False)  # email or phone
+    otp_hash = Column(String(255), nullable=False)
+    attempts = Column(Integer, default=0)
+    expires_at = Column(DateTime, nullable=False)  # 5-minute TTL
+    delivery_channel = Column(String(20), default="email")  # "email" | "whatsapp"
+    status = Column(String(20), default="pending", index=True)  # pending, verified, expired, failed, locked, manual_verified
+    school_name = Column(String(255), nullable=True)
+    principal_name = Column(String(255), nullable=True)
+    user_id = Column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    school_id = Column(String(36), ForeignKey("schools.id", ondelete="SET NULL"), nullable=True)
+    locked_until = Column(DateTime, nullable=True)
+    resend_available_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    user = relationship("User", foreign_keys=[user_id])
+    school = relationship("School", foreign_keys=[school_id])

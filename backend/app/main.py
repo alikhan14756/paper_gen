@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.init_db import init_db
 from app.api.v1 import api_router
+from app.api.v1.auth import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,8 +31,10 @@ app.add_middleware(
         "http://127.0.0.1:8000",
         "http://localhost:5000",
         "http://127.0.0.1:5000",
+        "https://aivanolabs.site",
+        "http://aivanolabs.site",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https?://.*\.aivanolabs\.site)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +42,7 @@ app.add_middleware(
 
 # Mount API routes
 app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(auth_router, prefix="/api")
 
 @app.get("/api/health")
 def health_check():

@@ -6,6 +6,7 @@ from app.models.core_entities import (
     SubscriptionPlan,
     SchoolSubscription,
     PaymentRecord,
+    VerificationOTP,
 )
 from app.models.document_entities import (
     Book,
@@ -37,6 +38,7 @@ __all__ = [
     "SubscriptionPlan",
     "SchoolSubscription",
     "PaymentRecord",
+    "VerificationOTP",
     "Book",
     "BookFile",
     "DocumentPage",

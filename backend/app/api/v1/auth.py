@@ -1,12 +1,12 @@
 import secrets
-from typing import List
+from typing import List, Optional
 from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import verify_password, hash_password, create_access_token
-from app.core.deps import get_current_user
-from app.models.core_entities import User, School, SchoolMembership, SchoolSubscription, SubscriptionPlan
+from app.core.deps import get_current_user, require_super_admin, require_super_owner_or_admin
+from app.models.core_entities import User, School, SchoolMembership, SchoolSubscription, SubscriptionPlan, VerificationOTP
 from app.schemas.auth import (
     Token,
     LoginRequest,
@@ -18,8 +18,17 @@ from app.schemas.auth import (
     VerifyEmailRequest,
     ResendCodeRequest,
     RegisterTeacherRequest,
+    RegisterInitiateRequest,
+    RegisterInitiateResponse,
+    VerifyOTPRequest,
+    ResendOTPRequest,
+    ResendOTPResponse,
+    OwnerVerificationItem,
+    OwnerVerificationsResponse,
 )
 from app.services.email.mailer import EmailService
+from app.services.communication.otp_service import OTPService
+from app.services.communication.whatsapp import WhatsAppService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -328,5 +337,370 @@ def get_me(current_user: User = Depends(get_current_user)):
         role=current_user.role,
         school_id=current_user.school_id,
         school_name=school_name,
+        phone_number=current_user.phone_number,
+        principal_name=current_user.principal_name,
         is_active=current_user.is_active,
+        is_email_verified=current_user.is_email_verified,
+        is_verified=current_user.is_verified,
     )
+
+# =========================================================================
+# AUTOMATIC OTP VERIFICATION ARCHITECTURE & WORKFLOW ENDPOINTS
+# =========================================================================
+
+@router.post("/register-initiate", response_model=RegisterInitiateResponse)
+def register_initiate(req: RegisterInitiateRequest, db: Session = Depends(get_db)):
+    """
+    Validates school registration fields, creates/updates pending entities,
+    generates a 6-digit cryptographic OTP, and automatically dispatches via Email or WhatsApp.
+    """
+    clean_email = req.email.strip().lower()
+    clean_phone = WhatsAppService.format_pakistan_phone(req.phone_number)
+    verification_method = (req.verification_method or "email").lower()
+    if verification_method not in ("email", "whatsapp"):
+        verification_method = "email"
+
+    # Check if active verified user exists with this email
+    existing_user = db.query(User).filter(User.email == clean_email).first()
+    if existing_user and existing_user.is_email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An active verified account with this email address already exists. Please Sign In."
+        )
+
+    # Slug from school name
+    base_slug = req.school_name.lower().strip()
+    clean_slug = "".join([c if c.isalnum() else "-" for c in base_slug]).strip("-") or "school"
+
+    # Reuse or create school
+    school = None
+    if existing_user and existing_user.school_id:
+        school = db.query(School).filter(School.id == existing_user.school_id).first()
+    
+    if not school:
+        # Check slug uniqueness
+        existing_slug = db.query(School).filter(School.slug == clean_slug).first()
+        if existing_slug and (not existing_user or existing_slug.id != existing_user.school_id):
+            clean_slug = f"{clean_slug}-{secrets.randbelow(9000) + 1000}"
+
+        school = School(
+            name=req.school_name.strip(),
+            slug=clean_slug,
+            principal_name=req.principal_name.strip(),
+            phone_number=clean_phone,
+            status="active",
+            is_active=True,
+            subscription_tier="free_trial",
+            is_paid=False,
+            free_papers_per_subject=2,
+            max_teachers=20,
+            max_monthly_papers=50,
+            papers_generated_this_month=0,
+        )
+        db.add(school)
+        db.flush()
+    else:
+        school.principal_name = req.principal_name.strip()
+        school.phone_number = clean_phone
+
+    # Reuse or create user
+    user = existing_user
+    if not user:
+        user = User(
+            school_id=school.id,
+            email=clean_email,
+            phone_number=clean_phone,
+            principal_name=req.principal_name.strip(),
+            hashed_password=hash_password(req.password),
+            full_name=req.principal_name.strip(),
+            role="school_admin",
+            is_active=True,
+            is_email_verified=False,
+            verification_method=verification_method,
+        )
+        db.add(user)
+        db.flush()
+
+        membership = SchoolMembership(
+            school_id=school.id,
+            user_id=user.id,
+            role="school_admin",
+            is_active=True,
+        )
+        db.add(membership)
+    else:
+        user.hashed_password = hash_password(req.password)
+        user.phone_number = clean_phone
+        user.principal_name = req.principal_name.strip()
+        user.verification_method = verification_method
+
+    db.commit()
+    db.refresh(school)
+    db.refresh(user)
+
+    # Determine primary dispatch identifier: email or phone
+    identifier = clean_phone if verification_method == "whatsapp" else clean_email
+
+    # Issue and dispatch OTP via selected channel
+    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+        db=db,
+        identifier=identifier,
+        delivery_channel=verification_method,
+        school_name=school.name,
+        principal_name=user.principal_name or user.full_name,
+        user_id=user.id,
+        school_id=school.id,
+    )
+
+    if not ok:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=msg
+        )
+
+    return RegisterInitiateResponse(
+        message=f"6-digit verification code dispatched via {verification_method.capitalize()}.",
+        identifier=identifier,
+        school_id=school.id,
+        user_id=user.id,
+        school_name=school.name,
+        principal_name=user.principal_name or user.full_name,
+        verification_method=verification_method,
+        resend_cooldown_seconds=cooldown,
+        expires_in_seconds=300,
+    )
+
+@router.post("/verify-otp", response_model=Token)
+def verify_otp(req: VerifyOTPRequest, db: Session = Depends(get_db)):
+    """
+    Checks the 6-digit code against HMAC hash, validates 5-minute expiry,
+    enforces 3-attempt limit with 30-minute lockout. On success, activates account and issues JWT.
+    """
+    clean_id = req.identifier.strip().lower()
+
+    # 1. Verify OTP code
+    ok, msg, otp_record = OTPService.verify_otp_code(db, clean_id, req.otp_code)
+    if not ok:
+        status_code = status.HTTP_429_TOO_MANY_REQUESTS if "locked" in msg.lower() else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(status_code=status_code, detail=msg)
+
+    # 2. Find user
+    user = None
+    if otp_record and otp_record.user_id:
+        user = db.query(User).filter(User.id == otp_record.user_id).first()
+    if not user:
+        user = db.query(User).filter((User.email == clean_id) | (User.phone_number == clean_id)).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User account associated with this verification not found."
+        )
+
+    # 3. Activate account
+    user.is_email_verified = True
+    user.is_active = True
+    user.verification_code = None
+    user.verification_code_expires_at = None
+    db.commit()
+    db.refresh(user)
+
+    school_name = user.school.name if user.school else None
+    token_data = {
+        "sub": user.id,
+        "school_id": user.school_id,
+        "role": user.role,
+        "email": user.email,
+    }
+    access_token = create_access_token(token_data)
+
+    user_resp = UserResponse(
+        id=user.id,
+        email=user.email,
+        full_name=user.full_name,
+        role=user.role,
+        school_id=user.school_id,
+        school_name=school_name,
+        phone_number=user.phone_number,
+        principal_name=user.principal_name,
+        is_active=user.is_active,
+        is_email_verified=True,
+        is_verified=True,
+    )
+    return Token(access_token=access_token, token_type="bearer", user=user_resp)
+
+@router.post("/resend-otp", response_model=ResendOTPResponse)
+def resend_otp(req: ResendOTPRequest, db: Session = Depends(get_db)):
+    """
+    Checks the 60-second cooldown rate limit and resends a fresh 6-digit OTP.
+    """
+    clean_id = req.identifier.strip().lower()
+
+    # Find existing OTP record to determine school, principal, and channel
+    record = (
+        db.query(VerificationOTP)
+        .filter(VerificationOTP.identifier == clean_id)
+        .order_by(VerificationOTP.created_at.desc())
+        .first()
+    )
+    if not record:
+        user = db.query(User).filter((User.email == clean_id) | (User.phone_number == clean_id)).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No registration found for this identifier."
+            )
+        school_name = user.school.name if user.school else "Your School"
+        principal_name = user.principal_name or user.full_name
+        channel = user.verification_method or ("whatsapp" if clean_id.startswith("+") else "email")
+        user_id = user.id
+        school_id = user.school_id
+    else:
+        school_name = record.school_name or "Your School"
+        principal_name = record.principal_name or "Principal / Administrator"
+        channel = record.delivery_channel
+        user_id = record.user_id
+        school_id = record.school_id
+
+    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+        db=db,
+        identifier=clean_id,
+        delivery_channel=channel,
+        school_name=school_name,
+        principal_name=principal_name,
+        user_id=user_id,
+        school_id=school_id,
+    )
+
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=msg)
+
+    return ResendOTPResponse(
+        message=f"Fresh 6-digit verification code dispatched via {channel.capitalize()}.",
+        identifier=clean_id,
+        resend_cooldown_seconds=cooldown,
+        expires_in_seconds=300,
+    )
+
+# =========================================================================
+# OWNER / SITE CODER MANAGEMENT INTERFACE (ADMIN PANEL) ENDPOINTS
+# =========================================================================
+
+@router.get("/owner/verifications", response_model=OwnerVerificationsResponse)
+def list_owner_verifications(
+    channel: Optional[str] = None,
+    status_filter: Optional[str] = Query(None, alias="status"),
+    query: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_super_owner_or_admin),
+):
+    """
+    Owner/Admin Management Interface endpoint for monitoring all OTP verification attempts.
+    Protected: Restricted to Site Owner / Super Admin.
+    """
+    now = datetime.now(timezone.utc)
+    base_q = db.query(VerificationOTP).order_by(VerificationOTP.created_at.desc())
+
+    if channel and channel.lower() != "all":
+        base_q = base_q.filter(VerificationOTP.delivery_channel == channel.lower())
+    if status_filter and status_filter.lower() != "all":
+        base_q = base_q.filter(VerificationOTP.status == status_filter.lower())
+    if query:
+        term = f"%{query.strip().lower()}%"
+        base_q = base_q.filter(
+            (VerificationOTP.identifier.ilike(term)) |
+            (VerificationOTP.school_name.ilike(term)) |
+            (VerificationOTP.principal_name.ilike(term))
+        )
+
+    records = base_q.limit(100).all()
+
+    # Aggregate metrics
+    total_schools = db.query(School).count()
+    verified_schools = db.query(User).filter(User.role == "school_admin", User.is_email_verified == True).count()
+    pending_verifications = db.query(VerificationOTP).filter(VerificationOTP.status == "pending").count()
+    locked_accounts = db.query(VerificationOTP).filter(VerificationOTP.status == "locked").count()
+
+    items = []
+    for r in records:
+        exp = r.expires_at.replace(tzinfo=timezone.utc) if r.expires_at.tzinfo is None else r.expires_at
+        is_locked = bool(r.locked_until and ((r.locked_until.replace(tzinfo=timezone.utc) if r.locked_until.tzinfo is None else r.locked_until) > now))
+        items.append(
+            OwnerVerificationItem(
+                id=r.id,
+                identifier=r.identifier,
+                school_name=r.school_name,
+                principal_name=r.principal_name,
+                delivery_channel=r.delivery_channel,
+                status=r.status,
+                attempts=r.attempts,
+                created_at=r.created_at.isoformat() if r.created_at else "",
+                expires_at=r.expires_at.isoformat() if r.expires_at else "",
+                is_locked=is_locked,
+                user_id=r.user_id,
+                school_id=r.school_id,
+            )
+        )
+
+    return OwnerVerificationsResponse(
+        items=items,
+        total_schools=total_schools,
+        verified_schools=verified_schools,
+        pending_verifications=pending_verifications,
+        locked_accounts=locked_accounts,
+    )
+
+@router.post("/owner/verify-manual/{otp_id}")
+def owner_manual_verify(
+    otp_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_super_owner_or_admin),
+):
+    """Allows site owner to manually approve a school if their telecom or email delivery fails."""
+    record = db.query(VerificationOTP).filter(VerificationOTP.id == otp_id).first()
+    if not record:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Verification record not found.")
+
+    record.status = "verified"
+    record.locked_until = None
+
+    user = None
+    if record.user_id:
+        user = db.query(User).filter(User.id == record.user_id).first()
+    if not user:
+        user = db.query(User).filter((User.email == record.identifier) | (User.phone_number == record.identifier)).first()
+
+    if user:
+        user.is_email_verified = True
+        user.is_active = True
+
+    db.commit()
+    return {"message": f"Successfully approved and verified: {record.school_name or record.identifier}"}
+
+@router.post("/owner/resend-otp/{otp_id}")
+def owner_resend_otp(
+    otp_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_super_owner_or_admin),
+):
+    """Allows site owner to forcefully re-dispatch an OTP bypassing client cooldown."""
+    record = db.query(VerificationOTP).filter(VerificationOTP.id == otp_id).first()
+    if not record:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Verification record not found.")
+
+    # Reset cooldown and lockout
+    record.resend_available_at = None
+    record.locked_until = None
+    record.attempts = 0
+    db.commit()
+
+    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+        db=db,
+        identifier=record.identifier,
+        delivery_channel=record.delivery_channel,
+        school_name=record.school_name or "Your School",
+        principal_name=record.principal_name or "Principal / Administrator",
+        user_id=record.user_id,
+        school_id=record.school_id,
+    )
+    return {"message": f"OTP re-dispatched to {record.identifier} via {record.delivery_channel.capitalize()}."}

@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Query, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.core.security import decode_access_token, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER
+from app.core.security import decode_access_token, ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER
 from app.models.core_entities import User, School
 
 security = HTTPBearer(auto_error=False)
@@ -51,7 +51,7 @@ def get_current_user(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is deactivated")
 
     # Enforce School Suspension boundary
-    if user.school_id and user.role != ROLE_SUPER_ADMIN:
+    if user.school_id and user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER):
         school = db.query(School).filter(School.id == user.school_id).first()
         if school and (school.status == "suspended" or not school.is_active):
             raise HTTPException(
@@ -62,10 +62,18 @@ def get_current_user(
     return user
 
 def require_super_admin(current_user: User = Depends(get_current_user)) -> User:
-    if current_user.role != ROLE_SUPER_ADMIN:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Super Admin privileges required"
+            detail="Super Admin or Owner privileges required"
+        )
+    return current_user
+
+def require_super_owner_or_admin(current_user: User = Depends(get_current_user)) -> User:
+    if current_user.role not in (ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Site Owner or Super Admin privileges required"
         )
     return current_user
 

@@ -5,11 +5,12 @@ import jwt
 from app.core.config import settings
 
 # System Roles
+ROLE_SUPER_OWNER = "super_owner"
 ROLE_SUPER_ADMIN = "super_admin"
 ROLE_SCHOOL_ADMIN = "school_admin"
 ROLE_TEACHER = "teacher"
 
-ALL_ROLES = [ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER]
+ALL_ROLES = [ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN, ROLE_TEACHER]
 
 def hash_password(password: str) -> str:
     salt = bcrypt.gensalt()
