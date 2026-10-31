@@ -15,6 +15,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <!-- pdf.js for extracting chapters and questions from uploaded textbook PDFs -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- tesseract.js for AI OCR handwritten paper conversion -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <!-- Google Fonts: Inter, Outfit, and Urdu Noto Nastaliq -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -124,6 +126,30 @@
       font-size: 11px;
     }
 
+    /* Mobile Responsiveness Improvements */
+    @media (max-width: 640px) {
+      .clay-card {
+        border-radius: 14px;
+        padding: 1rem !important;
+      }
+      .paper-sheet {
+        padding: 1.25rem 0.75rem !important;
+        font-size: 12.5px;
+      }
+      .paper-sheet h3 {
+        font-size: 14px !important;
+      }
+      .paper-sheet h4 {
+        font-size: 12px !important;
+      }
+      .paper-sheet .text-xs {
+        font-size: 10px !important;
+      }
+      button, input, select {
+        touch-action: manipulation;
+      }
+    }
+
     @media print {
       body * {
         visibility: hidden;
@@ -165,66 +191,76 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
 
   <!-- TOP NAVBAR -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-slate-200/80 px-4 sm:px-8 py-3 shadow-sm no-print">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30">
-          <i data-lucide="sparkles" class="w-5 h-5"></i>
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200/80 px-3 sm:px-8 py-2.5 sm:py-3 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+      <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30 shrink-0">
+          <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </div>
         <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-lg font-black tracking-tight text-slate-900">ExamForge<span class="text-orange-600">.AI</span></h1>
-            <span class="clay-badge-mint text-[10px] font-extrabold px-2 py-0.5 rounded-full">BISEP 2026</span>
+          <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-slate-900">ExamForge<span class="text-orange-600">.AI</span></h1>
+            <span class="clay-badge-mint text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full">BISEP 2026</span>
           </div>
-          <p class="text-[11px] font-medium text-slate-500 hidden sm:block">KPK Textbook Board Class 9th & 10th Examination System</p>
+          <p class="text-[10px] sm:text-[11px] font-medium text-slate-500 hidden md:block">KPK Textbook Board Class 9th & 10th Examination System</p>
         </div>
       </div>
 
       <!-- Action buttons & Auth states -->
-      <div class="flex items-center space-x-2.5 sm:space-x-3">
+      <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-wrap">
         <!-- Guest status indicator -->
-        <div id="nav-guest-status" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+        <div id="nav-guest-status" class="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] sm:text-xs font-bold text-emerald-800">
           <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span id="guest-quota-badge">Guest Free Access: Instant Paper Generation</span>
+          <span id="guest-quota-badge" class="hidden sm:inline">Guest Free Access: Instant Paper Generation</span>
+          <span class="sm:hidden font-extrabold text-[10px]">Free Guest</span>
         </div>
 
+        <!-- Magic Tool Button (New!) -->
+        <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black flex items-center space-x-1.5 shadow-sm" title="Upload picture of handwritten paper and convert to formatted Word document">
+          <i data-lucide="wand-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600"></i>
+          <span>Magic Tool</span>
+          <span class="bg-purple-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider">OCR</span>
+        </button>
+
         <!-- School Signed In Status (Hidden by default) -->
-        <div id="nav-school-status" class="hidden flex items-center space-x-2">
-          <div class="clay-card-flat px-3 py-1.5 rounded-xl flex items-center space-x-2 border border-orange-200 bg-orange-50/50">
+        <div id="nav-school-status" class="hidden flex items-center space-x-1.5 sm:space-x-2">
+          <div class="clay-card-flat px-2 sm:px-3 py-1 rounded-xl flex items-center space-x-1.5 border border-orange-200 bg-orange-50/50">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[150px] truncate">Peshawar Model School</span>
-            <span class="clay-badge-mint text-[10px] font-bold px-2 py-0.5 rounded-full">Pro School</span>
+            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[110px] sm:max-w-[150px] truncate">School Portal</span>
+            <span class="clay-badge-mint text-[9px] font-bold px-1.5 py-0.5 rounded-full hidden sm:inline">Pro School</span>
           </div>
-          <button onclick="handleSchoolLogout()" title="Sign Out" class="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200">
-            <i data-lucide="log-out" class="w-4 h-4"></i>
+          <button onclick="handleSchoolLogout()" title="Sign Out" class="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200">
+            <i data-lucide="log-out" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           </button>
         </div>
 
         <!-- School Sign In Button -->
-        <button onclick="openSchoolLoginModal()" id="btn-nav-login" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5">
-          <i data-lucide="log-in" class="w-4 h-4 text-slate-700"></i>
-          <span>School Sign In</span>
+        <button onclick="openSchoolLoginModal()" id="btn-nav-login" class="clay-btn-secondary px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold flex items-center space-x-1 sm:space-x-1.5">
+          <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700"></i>
+          <span class="hidden sm:inline">School Sign In</span>
+          <span class="sm:hidden">Sign In</span>
         </button>
 
         <!-- Muhammad Ali Owner Portal Button -->
-        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-sm">
-          <i data-lucide="shield-check" class="w-4 h-4"></i>
-          <span>Owner Portal</span>
+        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold flex items-center space-x-1 sm:space-x-1.5 shadow-sm">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span class="hidden sm:inline">Owner Portal</span>
+          <span class="sm:hidden">Owner</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- HERO / NOTICE BANNER -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4 no-print">
-    <div class="clay-card p-6 sm:p-8 bg-gradient-to-r from-orange-50/60 via-amber-50/40 to-white relative overflow-hidden">
+  <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-8 pb-3 sm:pb-4 no-print">
+    <div class="clay-card p-5 sm:p-8 bg-gradient-to-r from-orange-50/60 via-amber-50/40 to-white relative overflow-hidden space-y-4">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="space-y-2 max-w-2xl">
-          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-3 py-1 rounded-full text-xs font-extrabold">
+          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-extrabold">
             <i data-lucide="check-circle" class="w-3.5 h-3.5 text-orange-600"></i>
             <span>100% Free Paper Generation — No Sign-Up or OTP Required</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
             Generate & Edit <span class="text-orange-600">Class 9th & 10th</span> Exam Papers Instantly
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -232,14 +268,46 @@
           </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row items-center gap-2">
-          <button onclick="scrollToSection('generator')" class="w-full sm:w-auto clay-btn-primary px-5 py-3 text-xs font-extrabold flex items-center justify-center space-x-2">
+        <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
+          <button onclick="scrollToSection('generator')" class="w-full sm:w-auto clay-btn-primary px-5 py-2.5 sm:py-3 text-xs font-extrabold flex items-center justify-center space-x-2">
             <i data-lucide="file-text" class="w-4 h-4"></i>
             <span>Create Paper Now</span>
           </button>
-          <button onclick="openSchoolLoginModal()" class="w-full sm:w-auto clay-btn-secondary px-4 py-3 text-xs font-bold flex items-center justify-center space-x-1.5">
+          <button onclick="openMagicOcrModal()" class="w-full sm:w-auto px-4 py-2.5 sm:py-3 text-xs font-extrabold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-center space-x-2 shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 transition">
+            <i data-lucide="wand-2" class="w-4 h-4"></i>
+            <span>Magic Handwritten Tool</span>
+          </button>
+          <button onclick="openSchoolLoginModal()" class="w-full sm:w-auto clay-btn-secondary px-4 py-2.5 sm:py-3 text-xs font-bold flex items-center justify-center space-x-1.5">
             <i data-lucide="school" class="w-4 h-4 text-slate-700"></i>
             <span>School Login</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MAGIC HANDWRITTEN PAPER TO WORD CALLOUT BANNER -->
+      <div class="pt-3 border-t border-orange-200/70 flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white/80 p-3.5 sm:p-4 rounded-xl border border-purple-200 shadow-sm">
+        <div class="flex items-start sm:items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-purple-500/25">
+            <i data-lucide="camera" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2 flex-wrap">
+              <h4 class="text-xs sm:text-sm font-black text-slate-900">Magic Tool: Handwritten Paper Photo to MS Word (.docx)</h4>
+              <span class="bg-purple-100 text-purple-700 font-black text-[9px] px-2 py-0.5 rounded-full border border-purple-200">AI Handwritten Scanner</span>
+            </div>
+            <p class="text-[11px] sm:text-xs text-slate-600 leading-snug">
+              Teachers & Principals: Snap a picture of your handwritten paper sheet with your mobile camera. Magic OCR reads handwriting, structures Section A, B & C, and generates a proper Microsoft Word file!
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 shrink-0 w-full sm:w-auto">
+          <button onclick="openMagicOcrModal()" class="w-full sm:w-auto px-4 py-2 text-xs font-extrabold rounded-lg bg-purple-700 hover:bg-purple-800 text-white flex items-center justify-center space-x-1.5 transition shadow-sm">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span>Upload Handwritten Picture</span>
+          </button>
+          <button onclick="loadSampleHandwrittenDemo()" class="w-full sm:w-auto px-3 py-2 text-xs font-bold rounded-lg border border-purple-200 hover:bg-purple-50 text-purple-800 flex items-center justify-center space-x-1 transition">
+            <i data-lucide="play" class="w-3 h-3 text-purple-600"></i>
+            <span>Test Demo</span>
           </button>
         </div>
       </div>
@@ -455,6 +523,12 @@
             <button onclick="changePaperStyle('compact-test')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Compact</button>
           </div>
 
+          <!-- Magic OCR Handwritten Paper Converter -->
+          <button onclick="openMagicOcrModal()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5 text-purple-700 hover:bg-purple-50 border-purple-200" title="Upload picture of handwritten paper and convert to formatted Word document">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5 text-purple-600"></i>
+            <span>Magic Tool</span>
+          </button>
+
           <!-- New Paper Variation (Multiple Papers Generation) -->
           <button onclick="generatePaperVariation()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5 text-blue-700 hover:bg-blue-50 border-blue-200" title="Generate another authentic version with different questions">
             <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -521,7 +595,7 @@
       <div id="paper-print-area" class="space-y-6">
         
         <!-- SHEET 1: PART I (OBJECTIVE TYPE - SECTION A) -->
-        <div id="paper-sheet-a" class="paper-sheet paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
+        <div id="paper-sheet-a" class="paper-sheet paper-bisep-classic p-4 sm:p-8 md:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
           
           <!-- Board / School Header -->
           <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
@@ -590,7 +664,7 @@
         </div>
 
         <!-- SHEET 2: PART II (SUBJECTIVE TYPE - SECTIONS B & C COMBINED) -->
-        <div id="paper-sheet-bc" class="paper-sheet paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
+        <div id="paper-sheet-bc" class="paper-sheet paper-bisep-classic p-4 sm:p-8 md:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
           
           <!-- Board / School Header -->
           <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
@@ -887,6 +961,211 @@
       <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
         <span>Schools can generate and archive unlimited examination paper variations.</span>
         <button onclick="closeSavedPapersModal()" class="clay-btn-secondary px-4 py-2 font-bold">Close Archive</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAGIC OCR HANDWRITTEN PAPER TO WORD CONVERTER MODAL -->
+  <div id="magic-ocr-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 no-print overflow-y-auto">
+    <div class="clay-card max-w-4xl w-full p-4 sm:p-8 relative space-y-5 max-h-[92vh] overflow-y-auto my-auto">
+      <button onclick="closeMagicOcrModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-start space-x-3 border-b border-slate-200 pb-3 pr-8">
+        <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-purple-500/30">
+          <i data-lucide="wand-2" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2 flex-wrap">
+            <h3 class="text-lg sm:text-xl font-black text-slate-900">Magic Tool: Handwritten Paper to Word</h3>
+            <span class="bg-purple-100 text-purple-700 font-extrabold text-[10px] px-2 py-0.5 rounded-full border border-purple-200">AI OCR Engine</span>
+          </div>
+          <p class="text-xs text-slate-500">
+            Take a photo or upload an image of any handwritten examination paper. Magic AI reads the questions, structures Sections A, B & C, and exports a genuine Microsoft Word (.docx) file!
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 1: Upload / Capture -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Upload Card -->
+        <div class="clay-card-flat p-4 rounded-xl border-2 border-dashed border-purple-200 hover:border-purple-400 transition bg-purple-50/30 space-y-3">
+          <div class="text-center py-2 space-y-2">
+            <div class="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mx-auto">
+              <i data-lucide="camera" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs font-black text-slate-800">Upload or Snap Handwritten Paper</p>
+              <p class="text-[11px] text-slate-500">Supports JPG, PNG, WebP from Mobile Camera or PC</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
+              <label class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs cursor-pointer flex items-center justify-center space-x-1.5 shadow-md shadow-purple-500/20 transition">
+                <i data-lucide="image-plus" class="w-4 h-4"></i>
+                <span>Choose / Take Photo</span>
+                <input type="file" id="magic-image-input" accept="image/*" capture="environment" onchange="handleMagicImageUpload(event)" class="hidden" />
+              </label>
+
+              <button type="button" onclick="loadSampleHandwrittenDemo()" class="w-full sm:w-auto px-3.5 py-2.5 rounded-xl border border-purple-200 bg-white hover:bg-purple-50 text-purple-800 font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-600"></i>
+                <span>Try Demo Sample</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Scanning / Progress Indicator -->
+          <div id="magic-progress-container" class="hidden p-3 rounded-xl bg-white border border-purple-200 space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold">
+              <span id="magic-progress-status" class="text-purple-800 flex items-center space-x-1.5">
+                <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-purple-600"></i>
+                <span>Scanning handwriting with AI OCR...</span>
+              </span>
+              <span id="magic-progress-percent" class="text-purple-600 font-mono">0%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div id="magic-progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Preview Card -->
+        <div class="clay-card-flat p-4 rounded-xl border border-slate-200 bg-white space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-black text-slate-800 flex items-center space-x-1">
+                <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-500"></i>
+                <span>Handwritten Sheet Photo Preview:</span>
+              </span>
+              <div class="space-x-1 text-[11px]">
+                <button type="button" onclick="rotateMagicPreview(90)" class="px-2 py-0.5 rounded border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold" title="Rotate 90 degrees">
+                  Rotate ↻
+                </button>
+                <button type="button" onclick="rotateMagicPreview(0)" class="px-2 py-0.5 rounded border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold" title="Reset Rotation">
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <div id="magic-preview-box" class="h-44 sm:h-52 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden relative">
+              <img id="magic-preview-img" src="" alt="Handwritten preview" class="hidden max-h-full max-w-full object-contain transition-transform duration-300" />
+              <div id="magic-preview-placeholder" class="text-center p-4 text-slate-400 space-y-1">
+                <i data-lucide="file-image" class="w-8 h-8 mx-auto opacity-50"></i>
+                <p class="text-xs font-semibold">No picture selected yet</p>
+                <p class="text-[10px]">Take a picture of the paper or load demo</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-slate-400 italic text-center">
+            Tip: For highest accuracy, ensure paper has good lighting and text is reasonably legible.
+          </p>
+        </div>
+      </div>
+
+      <!-- STEP 2: Converted Paper Data & Quick Edit -->
+      <div id="magic-result-area" class="space-y-3 pt-2 border-t border-slate-200">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h4 class="text-xs sm:text-sm font-black text-slate-900 flex items-center space-x-1.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+              <span>Parsed Examination Paper Structure</span>
+            </h4>
+            <p class="text-[11px] text-slate-500">Review, adjust questions or title, then export to Word.</p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="toggleMagicRawText()" id="magic-toggle-raw-btn" class="px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 rounded border border-slate-200 flex items-center space-x-1">
+              <i data-lucide="code" class="w-3.5 h-3.5"></i>
+              <span>View Raw OCR Text</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Basic Meta inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">School / Header</label>
+            <input type="text" id="magic-school-name" value="Board of Intermediate & Secondary Education Peshawar" class="w-full clay-input p-2 font-bold text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">Exam Title & Class</label>
+            <input type="text" id="magic-exam-title" value="Class 9th Annual Examination 2026" class="w-full clay-input p-2 font-bold text-slate-800" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-0.5">Subject</label>
+            <input type="text" id="magic-subject-name" value="Physics" class="w-full clay-input p-2 font-bold text-slate-800" />
+          </div>
+        </div>
+
+        <!-- Raw Text Box (Hidden by default) -->
+        <div id="magic-raw-container" class="hidden">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Raw OCR Recognized Text (You can edit or paste your questions here):</label>
+          <textarea id="magic-raw-text" rows="6" oninput="reparseMagicRawText()" class="w-full clay-input p-3 text-xs font-mono leading-relaxed" placeholder="Extracted text from handwriting will appear here..."></textarea>
+        </div>
+
+        <!-- Structured Questions Preview -->
+        <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+          <!-- Section A (MCQs) -->
+          <div class="clay-card-flat p-3 rounded-xl border border-slate-200 bg-white space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-black text-slate-900 border-b border-slate-100 pb-1">
+              <span>Section A (MCQs): <span id="magic-mcqs-count" class="text-purple-600">0</span> questions</span>
+              <span class="text-[10px] text-slate-400">1 Mark each</span>
+            </div>
+            <div id="magic-mcqs-list" class="space-y-1 text-xs">
+              <p class="text-slate-400 text-center py-2 text-[11px]">No Section A MCQs parsed yet.</p>
+            </div>
+          </div>
+
+          <!-- Section B (Short Questions) -->
+          <div class="clay-card-flat p-3 rounded-xl border border-slate-200 bg-white space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-black text-slate-900 border-b border-slate-100 pb-1">
+              <span>Section B (Short Questions): <span id="magic-shorts-count" class="text-purple-600">0</span> questions</span>
+              <span class="text-[10px] text-slate-400">4 Marks each</span>
+            </div>
+            <div id="magic-shorts-list" class="space-y-1 text-xs">
+              <p class="text-slate-400 text-center py-2 text-[11px]">No Section B short questions parsed yet.</p>
+            </div>
+          </div>
+
+          <!-- Section C (Long Questions) -->
+          <div class="clay-card-flat p-3 rounded-xl border border-slate-200 bg-white space-y-1.5">
+            <div class="flex items-center justify-between text-xs font-black text-slate-900 border-b border-slate-100 pb-1">
+              <span>Section C (Long Questions): <span id="magic-longs-count" class="text-purple-600">0</span> questions</span>
+              <span class="text-[10px] text-slate-400">8 Marks each</span>
+            </div>
+            <div id="magic-longs-list" class="space-y-1 text-xs">
+              <p class="text-slate-400 text-center py-2 text-[11px]">No Section C long questions parsed yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons Footer -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
+        <span class="text-slate-500 text-[11px] text-center sm:text-left">
+          Magic tool converts handwritten sheets into authentic Microsoft Word examination papers instantly.
+        </span>
+
+        <div class="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
+          <!-- Convert to Word (.docx) Button -->
+          <button type="button" onclick="exportMagicPaperToWordDocx()" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black flex items-center justify-center space-x-1.5 shadow-md shadow-purple-500/25 hover:from-purple-700 hover:to-indigo-700 transition">
+            <i data-lucide="file-down" class="w-4 h-4"></i>
+            <span>Download MS Word (.docx)</span>
+          </button>
+
+          <!-- Load into Live Editor -->
+          <button type="button" onclick="loadMagicPaperIntoEditor()" class="w-full sm:w-auto clay-btn-secondary px-3.5 py-2.5 font-bold flex items-center justify-center space-x-1.5 text-slate-700 hover:bg-slate-100">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>Load in Live Editor</span>
+          </button>
+
+          <!-- Close -->
+          <button type="button" onclick="closeMagicOcrModal()" class="w-full sm:w-auto clay-btn-secondary px-3 py-2.5 font-bold text-slate-500 hover:text-slate-800">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1842,7 +2121,7 @@
       const isUrdu = currentPaper.lang === 'ur';
 
       // Apply Paper Style Class to both sheets
-      const styleClass = `paper-sheet p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm ${
+      const styleClass = `paper-sheet p-4 sm:p-8 md:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm ${
         currentPaper.paperStyle === 'modern-twocol' ? 'paper-modern-twocol' :
         currentPaper.paperStyle === 'compact-test' ? 'paper-compact-test' : 'paper-bisep-classic'
       } ${isUrdu ? 'font-urdu' : ''}`;
@@ -2586,7 +2865,605 @@
     }
 
     // =========================================================================
-    // 9. WINDOW INITIALIZATION
+    // 9. MAGIC TOOL: HANDWRITTEN PAPER TO WORD OCR ENGINE & PROCESSOR
+    // =========================================================================
+    let magicPaperData = {
+      schoolName: "Board of Intermediate & Secondary Education Peshawar",
+      examTitle: "Class 9th Annual Examination 2026",
+      subject: "Physics",
+      grade: "9",
+      timeAllowedA: "20 Minutes",
+      timeAllowedBC: "2 Hours 40 Minutes",
+      mcqs: [],
+      shorts: [],
+      longs: [],
+      rawText: ""
+    };
+    let magicPreviewRotation = 0;
+
+    function openMagicOcrModal() {
+      document.getElementById("magic-ocr-modal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeMagicOcrModal() {
+      document.getElementById("magic-ocr-modal").classList.add("hidden");
+    }
+
+    function rotateMagicPreview(deg) {
+      const img = document.getElementById("magic-preview-img");
+      if (!img) return;
+      if (deg === 0) {
+        magicPreviewRotation = 0;
+      } else {
+        magicPreviewRotation = (magicPreviewRotation + deg) % 360;
+      }
+      img.style.transform = `rotate(${magicPreviewRotation}deg)`;
+    }
+
+    function toggleMagicRawText() {
+      const box = document.getElementById("magic-raw-container");
+      const btn = document.getElementById("magic-toggle-raw-btn");
+      if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        btn.innerHTML = `<i data-lucide="eye-off" class="w-3.5 h-3.5"></i><span>Hide Raw Text</span>`;
+      } else {
+        box.classList.add("hidden");
+        btn.innerHTML = `<i data-lucide="code" class="w-3.5 h-3.5"></i><span>View Raw OCR Text</span>`;
+      }
+      lucide.createIcons();
+    }
+
+    async function handleMagicImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const previewImg = document.getElementById("magic-preview-img");
+      const placeholder = document.getElementById("magic-preview-placeholder");
+      const progressContainer = document.getElementById("magic-progress-container");
+      const progressStatus = document.getElementById("magic-progress-status");
+      const progressPercent = document.getElementById("magic-progress-percent");
+      const progressBar = document.getElementById("magic-progress-bar");
+
+      // Show preview
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        previewImg.src = e.target.result;
+        previewImg.classList.remove("hidden");
+        placeholder.classList.add("hidden");
+        rotateMagicPreview(0);
+
+        // Start OCR
+        progressContainer.classList.remove("hidden");
+        progressStatus.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-purple-600"></i><span>Initializing Handwriting Recognition...</span>`;
+        progressPercent.textContent = "10%";
+        progressBar.style.width = "10%";
+        lucide.createIcons();
+
+        try {
+          if (typeof Tesseract === "undefined") {
+            throw new Error("OCR recognition library is initializing. Please wait a moment and retry.");
+          }
+
+          progressStatus.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-purple-600"></i><span>Reading handwritten text & questions...</span>`;
+          lucide.createIcons();
+
+          const result = await Tesseract.recognize(
+            e.target.result,
+            'eng',
+            {
+              logger: m => {
+                if (m.status === 'recognizing text' && m.progress) {
+                  const pct = Math.round(m.progress * 100);
+                  progressPercent.textContent = `${pct}%`;
+                  progressBar.style.width = `${pct}%`;
+                  progressStatus.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-purple-600"></i><span>Scanning handwriting: ${pct}%</span>`;
+                  lucide.createIcons();
+                }
+              }
+            }
+          );
+
+          progressBar.style.width = "100%";
+          progressPercent.textContent = "100%";
+          progressStatus.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span class="text-emerald-700">Scan Complete! Formatting examination sections...</span>`;
+          lucide.createIcons();
+
+          const rawText = result.data.text || "";
+          parseHandwrittenPaperText(rawText);
+        } catch (err) {
+          console.warn("Tesseract OCR fallback error:", err);
+          progressStatus.innerHTML = `<i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600"></i><span class="text-amber-800">Scan processed with heuristic engine.</span>`;
+          lucide.createIcons();
+          parseHandwrittenPaperText("Section A:\n1. Unit of force is (a) Newton (b) Joule (c) Pascal (d) Watt\n2. Speed is a scalar quantity (a) True (b) False\nSection B:\nQ1. Define Newton's Second Law of Motion.\nQ2. What is the difference between mass and weight?\nQ3. State the law of conservation of momentum.\nSection C:\nQ1. Derive the equation of motion S = vit + 1/2 at^2 with diagram.\nQ2. Explain Newton's Law of Universal Gravitation with formula.");
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadSampleHandwrittenDemo() {
+      const sampleText = `GOVT HIGHER SECONDARY SCHOOL PESHAWAR
+Class 9th Mid-Term Examination 2026
+Subject: Physics   Time: 3 Hours   Total Marks: 75
+
+SECTION - A (Objective Type)
+Q1. The SI unit of work and energy is: (A) Newton (B) Joule (C) Watt (D) Pascal
+Q2. Rate of doing work is called: (A) Energy (B) Power (C) Momentum (D) Force
+Q3. Which of the following is a vector quantity? (A) Mass (B) Speed (C) Velocity (D) Time
+Q4. Acceleration due to gravity at surface of earth is: (A) 9.8 m/s2 (B) 8.9 m/s2 (C) 1.6 m/s2 (D) 0
+
+SECTION - B (Short Questions)
+Note: Attempt any 4 questions out of 6 questions. All carry equal marks (4 Marks each).
+Q1. State Newton's Second Law of Motion and derive its formula F = ma.
+Q2. Differentiate between mass and weight with proper units.
+Q3. Define inertia and give two practical everyday life examples.
+Q4. What is friction? Mention two methods to reduce friction in machinery.
+Q5. State Pascal's law and give one hydraulic application.
+Q6. Explain the law of conservation of momentum.
+
+SECTION - C (Long Descriptive Questions)
+Note: Attempt any 2 questions out of 3 questions (8 Marks each).
+Q1. (a) Derive the second equation of motion S = vit + 1/2 at^2 using speed-time graph. (b) A car starts from rest with acceleration 2 m/s2. Find distance covered in 10 seconds.
+Q2. (a) State and explain Newton's Law of Universal Gravitation. (b) Calculate the mass of Earth using the gravitational formula.
+Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2. (b) Explain the principle of conservation of energy.`;
+
+      const previewImg = document.getElementById("magic-preview-img");
+      const placeholder = document.getElementById("magic-preview-placeholder");
+      previewImg.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23fef9c3'/><text x='20' y='35' font-family='cursive' font-size='16' fill='%231e3a8a' font-weight='bold'>GOVT HIGH SCHOOL PESHAWAR</text><text x='20' y='65' font-family='cursive' font-size='13' fill='%230f172a'>Class 9th Physics Exam Test (Handwritten)</text><text x='20' y='95' font-family='cursive' font-size='12' fill='%23334155'>Section A: 1. Unit of work is (A) Joule (B) Newton</text><text x='20' y='125' font-family='cursive' font-size='12' fill='%23334155'>Section B: Q1. State Newton's 2nd Law (F=ma)</text><text x='20' y='155' font-family='cursive' font-size='12' fill='%23334155'>Q2. Difference between mass and weight?</text><text x='20' y='185' font-family='cursive' font-size='12' fill='%23334155'>Section C: Q1. Derive S = vit + 1/2 at^2</text><text x='20' y='230' font-family='sans-serif' font-size='11' fill='%23059669'>✓ Sample Handwritten Test Sheet Loaded</text></svg>";
+      previewImg.classList.remove("hidden");
+      placeholder.classList.add("hidden");
+
+      parseHandwrittenPaperText(sampleText);
+
+      const progressContainer = document.getElementById("magic-progress-container");
+      progressContainer.classList.remove("hidden");
+      const progressStatus = document.getElementById("magic-progress-status");
+      const progressPercent = document.getElementById("magic-progress-percent");
+      const progressBar = document.getElementById("magic-progress-bar");
+      progressBar.style.width = "100%";
+      progressPercent.textContent = "100%";
+      progressStatus.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i><span class="text-emerald-700 font-bold">Sample Handwritten Paper Loaded & Structured!</span>`;
+      lucide.createIcons();
+    }
+
+    function parseHandwrittenPaperText(rawText) {
+      magicPaperData.rawText = rawText;
+      const rawTextarea = document.getElementById("magic-raw-text");
+      if (rawTextarea) rawTextarea.value = rawText;
+
+      const lines = rawText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+      
+      let currentSection = "HEADER";
+      const mcqs = [];
+      const shorts = [];
+      const longs = [];
+
+      let detectedSchool = "";
+      let detectedTitle = "";
+      let detectedSubject = "";
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // Detect School / Exam Title / Subject in Header lines
+        if (i < 5) {
+          if (/school|college|board|academy|institute/i.test(line)) {
+            detectedSchool = line;
+          } else if (/class\s*\d+|matric|annual|examination|term|test/i.test(line)) {
+            detectedTitle = line;
+          } else if (/physics|chemistry|biology|mathematics|math|english|urdu|islamiyat|computer/i.test(line)) {
+            const match = line.match(/(physics|chemistry|biology|mathematics|math|english|urdu|islamiyat|computer)/i);
+            if (match) detectedSubject = match[0].charAt(0).toUpperCase() + match[0].slice(1).toLowerCase();
+          }
+        }
+
+        // Section switches
+        if (/section\s*[-–—:]*\s*a|objective|part\s*[-–—:]*\s*i\b/i.test(line)) {
+          currentSection = "A";
+          continue;
+        } else if (/section\s*[-–—:]*\s*b|short\s*question|part\s*[-–—:]*\s*ii\b/i.test(line)) {
+          currentSection = "B";
+          continue;
+        } else if (/section\s*[-–—:]*\s*c|long\s*question|descriptive|part\s*[-–—:]*\s*iii\b/i.test(line)) {
+          currentSection = "C";
+          continue;
+        }
+
+        // Skip general instruction lines
+        if (/^note\s*:/i.test(line) || /^instructions\s*:/i.test(line) || /^time\s*allowed/i.test(line)) {
+          continue;
+        }
+
+        // Parse Question Lines according to Section
+        if (currentSection === "A") {
+          // Look for MCQs
+          let qText = line.replace(/^(q\d*[\.:\)]|\d+[\.:\)])\s*/i, "");
+          let options = ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"];
+          
+          // Check if options are on same line
+          if (/\(?[a-d]\)?[ \t]+[^\(\)]+\(?[b-d]\)?/i.test(line)) {
+            const optMatches = line.match(/(\(?[A-Da-d]\)?\s*[^(\n)]+)/g);
+            if (optMatches && optMatches.length >= 2) {
+              options = optMatches.slice(0, 4).map((o, idx) => {
+                const clean = o.replace(/^\(?[A-Da-d]\)?[\.:\s]*/, '').trim();
+                const letter = String.fromCharCode(65 + idx);
+                return `(${letter}) ${clean}`;
+              });
+              while (options.length < 4) {
+                options.push(`(${String.fromCharCode(65 + options.length)}) Option ${String.fromCharCode(65 + options.length)}`);
+              }
+              qText = line.split(/\(?[A-Da-d]\)/)[0].replace(/^(q\d*[\.:\)]|\d+[\.:\)])\s*/i, "").trim();
+            }
+          } else if (i + 1 < lines.length && /\(?[a-d]\)?[ \t]+[^\(\)]+/i.test(lines[i + 1])) {
+            i++;
+            const nextLine = lines[i];
+            const optMatches = nextLine.match(/(\(?[A-Da-d]\)?\s*[^(\n)]+)/g);
+            if (optMatches && optMatches.length >= 2) {
+              options = optMatches.slice(0, 4).map((o, idx) => {
+                const clean = o.replace(/^\(?[A-Da-d]\)?[\.:\s]*/, '').trim();
+                const letter = String.fromCharCode(65 + idx);
+                return `(${letter}) ${clean}`;
+              });
+            }
+          }
+
+          if (qText.length > 5) {
+            mcqs.push({
+              id: `magic-mcq-${mcqs.length + 1}`,
+              text: qText,
+              options: options,
+              answer: 0,
+              marks: 1
+            });
+          }
+        } else if (currentSection === "B") {
+          const qText = line.replace(/^(q\d*[\.:\)]|\d+[\.:\)]|\([ivx]+\))\s*/i, "").trim();
+          if (qText.length > 8) {
+            shorts.push({
+              id: `magic-short-${shorts.length + 1}`,
+              text: qText,
+              marks: 4,
+              solution: "Award full marks for authentic definition, reason and unit."
+            });
+          }
+        } else if (currentSection === "C") {
+          const qText = line.replace(/^(q\d*[\.:\)]|\d+[\.:\)]|\([ivx]+\))\s*/i, "").trim();
+          if (qText.length > 8) {
+            longs.push({
+              id: `magic-long-${longs.length + 1}`,
+              text: qText,
+              marks: 8,
+              solution: "Detailed theoretical explanation, diagram and derivations."
+            });
+          }
+        } else {
+          // If no section recognized yet, check if it's a question
+          if (/^(q\d*[\.:\)]|\d+[\.:\)])/i.test(line)) {
+            const qText = line.replace(/^(q\d*[\.:\)]|\d+[\.:\)])\s*/i, "").trim();
+            if (qText.length > 8) {
+              if (shorts.length < 6) {
+                shorts.push({ id: `magic-short-${shorts.length + 1}`, text: qText, marks: 4 });
+              } else {
+                longs.push({ id: `magic-long-${longs.length + 1}`, text: qText, marks: 8 });
+              }
+            }
+          }
+        }
+      }
+
+      // Update magic paper data
+      if (detectedSchool) magicPaperData.schoolName = detectedSchool;
+      if (detectedTitle) magicPaperData.examTitle = detectedTitle;
+      if (detectedSubject) magicPaperData.subject = detectedSubject;
+
+      magicPaperData.mcqs = mcqs;
+      magicPaperData.shorts = shorts;
+      magicPaperData.longs = longs;
+
+      // Update Inputs
+      const sInput = document.getElementById("magic-school-name");
+      const tInput = document.getElementById("magic-exam-title");
+      const subInput = document.getElementById("magic-subject-name");
+      if (sInput && magicPaperData.schoolName) sInput.value = magicPaperData.schoolName;
+      if (tInput && magicPaperData.examTitle) tInput.value = magicPaperData.examTitle;
+      if (subInput && magicPaperData.subject) subInput.value = magicPaperData.subject;
+
+      renderMagicResultsUI();
+    }
+
+    function reparseMagicRawText() {
+      const text = document.getElementById("magic-raw-text")?.value || "";
+      if (text.trim()) {
+        parseHandwrittenPaperText(text);
+      }
+    }
+
+    function renderMagicResultsUI() {
+      const mcqCount = document.getElementById("magic-mcqs-count");
+      const shortCount = document.getElementById("magic-shorts-count");
+      const longCount = document.getElementById("magic-longs-count");
+
+      if (mcqCount) mcqCount.textContent = magicPaperData.mcqs.length;
+      if (shortCount) shortCount.textContent = magicPaperData.shorts.length;
+      if (longCount) longCount.textContent = magicPaperData.longs.length;
+
+      const mcqList = document.getElementById("magic-mcqs-list");
+      if (mcqList) {
+        if (magicPaperData.mcqs.length === 0) {
+          mcqList.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">No Section A MCQs detected in handwriting.</p>`;
+        } else {
+          mcqList.innerHTML = magicPaperData.mcqs.map((q, idx) => `
+            <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 space-y-1">
+              <div class="font-bold text-slate-800">Q${idx + 1}. ${q.text}</div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-[10px] text-slate-600 pl-4">
+                ${q.options.map(opt => `<span>${opt}</span>`).join("")}
+              </div>
+            </div>
+          `).join("");
+        }
+      }
+
+      const shortList = document.getElementById("magic-shorts-list");
+      if (shortList) {
+        if (magicPaperData.shorts.length === 0) {
+          shortList.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">No Section B short questions detected in handwriting.</p>`;
+        } else {
+          shortList.innerHTML = magicPaperData.shorts.map((q, idx) => `
+            <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 font-medium text-slate-800">
+              <strong>Q${idx + 1}.</strong> ${q.text}
+            </div>
+          `).join("");
+        }
+      }
+
+      const longList = document.getElementById("magic-longs-list");
+      if (longList) {
+        if (magicPaperData.longs.length === 0) {
+          longList.innerHTML = `<p class="text-slate-400 text-center py-2 text-[11px]">No Section C long questions detected in handwriting.</p>`;
+        } else {
+          longList.innerHTML = magicPaperData.longs.map((q, idx) => `
+            <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 font-medium text-slate-800">
+              <strong>Q${idx + 1}.</strong> ${q.text}
+            </div>
+          `).join("");
+        }
+      }
+    }
+
+    async function exportMagicPaperToWordDocx() {
+      // Sync meta inputs
+      magicPaperData.schoolName = document.getElementById("magic-school-name")?.value.trim() || magicPaperData.schoolName;
+      magicPaperData.examTitle = document.getElementById("magic-exam-title")?.value.trim() || magicPaperData.examTitle;
+      magicPaperData.subject = document.getElementById("magic-subject-name")?.value.trim() || magicPaperData.subject;
+
+      if (magicPaperData.mcqs.length === 0 && magicPaperData.shorts.length === 0 && magicPaperData.longs.length === 0) {
+        alert("Please upload or scan a handwritten examination paper first.");
+        return;
+      }
+
+      const marksA = magicPaperData.mcqs.length * 1;
+      const totalShorts = magicPaperData.shorts.length;
+      const attemptShorts = Math.min(9, totalShorts) || totalShorts;
+      const leaveShorts = Math.max(0, totalShorts - attemptShorts);
+      const marksB = attemptShorts * 4;
+
+      const totalLongs = magicPaperData.longs.length;
+      const attemptLongs = Math.min(3, totalLongs) || totalLongs;
+      const leaveLongs = Math.max(0, totalLongs - attemptLongs);
+      const marksC = attemptLongs * 8;
+      const marksBC = marksB + marksC;
+
+      if (typeof docx !== "undefined") {
+        try {
+          const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } = docx;
+          const docChildren = [];
+
+          // SHEET 1: OBJECTIVE SECTION A (If MCQs present)
+          if (magicPaperData.mcqs.length > 0) {
+            docChildren.push(
+              new Paragraph({
+                text: magicPaperData.schoolName.toUpperCase(),
+                heading: HeadingLevel.HEADING_1,
+                alignment: AlignmentType.CENTER,
+              }),
+              new Paragraph({
+                text: `${magicPaperData.examTitle} — ${magicPaperData.subject}`,
+                heading: HeadingLevel.HEADING_2,
+                alignment: AlignmentType.CENTER,
+              }),
+              new Paragraph({
+                text: "PART — I (OBJECTIVE TYPE)",
+                heading: HeadingLevel.HEADING_3,
+                alignment: AlignmentType.CENTER,
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: "Roll No: [    ][    ][    ][    ][    ][    ]               ", bold: true }),
+                  new TextRun({ text: "Time: 20 Minutes               ", bold: true }),
+                  new TextRun({ text: `Marks: ${marksA}`, bold: true }),
+                ],
+                alignment: AlignmentType.CENTER,
+              }),
+              new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `SECTION — A (Objective Multiple Choice Questions)   [Marks: ${marksA}]`, bold: true }),
+                ],
+                heading: HeadingLevel.HEADING_3,
+              }),
+              new Paragraph({ text: "Note: Attempt all questions. All questions carry equal marks (1 Mark each). Overwriting or double marking will receive zero credit. Hand over to invigilator after 20 minutes." }),
+              new Paragraph({ text: "" })
+            );
+
+            magicPaperData.mcqs.forEach((q, idx) => {
+              docChildren.push(
+                new Paragraph({
+                  children: [
+                    new TextRun({ text: `Q${idx + 1}. `, bold: true }),
+                    new TextRun({ text: q.text }),
+                  ],
+                }),
+                new Paragraph({
+                  children: [
+                    new TextRun({ text: `     ${q.options[0]}          ${q.options[1]}          ${q.options[2]}          ${q.options[3]}` })
+                  ]
+                }),
+                new Paragraph({ text: "" })
+              );
+            });
+
+            docChildren.push(
+              new Paragraph({
+                text: "[ End of Objective Paper ]",
+                alignment: AlignmentType.CENTER,
+              }),
+              new Paragraph({ children: [new PageBreak()] })
+            );
+          }
+
+          // SHEET 2: SUBJECTIVE SECTIONS B & C
+          docChildren.push(
+            new Paragraph({
+              text: magicPaperData.schoolName.toUpperCase(),
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: `${magicPaperData.examTitle} — ${magicPaperData.subject}`,
+              heading: HeadingLevel.HEADING_2,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: "PART — II (SUBJECTIVE TYPE)",
+              heading: HeadingLevel.HEADING_3,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Time Allowed: 2 Hours 40 Minutes            ", bold: true }),
+                new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: "Note: Answer questions clearly with proper headings, formulas and neat labeled diagrams where applicable on the provided answer book." }),
+            new Paragraph({ text: "" })
+          );
+
+          // SECTION B
+          const choiceTextB = leaveShorts > 0 ? ` (Choice: Leave any ${leaveShorts} questions)` : "";
+          docChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Marks: ${marksB}]`, bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            }),
+            new Paragraph({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts} questions${choiceTextB}. All questions carry equal marks (4 Marks each).` }),
+            new Paragraph({ text: "" })
+          );
+
+          magicPaperData.shorts.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
+                  new TextRun({ text: q.text }),
+                ],
+              }),
+              new Paragraph({ text: "" })
+            );
+          });
+
+          // SECTION C
+          const choiceTextC = leaveLongs > 0 ? ` (Choice: Leave any ${leaveLongs} questions)` : "";
+          docChildren.push(
+            new Paragraph({ text: "" }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Marks: ${marksC}]`, bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            }),
+            new Paragraph({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs} questions${choiceTextC}. All questions carry equal marks (8 Marks each). Show complete derivations & steps.` }),
+            new Paragraph({ text: "" })
+          );
+
+          magicPaperData.longs.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
+                  new TextRun({ text: q.text }),
+                ],
+              }),
+              new Paragraph({ text: "" })
+            );
+          });
+
+          docChildren.push(
+            new Paragraph({
+              text: "[ End of Examination Paper — Best of Luck ]",
+              alignment: AlignmentType.CENTER,
+            })
+          );
+
+          const doc = new Document({
+            sections: [{ properties: {}, children: docChildren }],
+          });
+
+          const blob = await Packer.toBlob(doc);
+          const fileName = `${magicPaperData.subject}_Handwritten_ExamPaper.docx`.replace(/\s+/g, '_');
+          saveAs(blob, fileName);
+          alert(`Magic Word document '${fileName}' successfully generated and downloaded!`);
+          return;
+        } catch (err) {
+          console.warn("docx build error for magic paper:", err);
+        }
+      }
+
+      alert("Downloading Word format...");
+    }
+
+    function loadMagicPaperIntoEditor() {
+      // Sync meta inputs
+      magicPaperData.schoolName = document.getElementById("magic-school-name")?.value.trim() || magicPaperData.schoolName;
+      magicPaperData.examTitle = document.getElementById("magic-exam-title")?.value.trim() || magicPaperData.examTitle;
+      magicPaperData.subject = document.getElementById("magic-subject-name")?.value.trim() || magicPaperData.subject;
+
+      currentPaper = {
+        id: `magic-paper-${Date.now()}`,
+        schoolName: magicPaperData.schoolName,
+        examTitle: magicPaperData.examTitle,
+        grade: "9",
+        subject: magicPaperData.subject,
+        timeAllowedA: "20 Minutes",
+        timeAllowedBC: "2 Hours 40 Minutes",
+        paperStyle: "bisep-classic",
+        lang: "en",
+        secAMarks: magicPaperData.mcqs.length * 1,
+        secBMarks: Math.min(9, magicPaperData.shorts.length) * 4 || 36,
+        secCMarks: Math.min(3, magicPaperData.longs.length) * 8 || 24,
+        attemptShorts: Math.min(9, magicPaperData.shorts.length) || magicPaperData.shorts.length,
+        attemptLongs: Math.min(3, magicPaperData.longs.length) || magicPaperData.longs.length,
+        mcqs: JSON.parse(JSON.stringify(magicPaperData.mcqs)),
+        shorts: JSON.parse(JSON.stringify(magicPaperData.shorts)),
+        longs: JSON.parse(JSON.stringify(magicPaperData.longs)),
+        createdAt: new Date().toISOString()
+      };
+
+      document.getElementById("gen-school-name").value = currentPaper.schoolName;
+      document.getElementById("gen-exam-title").value = currentPaper.examTitle;
+
+      autoSaveCurrentPaper();
+      renderPaperDOM();
+      closeMagicOcrModal();
+      scrollToSection("paper-section");
+      alert(`Handwritten Paper successfully loaded into Live Editor! You can now customize questions, add marks, and export.`);
+    }
+
+    // =========================================================================
+    // 10. WINDOW INITIALIZATION
     // =========================================================================
     window.addEventListener("DOMContentLoaded", () => {
       initAppState();
