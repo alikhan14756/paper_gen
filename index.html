@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExamForge AI — Bilingual Examination Paper Generator | BISE Peshawar & KPK Board</title>
+  <meta name="description" content="Production-ready AI examination paper generator grounded in official KPK Textbook Board Peshawar textbooks for Class 9th and 10th. Developed by Muhammad Ali (AliBuild).">
+  <meta name="author" content="Muhammad Ali — AliBuild">
+  
+  <!-- Tailwind CSS CDN & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+    .urdu-font {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      direction: rtl;
+      line-height: 2.2;
+    }
+    /* Claymorphism Theme Styles matching ExamForge AI Next.js UI */
+    .clay-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 
+        8px 8px 20px rgba(226, 232, 240, 0.8),
+        -8px -8px 20px rgba(255, 255, 255, 0.9),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.9);
+    }
+    .clay-card-flat {
+      background: #f1f5f9;
+      border-radius: 1rem;
+      box-shadow: 
+        inset 3px 3px 6px rgba(203, 213, 225, 0.5),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+    }
+    .clay-btn-primary {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 
+        4px 4px 10px rgba(234, 88, 12, 0.35),
+        -2px -2px 6px rgba(255, 255, 255, 0.8),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .clay-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        6px 6px 14px rgba(234, 88, 12, 0.45),
+        -2px -2px 6px rgba(255, 255, 255, 0.9);
+    }
+    .clay-btn-secondary {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 1rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 
+        3px 3px 8px rgba(226, 232, 240, 0.8),
+        -3px -3px 8px rgba(255, 255, 255, 0.9);
+      transition: all 0.2s ease;
+    }
+    .clay-btn-secondary:hover {
+      background: #f8fafc;
+      transform: translateY(-1px);
+    }
+    .clay-input {
+      background: #f8fafc;
+      border-radius: 0.875rem;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: inset 2px 2px 5px rgba(203, 213, 225, 0.3);
+      transition: all 0.2s ease;
+    }
+    .clay-input:focus {
+      outline: none;
+      border-color: #f97316;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    }
+    .clay-badge-mint {
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      box-shadow: 2px 2px 5px rgba(16, 185, 129, 0.1);
+    }
+    .clay-badge-orange {
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      box-shadow: 2px 2px 5px rgba(234, 88, 12, 0.1);
+    }
+    .exam-paper-page {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: 1px solid #cbd5e1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
+
+  <!-- TOP BRANDING NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-slate-200/80 px-4 sm:px-8 py-3.5 shadow-sm">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-lg font-black tracking-tight text-slate-900">ExamForge<span class="text-orange-600">.AI</span></h1>
+            <span class="clay-badge-mint text-[10px] font-extrabold px-2 py-0.5 rounded-full">BISEP 2026</span>
+          </div>
+          <p class="text-[11px] font-medium text-slate-500 hidden sm:block">KPK Textbook Board Class 9th & 10th Examination System</p>
+        </div>
+      </div>
+
+      <!-- Nav Links & Quota Badge -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-orange-50 border border-orange-200 text-xs font-bold text-orange-800">
+          <i data-lucide="gift" class="w-3.5 h-3.5 text-orange-600"></i>
+          <span>Free Trial: 2 Free Papers / Subject</span>
+        </div>
+
+        <button onclick="scrollToSection('generator')" class="clay-btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5">
+          <i data-lucide="file-plus" class="w-4 h-4"></i>
+          <span>Create Exam Paper</span>
+        </button>
+
+        <button onclick="openRegisterModal()" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold hidden sm:flex items-center space-x-1.5">
+          <i data-lucide="school" class="w-4 h-4 text-orange-600"></i>
+          <span>School Login / Register</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-12">
+    <div class="clay-card p-8 sm:p-12 relative overflow-hidden">
+      <div class="max-w-3xl space-y-4">
+        <div class="inline-flex items-center space-x-2 clay-badge-orange px-3 py-1 rounded-full text-xs font-extrabold">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-orange-600"></i>
+          <span>Official BISE Peshawar & KPK Board Curriculum Grounded</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          Generate Authentic Examination Papers for <span class="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Class 9th & 10th</span> in Seconds.
+        </h2>
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+          Ground questions in 100% authentic textbooks with every single chapter. Features bilingual Urdu/English typography, objective bubble MCQs, conceptual short questions, marking rubrics, and confidential teacher answer keys.
+        </p>
+
+        <!-- CTA Action Row -->
+        <div class="pt-4 flex flex-wrap items-center gap-3">
+          <button onclick="scrollToSection('curriculum')" class="clay-btn-primary px-6 py-3 text-xs sm:text-sm font-extrabold flex items-center space-x-2">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Explore 18 KPK Textbooks</span>
+          </button>
+          <button onclick="scrollToSection('generator')" class="clay-btn-secondary px-6 py-3 text-xs sm:text-sm font-extrabold flex items-center space-x-2">
+            <i data-lucide="wand-2" class="w-4 h-4 text-orange-600"></i>
+            <span>Generate Sample Paper</span>
+          </button>
+          <a href="https://alibuild.site" target="_blank" class="px-4 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1.5">
+            <span>By Muhammad Ali (AliBuild)</span>
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTHENTIC CURRICULUM EXPLORER (18 BOOKS) -->
+  <section id="curriculum" class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3">
+      <div>
+        <div class="inline-flex items-center space-x-1.5 text-orange-600 text-xs font-black uppercase tracking-wider mb-1">
+          <i data-lucide="library" class="w-4 h-4"></i>
+          <span>Official Syllabus</span>
+        </div>
+        <h3 class="text-2xl font-black text-slate-900 tracking-tight">KPK Peshawar Textbook Board Syllabus (18 Core Books)</h3>
+        <p class="text-xs text-slate-500">Every textbook includes 100% complete chapters — zero missing chapters.</p>
+      </div>
+
+      <!-- Grade Filter Pills -->
+      <div class="clay-card-flat p-1 flex self-start sm:self-auto">
+        <button id="btn-grade-all" onclick="filterBooks('all')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-sm transition">All (18)</button>
+        <button id="btn-grade-9" onclick="filterBooks('9')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition">Class 9th (9)</button>
+        <button id="btn-grade-10" onclick="filterBooks('10')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition">Class 10th (9)</button>
+      </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Dynamic books populated by JS -->
+    </div>
+  </section>
+
+  <!-- INTERACTIVE EXAMINATION GENERATOR -->
+  <section id="generator" class="max-w-7xl mx-auto px-4 sm:px-8 py-10">
+    <div class="clay-card p-6 sm:p-10 space-y-8">
+      <div class="border-b border-slate-200/80 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-1 rounded-full text-[11px] font-black mb-2">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Interactive Examination Blueprint Engine</span>
+          </div>
+          <h3 class="text-2xl font-black text-slate-900 tracking-tight">Configure & Generate Examination Paper</h3>
+          <p class="text-xs text-slate-500">Select curriculum chapters, question distributions, and generate printable papers.</p>
+        </div>
+
+        <div class="clay-card-flat px-4 py-2.5 flex items-center space-x-3 bg-amber-50/60 border border-amber-200/80">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-orange-600"></i>
+          <div class="text-xs">
+            <p class="font-bold text-slate-900">Free Trial Quota: <span id="quota-display" class="text-orange-600">0 / 2 Papers Used</span></p>
+            <p class="text-[11px] text-slate-500">2 free papers per subject. Unlimited on Pro subscription.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Settings Column -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Target Class / Grade</label>
+            <select id="gen-grade" onchange="updateSubjectOptions()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
+              <option value="9">Class 9th (Matric Part I)</option>
+              <option value="10">Class 10th (Matric Part II)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Subject</label>
+            <select id="gen-subject" onchange="renderChapterSelector()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Examination Title</label>
+            <input type="text" id="gen-title" value="Class 9th Annual Examination 2026" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Time Allowed</label>
+              <input type="text" id="gen-time" value="3 Hours" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Total Marks</label>
+              <input type="number" id="gen-marks" value="75" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
+            </div>
+          </div>
+
+          <div class="clay-card-flat p-4 rounded-xl space-y-2 text-xs">
+            <p class="font-extrabold text-slate-800">Section Distribution Blueprint:</p>
+            <div class="flex justify-between text-slate-600">
+              <span>Section A (MCQs - 1 Mark each):</span>
+              <strong class="text-slate-900">15 Marks</strong>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Section B (Short Questions - 4 Marks):</span>
+              <strong class="text-slate-900">36 Marks</strong>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Section C (Long Questions - 8 Marks):</span>
+              <strong class="text-slate-900">24 Marks</strong>
+            </div>
+            <div class="border-t border-slate-300 pt-1.5 flex justify-between font-black text-slate-900">
+              <span>Total Calculated:</span>
+              <span class="text-orange-600">75 / 75 Marks (Valid)</span>
+            </div>
+          </div>
+
+          <button onclick="generateMockPaper()" class="w-full clay-btn-primary py-3 px-4 text-xs font-extrabold flex items-center justify-center space-x-2">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Generate & Render Examination Paper</span>
+          </button>
+        </div>
+
+        <!-- Chapters Selection Column (2 Cols wide) -->
+        <div class="lg:col-span-2 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-slate-700">Select Textbook Chapters to Include</label>
+            <div class="space-x-2">
+              <button onclick="selectAllChapters(true)" class="text-[11px] font-bold text-orange-600 hover:underline">Select All</button>
+              <span class="text-slate-300">•</span>
+              <button onclick="selectAllChapters(false)" class="text-[11px] font-bold text-slate-500 hover:underline">Deselect All</button>
+            </div>
+          </div>
+
+          <div id="chapters-checkbox-container" class="clay-card-flat p-4 rounded-2xl max-h-[380px] overflow-y-auto space-y-2 text-xs">
+            <!-- Checkboxes injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE EXAMINATION PAPER & ANSWER KEY PREVIEW -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+    <div class="clay-card p-6 sm:p-10 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 clay-badge-mint px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+            <span>Preview Mode</span>
+          </div>
+          <h3 class="text-xl font-black text-slate-900">Generated BISEP Examination Paper</h3>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button onclick="toggleAnswerKey()" id="btn-toggle-key" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5">
+            <i data-lucide="eye" class="w-4 h-4 text-orange-600"></i>
+            <span id="key-label">View Confidential Answer Key</span>
+          </button>
+          <button onclick="window.print()" class="clay-btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            <span>Print / Save DOCX</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paper Page Sheet Container -->
+      <div id="paper-view-container" class="exam-paper-page p-8 sm:p-12 rounded-xl text-slate-900 space-y-8 max-w-4xl mx-auto">
+        
+        <!-- Board Header -->
+        <div class="text-center border-b-2 border-slate-900 pb-4 space-y-1">
+          <h4 class="text-base sm:text-lg font-black uppercase tracking-wider">Board of Intermediate & Secondary Education Peshawar</h4>
+          <h5 id="paper-heading-title" class="text-sm font-extrabold text-slate-800">Class 9th Annual Examination 2026 — Mathematics</h5>
+          <div class="flex justify-between text-xs font-bold text-slate-700 pt-2 border-t border-slate-300 mt-2">
+            <span>Time Allowed: <span id="paper-display-time">3 Hours</span></span>
+            <span>Total Marks: <span id="paper-display-marks">75</span></span>
+          </div>
+        </div>
+
+        <!-- Student Instructions -->
+        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px] text-slate-600 space-y-1">
+          <p class="font-bold text-slate-800">General Instructions:</p>
+          <p>1. Section A is compulsory. All candidates must fill the rounded bubbles corresponding to the correct option.</p>
+          <p>2. Section B contains conceptual short questions. Attempt any 9 questions out of 12.</p>
+          <p>3. Section C contains descriptive analytical questions. Attempt any 3 questions out of 4.</p>
+        </div>
+
+        <!-- Section A: Objective MCQs -->
+        <div class="space-y-4">
+          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
+            <span>SECTION - A (Objective MCQs)</span>
+            <span>Marks: 15</span>
+          </div>
+
+          <div id="mcqs-container" class="space-y-4 text-xs">
+            <!-- Sample MCQs -->
+            <div class="space-y-2">
+              <p class="font-bold">Q1. If A = [[2, 1], [0, 3]], then the determinant of matrix A (|A|) is:</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) 5</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) 6</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) 0</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) 2</span></label>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="font-bold">Q2. The value of log_10(1000) according to laws of logarithms is equal to:</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) 1</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) 2</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) 3</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) 10</span></label>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="font-bold">Q3. In a right-angled triangle, the relation between hypotenuse (c), base (b), and perpendicular (a) is:</p>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) c^2 = a^2 + b^2</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) c = a + b</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) a^2 = b^2 + c^2</span></label>
+                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) b^2 = a^2 + c^2</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section B: Short Questions -->
+        <div class="space-y-4">
+          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
+            <span>SECTION - B (Short Conceptual Questions)</span>
+            <span>Marks: 36 (9 x 4)</span>
+          </div>
+
+          <div id="short-container" class="space-y-3 text-xs">
+            <p><strong>Q2.</strong> Define a Singular Matrix and determine whether B = [[4, 2], [6, 3]] is singular or non-singular. [4 Marks]</p>
+            <p><strong>Q3.</strong> Solve for x: log_3(x) = 4 using the fundamental definition of logarithms. [4 Marks]</p>
+            <p><strong>Q4.</strong> Simplify the radical expression and rationalize the denominator: (3 + sqrt(5)) / (3 - sqrt(5)). [4 Marks]</p>
+            <p><strong>Q5.</strong> State the SAS (Side-Angle-Side) Congruence Postulate for two triangles. [4 Marks]</p>
+          </div>
+        </div>
+
+        <!-- Section C: Long Descriptive Questions -->
+        <div class="space-y-4">
+          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
+            <span>SECTION - C (Descriptive Long Questions)</span>
+            <span>Marks: 24 (3 x 8)</span>
+          </div>
+
+          <div id="long-container" class="space-y-3 text-xs">
+            <p><strong>Q6.</strong> Solve the following system of linear equations by using Cramer's Rule: 2x + y = 3 and 6x + 5y = 1. [8 Marks]</p>
+            <p><strong>Q7.</strong> Prove that any point on the right bisector of a line segment is equidistant from its end points. Draw a neat geometric diagram and write Given, To Prove, and Proof. [8 Marks]</p>
+          </div>
+        </div>
+
+        <!-- Confidential Answer Key Box (Hidden by Default) -->
+        <div id="answer-key-box" class="hidden border-2 border-red-500 bg-red-50/50 p-6 rounded-xl space-y-3">
+          <div class="flex items-center space-x-2 text-red-700 font-black text-sm">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            <span>CONFIDENTIAL TEACHER ANSWER KEY & MARKING SCHEME</span>
+          </div>
+          <p class="text-xs text-red-900 font-semibold">Keep this document separate and confidential. For examiner evaluation only.</p>
+          <div class="text-xs space-y-2 text-slate-800">
+            <p><strong>Q1:</strong> Option (B) 6 [Calculation: 2x3 - 1x0 = 6]</p>
+            <p><strong>Q2:</strong> Option (C) 3 [Calculation: 10^3 = 1000 => log_10(1000) = 3]</p>
+            <p><strong>Q3:</strong> Option (A) c^2 = a^2 + b^2 [Pythagoras' theorem fundamental formula]</p>
+            <p><strong>Q6:</strong> Cramer's Rule steps: Det(A) = 4, Det(Ax) = 14, Det(Ay) = -16. Solution: x = 3.5, y = -4. (Award 2 marks for determinants, 4 marks for substitutions, 2 marks for final values).</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTRATION & EMAIL OTP MODAL (CLEAN - ZERO PASSWORD OR CODE ON SCREEN) -->
+  <div id="register-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="clay-card max-w-md w-full p-8 relative space-y-5">
+      <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center space-y-1">
+        <div class="h-10 w-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center mx-auto shadow-md">
+          <i data-lucide="school" class="w-5 h-5"></i>
+        </div>
+        <h4 id="modal-title" class="text-xl font-black text-slate-900">School Registration</h4>
+        <p class="text-[11px] text-slate-500">Free Trial: 2 Free Papers per subject activated on verification</p>
+      </div>
+
+      <!-- Step 1: Registration Form -->
+      <form id="reg-form" onsubmit="handleRegistrationSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">School Name</label>
+          <input type="text" required id="reg-school-name" placeholder="e.g. Peshawar Model School" class="w-full clay-input p-2.5 text-xs font-medium" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Principal / Administrator Email</label>
+          <input type="email" required id="reg-email" placeholder="principal@school.edu.pk" class="w-full clay-input p-2.5 text-xs font-medium" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+          <input type="password" required id="reg-password" placeholder="Create a secure password" class="w-full clay-input p-2.5 text-xs font-medium" />
+        </div>
+
+        <button type="submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-bold flex items-center justify-center space-x-2">
+          <span>Create Account & Send Email Code</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+      <!-- Step 2: Email OTP Form (Revealed after submit) -->
+      <form id="otp-form" onsubmit="handleOtpSubmit(event)" class="hidden space-y-4">
+        <div class="clay-card-flat p-3.5 rounded-xl text-center space-y-1">
+          <i data-lucide="mail-check" class="w-6 h-6 text-orange-600 mx-auto"></i>
+          <p class="text-xs font-bold text-slate-900">Verification Code Sent!</p>
+          <p class="text-[11px] text-slate-500">A 6-digit code has been sent to your email inbox. Please check your email and enter the code below:</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 text-center">Enter 6-Digit Code from Email</label>
+          <input type="text" maxlength="6" required id="otp-code" placeholder="Enter 6-digit code" class="w-full clay-input text-center text-xl font-mono tracking-widest py-2.5 font-bold" />
+        </div>
+
+        <button type="submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-bold flex items-center justify-center space-x-2">
+          <span>Verify & Activate School</span>
+          <i data-lucide="check" class="w-4 h-4"></i>
+        </button>
+
+        <div class="text-center text-xs">
+          <button type="button" onclick="alert('Fresh code dispatched to your email!')" class="text-orange-600 font-bold hover:underline">Resend Code to Email</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- UPGRADE MODAL (Contact Muhammad Ali) -->
+  <div id="upgrade-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="clay-card max-w-md w-full p-8 text-center space-y-4">
+      <div class="h-12 w-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center mx-auto shadow-md">
+        <i data-lucide="crown" class="w-6 h-6"></i>
+      </div>
+      <h4 class="text-xl font-black text-slate-900">Free Trial Limit Reached</h4>
+      <p class="text-xs text-slate-600">
+        You have generated the <strong>2 free examination papers</strong> allocated for this subject. To unlock unlimited generation across all 18 KPK BISEP textbooks, please upgrade to a Paid Subscription or contact the founder:
+      </p>
+
+      <div class="clay-card-flat p-4 rounded-xl text-left space-y-1.5 text-xs">
+        <p class="font-extrabold text-slate-900">Muhammad Ali — Founder & Lead Architect</p>
+        <p class="text-slate-600">Company: <strong>AliBuild</strong></p>
+        <p class="text-slate-600">Email: <a href="mailto:alikhanwebdeveloper@gmail.com" class="text-orange-600 font-bold hover:underline">alikhanwebdeveloper@gmail.com</a></p>
+        <p class="text-slate-600">Portfolio: <a href="https://alibuild.site" target="_blank" class="text-orange-600 font-bold hover:underline">https://alibuild.site</a></p>
+      </div>
+
+      <button onclick="closeUpgradeModal()" class="w-full clay-btn-primary py-2.5 text-xs font-bold">
+        Got it, Thank You
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-slate-200/80 bg-white/80 py-8 px-4 sm:px-8 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <div class="h-6 w-6 rounded-lg bg-orange-500 flex items-center justify-center text-white text-[10px] font-bold">EF</div>
+        <span class="font-bold text-slate-800">ExamForge AI</span>
+        <span>•</span>
+        <span>KPK Textbook Board & BISE Peshawar Edition</span>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <span>Architected by <a href="https://alibuild.site" target="_blank" class="font-extrabold text-orange-600 hover:underline">Muhammad Ali (AliBuild)</a></span>
+        <span>•</span>
+        <a href="https://github.com/alikhan14756/prompt" target="_blank" class="hover:text-slate-900 flex items-center space-x-1">
+          <i data-lucide="github" class="w-3.5 h-3.5"></i>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT DATA & APP CONTROLLER -->
+  <script>
+    // Authentic KPK Textbook Board Syllabus (18 Core Books with ALL authentic chapters)
+    const AUTHENTIC_BOOKS = [
+      // Class 9th
+      {
+        grade: "9",
+        subject: "Mathematics",
+        title: "Mathematics Class 9 (KPK Textbook Board)",
+        chaptersCount: 17,
+        lang: "en",
+        chapters: [
+          "1. Matrices and Determinants",
+          "2. Real and Complex Numbers",
+          "3. Logarithms",
+          "4. Algebraic Expressions and Formulas",
+          "5. Factorization",
+          "6. Algebraic Manipulation",
+          "7. Linear Equations and Inequalities",
+          "8. Linear Graphs and Their Application",
+          "9. Introduction to Coordinate Geometry",
+          "10. Congruent Triangles",
+          "11. Parallelograms and Triangles",
+          "12. Line Bisectors and Angle Bisectors",
+          "13. Sides and Angles of a Triangle",
+          "14. Ratio and Proportion",
+          "15. Pythagoras' Theorem",
+          "16. Theorems Related with Area",
+          "17. Practical Geometry - Triangles"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "English",
+        title: "English Compulsory Class 9 (KPK Textbook Board)",
+        chaptersCount: 15,
+        lang: "en",
+        chapters: [
+          "Unit 1: The Holy Prophet (PBUH) - Embodiment of Justice",
+          "Unit 2: Daffodils (Poem by William Wordsworth)",
+          "Unit 3: Media and Its Impact",
+          "Unit 4: Hazrat Asma (R.A)",
+          "Unit 5: Stopping by Woods on a Snowy Evening",
+          "Unit 6: The Quaid's Vision and Pakistan",
+          "Unit 7: Sultan Ahmad Mosque (Blue Mosque)",
+          "Unit 8: Peace (Poem by Dr. Hartmann)",
+          "Unit 9: All is Not Lost",
+          "Unit 10: Drug Addiction",
+          "Unit 11: Noise in the Environment",
+          "Unit 12: Three Days to See (Helen Keller)",
+          "Unit 13: Abou Ben Adhem (Leigh Hunt)",
+          "Unit 14: Hope is the Thing with Feathers",
+          "Unit 15: Technology in Everyday Life"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Urdu",
+        title: "اردو لازمی جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 18,
+        lang: "ur",
+        chapters: [
+          "سبق 1: ہجرت نبوی صلی اللہ علیہ وآلہ وسلم",
+          "سبق 2: کاہلی (سر سید احمد خان)",
+          "سبق 3: اخلاق نبوی صلی اللہ علیہ وآلہ وسلم",
+          "سبق 4: شاعروں کے لطیفے (مولانا آزاد)",
+          "سبق 5: نصوح اور سلیم کی گفتگو",
+          "سبق 6: پنچایت (منشی پریم چند)",
+          "سبق 7: آرام و سکون (امتیاز علی تاج)",
+          "سبق 8: امتحان (مرزا فرحت اللہ بیگ)",
+          "سبق 9: ملکی پرندے اور دوسرے جانور",
+          "سبق 10: قدر ایاز (کرنل محمد خان)",
+          "نظم 1: حمد (مولانا حالی)",
+          "نظم 2: نعت (احسان دانش)",
+          "نظم 3: برسات کی بہاریں",
+          "نظم 4: پیوستہ رہ شجر سے امید بہار رکھ",
+          "غزل 1: ہستی اپنی حباب کی سی ہے (میر)",
+          "غزل 2: دل ناداں تجھے ہوا کیا ہے (غالب)",
+          "غزل 3: رخ و زلف پر جان کھویا کیا (آتش)",
+          "غزل 4: لگتا نہیں ہے دل مرا (بہادر شاہ ظفر)"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Physics",
+        title: "Physics Class 9 (KPK Textbook Board)",
+        chaptersCount: 9,
+        lang: "en",
+        chapters: [
+          "1. Physical Quantities and Measurement",
+          "2. Kinematics",
+          "3. Dynamics",
+          "4. Turning Effect of Forces",
+          "5. Gravitation",
+          "6. Work and Energy",
+          "7. Properties of Matter",
+          "8. Thermal Properties of Matter",
+          "9. Transfer of Heat"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Chemistry",
+        title: "Chemistry Class 9 (KPK Textbook Board)",
+        chaptersCount: 8,
+        lang: "en",
+        chapters: [
+          "1. Fundamentals of Chemistry",
+          "2. Structure of Atoms",
+          "3. Periodic Table and Periodicity",
+          "4. Structure of Molecules",
+          "5. Physical States of Matter",
+          "6. Solutions",
+          "7. Electrochemistry",
+          "8. Chemical Reactivity"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Biology",
+        title: "Biology Class 9 (KPK Textbook Board)",
+        chaptersCount: 9,
+        lang: "en",
+        chapters: [
+          "1. Introduction to Biology",
+          "2. Solving a Biological Problem",
+          "3. Biodiversity",
+          "4. Cells and Tissues",
+          "5. Cell Cycle",
+          "6. Enzymes",
+          "7. Bioenergetics",
+          "8. Nutrition",
+          "9. Transport"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Computer Science",
+        title: "Computer Science Class 9 (KPK Textbook Board)",
+        chaptersCount: 6,
+        lang: "en",
+        chapters: [
+          "1. Fundamentals of Computer",
+          "2. Fundamentals of Operating System",
+          "3. Office Automation",
+          "4. Data Communication & Networks",
+          "5. Computer Security and Cyber Ethics",
+          "6. Web Development & Algorithms"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Pak Studies",
+        title: "مطالعہ پاکستان جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 5,
+        lang: "ur",
+        chapters: [
+          "باب 1: نظریہ پاکستان کی اساس اور مفہوم",
+          "باب 2: تحریک پاکستان اور قیام پاکستان",
+          "باب 3: پاکستان کا جغرافیہ اور ماحولیات",
+          "باب 4: ابتدائی مشکلات اور قومی یکجہتی",
+          "باب 5: خیبر پختونخوا اور قبائلی اضلاع کا انضمام"
+        ]
+      },
+      {
+        grade: "9",
+        subject: "Islamiat",
+        title: "اسلامیات لازمی جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 6,
+        lang: "ur",
+        chapters: [
+          "باب 1: قرآن مجید اور حدیث نبوی کا تعارف",
+          "باب 2: ایمانیات و عبادات",
+          "باب 3: سیرت طیبہ اور اسوہ حسنہ",
+          "باب 4: اخلاق و آداب",
+          "باب 5: حسن معاشرت اور حقوق العباد",
+          "باب 6: مشاہیر اسلام"
+        ]
+      },
+
+      // Class 10th
+      {
+        grade: "10",
+        subject: "Mathematics",
+        title: "Mathematics Class 10 (KPK Textbook Board)",
+        chaptersCount: 13,
+        lang: "en",
+        chapters: [
+          "1. Quadratic Equations",
+          "2. Theory of Quadratic Equations",
+          "3. Variations",
+          "4. Partial Fractions",
+          "5. Sets and Functions",
+          "6. Basic Statistics",
+          "7. Introduction to Trigonometry",
+          "8. Projection of a Side of a Triangle",
+          "9. Chords of a Circle",
+          "10. Tangent to a Circle",
+          "11. Chords and Arcs",
+          "12. Angle in a Segment of a Circle",
+          "13. Practical Geometry - Circles"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "English",
+        title: "English Compulsory Class 10 (KPK Textbook Board)",
+        chaptersCount: 13,
+        lang: "en",
+        chapters: [
+          "Unit 1: Hazrat Muhammad (PBUH) - Exemplary Judge",
+          "Unit 2: Chinese New Year",
+          "Unit 3: Try Again (Poem)",
+          "Unit 4: First Aid",
+          "Unit 5: The Rain (Poem by W.H. Davies)",
+          "Unit 6: Television vs Newspapers",
+          "Unit 7: Little by Little One Walks Far!",
+          "Unit 8: Peace (Poem)",
+          "Unit 9: Selecting the Right Career",
+          "Unit 10: A World Without Books",
+          "Unit 11: Great Expectations (Dickens)",
+          "Unit 12: Population Growth & Food Supplies",
+          "Unit 13: Faithfulness"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Urdu",
+        title: "اردو لازمی جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 18,
+        lang: "ur",
+        chapters: [
+          "سبق 1: مرزا محمد سعید",
+          "سبق 2: نظریہ پاکستان",
+          "سبق 3: پرستان کی شہزادی",
+          "سبق 4: اردو ادب میں عید الفطر",
+          "سبق 5: مجھے میرے دوستوں سے بچاؤ",
+          "سبق 6: ملمع (ہاجرہ مسرور)",
+          "سبق 7: چغل خور (شفیع عقیل)",
+          "سبق 8: نام دیو مالی",
+          "سبق 9: علی بخش (قدرت اللہ شہاب)",
+          "سبق 10: استنبول (حکیم محمد سعید)",
+          "نظم 1: حمد (حفیظ جالندھری)",
+          "نظم 2: نعت (حفیظ جالندھری)",
+          "نظم 3: میدان کربلا میں صبح کا منظر",
+          "نظم 4: فاطمہ بنت عبداللہ (اقبال)",
+          "نظم 5: کسان (جوش ملیح آبادی)",
+          "نظم 6: جیوے جیوے پاکستان",
+          "غزل 1: مصیبت بھی راحت فزا ہو گئی ہے",
+          "غزل 2: آدمی آدمی سے ملتا ہے"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Physics",
+        title: "Physics Class 10 (KPK Textbook Board)",
+        chaptersCount: 9,
+        lang: "en",
+        chapters: [
+          "Unit 10: Simple Harmonic Motion and Waves",
+          "Unit 11: Sound",
+          "Unit 12: Geometrical Optics",
+          "Unit 13: Electrostatics",
+          "Unit 14: Current Electricity",
+          "Unit 15: Electromagnetism",
+          "Unit 16: Basic Electronics",
+          "Unit 17: Information & Communication Technology",
+          "Unit 18: Atomic and Nuclear Physics"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Chemistry",
+        title: "Chemistry Class 10 (KPK Textbook Board)",
+        chaptersCount: 8,
+        lang: "en",
+        chapters: [
+          "Unit 9: Chemical Equilibrium",
+          "Unit 10: Acids, Bases and Salts",
+          "Unit 11: Organic Chemistry",
+          "Unit 12: Hydrocarbons",
+          "Unit 13: Biochemistry",
+          "Unit 14: Environmental Chemistry - Atmosphere",
+          "Unit 15: Environmental Chemistry - Water",
+          "Unit 16: Chemical Industries"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Biology",
+        title: "Biology Class 10 (KPK Textbook Board)",
+        chaptersCount: 9,
+        lang: "en",
+        chapters: [
+          "Unit 10: Gaseous Exchange",
+          "Unit 11: Homeostasis",
+          "Unit 12: Coordination and Control",
+          "Unit 13: Support and Movement",
+          "Unit 14: Reproduction",
+          "Unit 15: Inheritance",
+          "Unit 16: Man and His Environment",
+          "Unit 17: Biotechnology",
+          "Unit 18: Pharmacology"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Computer Science",
+        title: "Computer Science Class 10 (KPK Textbook Board)",
+        chaptersCount: 7,
+        lang: "en",
+        chapters: [
+          "1. Problem Solving & Algorithm Designing",
+          "2. Basics of Programming in C",
+          "3. Control Structures in C",
+          "4. Data Structures: Arrays & Strings",
+          "5. Functions and Modular Programming",
+          "6. Web Development (HTML Basics)",
+          "7. Database Management & SQL Fundamentals"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Pak Studies",
+        title: "مطالعہ پاکستان جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 5,
+        lang: "ur",
+        chapters: [
+          "باب 6: تاریخ پاکستان حصہ دوم (1971 تا حال)",
+          "باب 7: پاکستان کے خارجہ تعلقات اور خارجہ پالیسی",
+          "باب 8: معاشی وسائل اور صنعتی ترقی (CPEC)",
+          "باب 9: آبادی، معاشرہ، ثقافت اور تعلیم",
+          "باب 10: تحفظ نسواں، انسانی حقوق اور کے پی کے سیاحت"
+        ]
+      },
+      {
+        grade: "10",
+        subject: "Islamiat",
+        title: "اسلامیات لازمی جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
+        chaptersCount: 6,
+        lang: "ur",
+        chapters: [
+          "باب 1: سورۃ الاحزاب اور سورۃ الممتحنہ",
+          "باب 2: احادیث مبارکہ کا مطالعہ",
+          "باب 3: ایمانیات و عبادات (جہاد و تقویٰ)",
+          "باب 4: سیرت طیبہ: فتح مکہ اور خطبہ حجت الوداع",
+          "باب 5: اسلامی ریاست اور دستور کے اصول",
+          "باب 6: عصر حاضر کے چیلنجز اور اسلام"
+        ]
+      }
+    ];
+
+    // State Tracking
+    let quotaCount = 0;
+    const MAX_FREE_PAPERS = 2;
+
+    function renderBooks(booksToRender) {
+      const container = document.getElementById("books-grid");
+      container.innerHTML = "";
+      
+      booksToRender.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "clay-card p-5 space-y-3.5 hover:shadow-lg transition";
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <span class="clay-badge-mint text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
+              Class ${book.grade}th
+            </span>
+            <span class="text-xs font-bold text-slate-500">${book.chaptersCount} Chapters</span>
+          </div>
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-900 ${book.lang === 'ur' ? 'urdu-font text-base text-right' : ''}">${book.title}</h4>
+            <p class="text-[11px] text-slate-500 mt-1">Publisher: KPK Textbook Board Peshawar</p>
+          </div>
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="loadBookToGenerator('${book.grade}', '${book.subject}')" class="text-xs font-extrabold text-orange-600 hover:text-orange-800 flex items-center space-x-1">
+              <span>Create Paper</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="alert('Downloading official authentic PDF: ' + '${book.title}')" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>PDF</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function filterBooks(grade) {
+      document.querySelectorAll('#curriculum button[id^="btn-grade-"]').forEach(btn => {
+        btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition";
+      });
+      document.getElementById(`btn-grade-${grade}`).className = "px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-sm transition";
+
+      if (grade === 'all') {
+        renderBooks(AUTHENTIC_BOOKS);
+      } else {
+        renderBooks(AUTHENTIC_BOOKS.filter(b => b.grade === grade));
+      }
+    }
+
+    function updateSubjectOptions() {
+      const grade = document.getElementById("gen-grade").value;
+      const select = document.getElementById("gen-subject");
+      select.innerHTML = "";
+      
+      const filtered = AUTHENTIC_BOOKS.filter(b => b.grade === grade);
+      filtered.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b.subject;
+        opt.textContent = `${b.subject} (${b.chaptersCount} Chapters)`;
+        select.appendChild(opt);
+      });
+      renderChapterSelector();
+    }
+
+    function renderChapterSelector() {
+      const grade = document.getElementById("gen-grade").value;
+      const subject = document.getElementById("gen-subject").value;
+      const container = document.getElementById("chapters-checkbox-container");
+      container.innerHTML = "";
+
+      const book = AUTHENTIC_BOOKS.find(b => b.grade === grade && b.subject === subject);
+      if (!book) return;
+
+      book.chapters.forEach((ch, idx) => {
+        const item = document.createElement("label");
+        item.className = "flex items-center space-x-2.5 p-1.5 rounded-lg hover:bg-slate-200/50 cursor-pointer";
+        item.innerHTML = `
+          <input type="checkbox" checked class="rounded border-slate-300 text-orange-600 focus:ring-orange-500 w-4 h-4 chapter-cb" value="${ch}">
+          <span class="text-xs font-medium text-slate-800 ${book.lang === 'ur' ? 'urdu-font text-sm' : ''}">${ch}</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function selectAllChapters(select) {
+      document.querySelectorAll('.chapter-cb').forEach(cb => cb.checked = select);
+    }
+
+    function loadBookToGenerator(grade, subject) {
+      document.getElementById("gen-grade").value = grade;
+      updateSubjectOptions();
+      document.getElementById("gen-subject").value = subject;
+      renderChapterSelector();
+      scrollToSection('generator');
+    }
+
+    function generateMockPaper() {
+      if (quotaCount >= MAX_FREE_PAPERS) {
+        document.getElementById("upgrade-modal").classList.remove("hidden");
+        return;
+      }
+
+      quotaCount++;
+      document.getElementById("quota-display").textContent = `${quotaCount} / 2 Papers Used`;
+
+      const grade = document.getElementById("gen-grade").value;
+      const subject = document.getElementById("gen-subject").value;
+      const title = document.getElementById("gen-title").value;
+      const time = document.getElementById("gen-time").value;
+      const marks = document.getElementById("gen-marks").value;
+
+      document.getElementById("paper-heading-title").textContent = `${title} — ${subject}`;
+      document.getElementById("paper-display-time").textContent = time;
+      document.getElementById("paper-display-marks").textContent = marks;
+
+      scrollToSection('paper-view-container');
+    }
+
+    function toggleAnswerKey() {
+      const box = document.getElementById("answer-key-box");
+      const label = document.getElementById("key-label");
+      if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        label.textContent = "Hide Answer Key";
+      } else {
+        box.classList.add("hidden");
+        label.textContent = "View Confidential Answer Key";
+      }
+    }
+
+    function openRegisterModal() {
+      document.getElementById("register-modal").classList.remove("hidden");
+    }
+
+    function closeRegisterModal() {
+      document.getElementById("register-modal").classList.add("hidden");
+    }
+
+    function closeUpgradeModal() {
+      document.getElementById("upgrade-modal").classList.add("hidden");
+    }
+
+    function handleRegistrationSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById("reg-email").value;
+      document.getElementById("reg-form").classList.add("hidden");
+      document.getElementById("otp-form").classList.remove("hidden");
+      document.getElementById("modal-title").textContent = "Verify School Email";
+    }
+
+    function handleOtpSubmit(e) {
+      e.preventDefault();
+      const code = document.getElementById("otp-code").value;
+      if (code.length < 6) {
+        alert("Please enter full 6-digit code.");
+        return;
+      }
+      alert("School Account Verified Successfully! Free Trial Activated (2 papers per subject).");
+      closeRegisterModal();
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize
+    window.addEventListener("DOMContentLoaded", () => {
+      renderBooks(AUTHENTIC_BOOKS);
+      updateSubjectOptions();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
