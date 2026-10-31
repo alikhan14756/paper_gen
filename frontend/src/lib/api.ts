@@ -260,6 +260,7 @@ export class ApiClient {
       verification_method: string;
       resend_cooldown_seconds: number;
       expires_in_seconds: number;
+      session_code?: string;
     }>("/auth/register-initiate", {
       method: "POST",
       body: JSON.stringify(data),

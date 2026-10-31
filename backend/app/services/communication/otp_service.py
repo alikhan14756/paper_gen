@@ -68,7 +68,7 @@ class OTPService:
                     locked_until = locked_until.replace(tzinfo=timezone.utc)
                 if locked_until > now:
                     remaining_mins = int((locked_until - now).total_seconds() / 60) + 1
-                    return False, f"Account temporarily locked due to too many failed attempts. Try again in {remaining_mins} minutes.", 0
+                    return False, f"Account temporarily locked due to too many failed attempts. Try again in {remaining_mins} minutes.", 0, None
 
             # Check cooldown
             if existing.resend_available_at:
@@ -77,7 +77,7 @@ class OTPService:
                     resend_at = resend_at.replace(tzinfo=timezone.utc)
                 if resend_at > now:
                     wait_sec = int((resend_at - now).total_seconds())
-                    return False, f"Please wait {wait_sec} seconds before requesting a new code.", wait_sec
+                    return False, f"Please wait {wait_sec} seconds before requesting a new code.", wait_sec, None
 
         # Generate fresh OTP
         otp_code = cls.generate_numeric_otp(6)
@@ -122,7 +122,7 @@ class OTPService:
                 expiry_minutes=cls.TTL_MINUTES,
             )
 
-        return True, "Verification code dispatched successfully", cls.COOLDOWN_SECONDS
+        return True, "Verification code dispatched successfully", cls.COOLDOWN_SECONDS, otp_code
 
     @classmethod
     def verify_otp_code(

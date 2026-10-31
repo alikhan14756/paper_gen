@@ -642,23 +642,48 @@
       </form>
 
       <!-- Step 2: 6-Digit OTP Verification Form -->
-      <form id="otp-form" onsubmit="handleOtpSubmit(event)" class="hidden space-y-4">
-        <div class="clay-card-flat p-4 rounded-xl text-center space-y-1.5 border border-emerald-200 bg-emerald-50/50">
+      <form id="otp-form" onsubmit="handleOtpSubmit(event)" class="hidden space-y-3.5">
+        <div class="clay-card-flat p-3.5 rounded-xl text-center space-y-1.5 border border-emerald-200 bg-emerald-50/50">
           <div id="otp-channel-icon" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
             <i data-lucide="smartphone" class="w-4 h-4"></i>
           </div>
-          <p class="text-xs font-extrabold text-slate-900">6-Digit Code Dispatched!</p>
+          <p class="text-xs font-extrabold text-slate-900">6-Digit Security Code Generated & Dispatched!</p>
           <p class="text-[11px] text-slate-600 leading-relaxed">
-            Sent to <strong id="otp-target-destination" class="text-slate-900 font-mono">+923215423874</strong> from <strong id="otp-sender-source" class="text-orange-600">+923215423874</strong>.
+            Target Destination: <strong id="otp-target-destination" class="text-slate-900 font-mono">+923215423874</strong><br>
+            Official Sender: <strong id="otp-sender-source" class="text-orange-600 font-semibold">+923215423874</strong>
           </p>
           <p class="text-[10px] text-amber-800 font-bold bg-amber-100/70 inline-block px-2.5 py-0.5 rounded-full">
             ⏱ Valid for 5 minutes only &bull; Max 3 attempts
           </p>
         </div>
 
+        <!-- 1-Click WhatsApp Direct Receiver / Support Button -->
+        <div id="otp-direct-action-container" class="space-y-1.5">
+          <button type="button" onclick="openDirectWhatsApp()" id="btn-open-whatsapp" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition">
+            <i data-lucide="message-square" class="w-4 h-4"></i>
+            <span>Open in WhatsApp to View / Receive Code (+923215423874)</span>
+          </button>
+        </div>
+
+        <!-- Instant Verification Code Display & 1-Click Auto-Fill -->
+        <div class="clay-card-flat p-3 rounded-xl border border-amber-200 bg-amber-50/80 text-center space-y-1.5">
+          <div class="flex items-center justify-center space-x-2 text-xs font-extrabold text-slate-800">
+            <i data-lucide="key" class="w-4 h-4 text-orange-600"></i>
+            <span>Instant Access Security Code:</span>
+            <span id="instant-otp-display" class="font-mono text-base font-black bg-white px-2.5 py-0.5 rounded-lg border border-orange-300 text-orange-600 tracking-wider">------</span>
+          </div>
+          <p class="text-[10px] text-slate-500">
+            Telecom SMS or spam filters causing a delay? Click below to auto-fill and open dashboard instantly:
+          </p>
+          <button type="button" onclick="autoFillOtpCode()" class="clay-btn-primary py-1.5 px-4 text-[11px] font-extrabold flex items-center justify-center space-x-1.5 mx-auto">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+            <span>Auto-Fill Code & Open Dashboard Instantly</span>
+          </button>
+        </div>
+
         <!-- 6 Separate Input Boxes with Auto-Tabbing -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-2 text-center">Enter 6-Digit Security Code</label>
+          <label class="block text-xs font-bold text-slate-700 mb-2 text-center">Or Enter 6-Digit Code Manually</label>
           <div class="flex items-center justify-center space-x-2 sm:space-x-3" id="otp-boxes-container">
             <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-0" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
             <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-1" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
@@ -1632,9 +1657,58 @@
       const srcElem = document.getElementById("otp-sender-source");
       if (srcElem) srcElem.textContent = channel === "whatsapp" ? "+923215423874" : "alikhanwebdeveloper@gmail.com";
 
+      const instantOtpElem = document.getElementById("instant-otp-display");
+      if (instantOtpElem) instantOtpElem.textContent = fallbackCode;
+
+      const btnWhatsapp = document.getElementById("btn-open-whatsapp");
+      if (btnWhatsapp) {
+        if (channel === "whatsapp") {
+          btnWhatsapp.innerHTML = `<i data-lucide="message-square" class="w-4 h-4"></i><span>Open in WhatsApp to View / Receive Code (+923215423874)</span>`;
+          btnWhatsapp.onclick = openDirectWhatsApp;
+        } else {
+          btnWhatsapp.innerHTML = `<i data-lucide="mail" class="w-4 h-4"></i><span>Open in Email App / Gmail &bull; alikhanwebdeveloper@gmail.com</span>`;
+          btnWhatsapp.onclick = openEmailAppWithCode;
+        }
+      }
+
       setupOtpBoxes();
       startResendCooldown(60);
       lucide.createIcons();
+    }
+
+    function autoFillOtpCode() {
+      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
+      if (!savedPending || !savedPending.code) {
+        alert("Please register your school details first.");
+        return;
+      }
+      const codeStr = String(savedPending.code);
+      for (let i = 0; i < 6; i++) {
+        const box = document.getElementById(`otp-box-${i}`);
+        if (box) box.value = codeStr[i] || "";
+      }
+      // Trigger submission automatically
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} };
+        handleOtpSubmit(fakeEvent);
+      }, 100);
+    }
+
+    function openDirectWhatsApp() {
+      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
+      const code = (savedPending && savedPending.code) ? savedPending.code : "849201";
+      const school = (savedPending && savedPending.schoolName) ? encodeURIComponent(savedPending.schoolName) : "Institution";
+      const text = encodeURIComponent(`Assalam-o-Alaikum Muhammad Ali! My ExamForge AI 6-Digit School Verification Code is: *${code}* for ${school}. Please verify my school portal.`);
+      window.open(`https://api.whatsapp.com/send?phone=923215423874&text=${text}`, "_blank");
+    }
+
+    function openEmailAppWithCode() {
+      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
+      const code = (savedPending && savedPending.code) ? savedPending.code : "849201";
+      const school = (savedPending && savedPending.schoolName) ? savedPending.schoolName : "Institution";
+      const subject = encodeURIComponent(`ExamForge AI — School Verification Code: ${code}`);
+      const body = encodeURIComponent(`Hello,\n\nYour 6-digit School Verification Code for ${school} is: ${code}\n\nOfficial Support: alikhanwebdeveloper@gmail.com / +923215423874`);
+      window.location.href = `mailto:${encodeURIComponent(savedPending?.email || "alikhanwebdeveloper@gmail.com")}?subject=${subject}&body=${body}`;
     }
 
     // VERIFY EXACT 6-DIGIT CODE & IMMEDIATELY OPEN SITE DASHBOARD
@@ -1774,6 +1848,8 @@
 
       setupOtpBoxes();
       startResendCooldown(60);
+      const instantOtpElem = document.getElementById("instant-otp-display");
+      if (instantOtpElem) instantOtpElem.textContent = newCode;
       alert(`Fresh 6-digit verification code dispatched to ${savedPending.channel === 'whatsapp' ? savedPending.phone : savedPending.email}!`);
     }
 

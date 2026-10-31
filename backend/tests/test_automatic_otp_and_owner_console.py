@@ -82,7 +82,7 @@ def test_otp_verification_attempts_and_lockout(db_session):
     principal = "Dr. Lockout"
 
     # Issue OTP directly
-    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+    ok, msg, cooldown, *rest = OTPService.issue_and_dispatch_otp(
         db=db_session,
         identifier=test_id,
         delivery_channel="email",

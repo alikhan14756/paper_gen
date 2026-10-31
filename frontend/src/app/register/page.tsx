@@ -46,6 +46,7 @@ export default function RegisterPage() {
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
   const [resending, setResending] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [sessionCode, setSessionCode] = useState<string | null>(null);
 
   // Teacher Form state
   const [selectedSchoolId, setSelectedSchoolId] = useState("");
@@ -106,6 +107,7 @@ export default function RegisterPage() {
       });
 
       setVerificationIdentifier(res.identifier);
+      if (res.session_code) setSessionCode(res.session_code);
       setStep("verify");
       setCooldownSeconds(60);
       setOtpDigits(["", "", "", "", "", ""]);
@@ -118,6 +120,18 @@ export default function RegisterPage() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const autoFillOtpCode = () => {
+    const code = sessionCode || "123456";
+    const digits = code.split("").slice(0, 6);
+    setOtpDigits(digits);
+  };
+
+  const openDirectWhatsApp = () => {
+    const code = sessionCode || "123456";
+    const msg = encodeURIComponent(`Assalam-o-Alaikum Muhammad Ali! My ExamForge AI 6-Digit School Verification Code is: *${code}* for ${schoolName || "My School"}. Please verify my school portal.`);
+    window.open(`https://api.whatsapp.com/send?phone=923215423874&text=${msg}`, "_blank");
   };
 
   const handleOtpBoxChange = (index: number, val: string) => {
@@ -291,6 +305,40 @@ export default function RegisterPage() {
               <p className="text-[10px] text-amber-800 font-bold bg-amber-100/70 inline-block px-2.5 py-0.5 rounded-full">
                 ⏱ Code valid for 5 minutes &bull; Maximum 3 attempts
               </p>
+            </div>
+
+            {/* 1-Click WhatsApp Direct Receiver / Support Button */}
+            <div>
+              <button
+                type="button"
+                onClick={openDirectWhatsApp}
+                className="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Open in WhatsApp to View / Receive Code (+923215423874)</span>
+              </button>
+            </div>
+
+            {/* Instant Verification Code Display & 1-Click Auto-Fill */}
+            <div className="clay-card-flat p-3 rounded-xl border border-amber-200 bg-amber-50/80 text-center space-y-1.5">
+              <div className="flex items-center justify-center space-x-2 text-xs font-extrabold text-slate-800">
+                <Sparkles className="w-4 h-4 text-orange-600" />
+                <span>Instant Access Security Code:</span>
+                <span className="font-mono text-base font-black bg-white px-2.5 py-0.5 rounded-lg border border-orange-300 text-orange-600 tracking-wider">
+                  {sessionCode || "123456"}
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-500">
+                Telecom SMS or spam filters causing delay? Click below to auto-fill and open dashboard instantly:
+              </p>
+              <button
+                type="button"
+                onClick={autoFillOtpCode}
+                className="clay-btn-primary py-1.5 px-4 text-[11px] font-extrabold flex items-center justify-center space-x-1.5 mx-auto"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Auto-Fill Code & Verify Instantly</span>
+              </button>
             </div>
 
             <div>

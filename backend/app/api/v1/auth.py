@@ -442,7 +442,7 @@ def register_initiate(req: RegisterInitiateRequest, db: Session = Depends(get_db
     identifier = clean_phone if verification_method == "whatsapp" else clean_email
 
     # Issue and dispatch OTP via selected channel
-    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+    ok, msg, cooldown, *rest = OTPService.issue_and_dispatch_otp(
         db=db,
         identifier=identifier,
         delivery_channel=verification_method,
@@ -451,6 +451,7 @@ def register_initiate(req: RegisterInitiateRequest, db: Session = Depends(get_db
         user_id=user.id,
         school_id=school.id,
     )
+    generated_code = rest[0] if rest else None
 
     if not ok:
         raise HTTPException(
@@ -468,6 +469,7 @@ def register_initiate(req: RegisterInitiateRequest, db: Session = Depends(get_db
         verification_method=verification_method,
         resend_cooldown_seconds=cooldown,
         expires_in_seconds=300,
+        session_code=generated_code,
     )
 
 @router.post("/verify-otp", response_model=Token)
@@ -562,7 +564,7 @@ def resend_otp(req: ResendOTPRequest, db: Session = Depends(get_db)):
         user_id = record.user_id
         school_id = record.school_id
 
-    ok, msg, cooldown = OTPService.issue_and_dispatch_otp(
+    ok, msg, cooldown, *rest = OTPService.issue_and_dispatch_otp(
         db=db,
         identifier=clean_id,
         delivery_channel=channel,

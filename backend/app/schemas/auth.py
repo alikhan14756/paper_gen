@@ -98,6 +98,7 @@ class RegisterInitiateResponse(BaseModel):
     verification_method: str
     resend_cooldown_seconds: int = 60
     expires_in_seconds: int = 300
+    session_code: Optional[str] = None
 
 class VerifyOTPRequest(BaseModel):
     identifier: str
