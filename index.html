@@ -100,6 +100,10 @@
     }
     
     /* Paper Formats */
+    .paper-sheet {
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
     .paper-bisep-classic {
       border: 3px double #0f172a;
       background: #ffffff;
@@ -131,9 +135,24 @@
         top: 0;
         width: 100%;
         margin: 0;
-        padding: 15mm;
-        box-shadow: none;
-        border: none;
+        padding: 0;
+      }
+      .paper-sheet {
+        page-break-after: always;
+        break-after: page;
+        box-shadow: none !important;
+        border: 3px double #0f172a !important;
+        padding: 10mm 14mm !important;
+        margin: 0 0 15mm 0 !important;
+        background: #ffffff !important;
+      }
+      #paper-sheet-bc {
+        page-break-before: always;
+        break-before: page;
+      }
+      #paper-answer-key {
+        page-break-before: always;
+        break-before: page;
       }
       .no-print {
         display: none !important;
@@ -409,82 +428,157 @@
         </div>
       </div>
 
-      <!-- PRINTABLE & EDITABLE EXAMINATION PAPER SHEET -->
-      <div id="paper-print-area">
-        <div id="paper-container" class="paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto">
+      <!-- PRINTABLE & EDITABLE EXAMINATION PAPER SHEETS (SEPARATE OBJECTIVE & SUBJECTIVE) -->
+      <div id="paper-print-area" class="space-y-6">
+        
+        <!-- SHEET 1: PART I (OBJECTIVE TYPE - SECTION A) -->
+        <div id="paper-sheet-a" class="paper-sheet paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
           
           <!-- Board / School Header -->
           <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
-            <h3 id="paper-head-school" contenteditable="true" onblur="currentPaper.schoolName=this.innerText" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
+            <h3 id="paper-head-school-a" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
               Board of Intermediate & Secondary Education Peshawar
             </h3>
-            <h4 id="paper-head-exam" contenteditable="true" onblur="currentPaper.examTitle=this.innerText" class="editable-text text-sm font-extrabold text-slate-800">
+            <h4 id="paper-head-exam-a" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-sm font-extrabold text-slate-800">
               Class 9th Annual Examination 2026 — Mathematics
             </h4>
-            <div class="flex justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2">
-              <span>Time Allowed: <span id="paper-head-time" contenteditable="true" onblur="currentPaper.timeAllowed=this.innerText" class="editable-text font-mono">3 Hours</span></span>
-              <span>Paper Code: <span class="font-mono">914-A</span></span>
-              <span>Total Marks: <span id="paper-head-total-marks" class="text-orange-600 font-mono font-black text-sm">75</span></span>
+            <div class="pt-1">
+              <span class="inline-block bg-slate-900 text-white text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
+                Part — I (Objective Type)
+              </span>
+            </div>
+            
+            <div class="flex flex-wrap justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2 gap-2">
+              <div class="flex items-center space-x-1">
+                <span>Roll No:</span>
+                <div class="flex border border-slate-900 rounded overflow-hidden">
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 border-r border-slate-900 inline-block"></span>
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 border-r border-slate-900 inline-block"></span>
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 border-r border-slate-900 inline-block"></span>
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 border-r border-slate-900 inline-block"></span>
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 border-r border-slate-900 inline-block"></span>
+                  <span class="w-4 h-4 sm:w-5 sm:h-5 inline-block"></span>
+                </div>
+              </div>
+              <div>Time Allowed: <span id="paper-head-time-a" contenteditable="true" onblur="currentPaper.timeAllowedA=this.innerText" class="editable-text font-mono">20 Minutes</span></div>
+              <div>Paper Code: <span class="font-mono">914-A</span></div>
+              <div>Total Marks: <span id="paper-head-marks-a" class="text-orange-600 font-mono font-black text-sm">15</span></div>
             </div>
           </div>
 
-          <!-- General Student Instructions -->
-          <div class="bg-slate-50/80 p-3 rounded-lg border border-slate-200 text-[11px] text-slate-700 space-y-1">
-            <p class="font-black text-slate-900 uppercase">General Instructions for Candidates:</p>
-            <p>1. Section A is compulsory. All candidates must fill the bubbles corresponding to the correct answer on the OMR sheet.</p>
-            <p>2. Section B contains conceptual short questions. Attempt required questions with neat headings and scientific reasons.</p>
-            <p>3. Section C contains descriptive analytical questions. Show complete steps and diagrams where applicable.</p>
+          <!-- Section A Instructions -->
+          <div class="bg-slate-50/80 p-2.5 rounded-lg border border-slate-200 text-[11px] text-slate-700 space-y-1">
+            <p class="font-black text-slate-900 uppercase">Instructions for Candidate (Section A):</p>
+            <p>1. Attempt all questions. All questions carry equal marks (1 Mark each).</p>
+            <p>2. Fill the corresponding circle for each question. Cutting, erasing, overwriting or multiple choices will be treated as zero.</p>
+            <p>3. Hand over this Question Paper / Answer Sheet to the Superintendent after 20 minutes.</p>
           </div>
 
           <!-- SECTION A: OBJECTIVE MCQS -->
           <div class="space-y-4">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — A (Objective Multiple Choice Questions)</span>
-              <span>Marks: <span id="sec-a-marks">15</span></span>
+              <span>Marks: <span id="sec-a-marks" contenteditable="true" onblur="updateSectionMarks('A', this.innerText)" class="editable-text text-amber-300">15</span></span>
             </div>
 
             <div id="sec-a-container" class="space-y-4 text-xs">
-              <!-- MCQs rendered dynamically with inline edit, delete, and options -->
+              <!-- MCQs rendered dynamically without per-question marks -->
             </div>
           </div>
 
+          <!-- Footer on Sheet A -->
+          <div class="text-center text-[10px] text-slate-500 font-bold tracking-wider uppercase border-t border-slate-200 pt-2">
+            [ End of Objective Paper — Collect after 20 Minutes ]
+          </div>
+        </div>
+
+        <!-- VISUAL SEPARATOR IN BROWSER VIEW (NO-PRINT) -->
+        <div class="no-print flex items-center justify-center my-4">
+          <div class="bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl px-4 py-2 text-center text-xs text-amber-800 font-bold flex items-center space-x-2 shadow-sm">
+            <i data-lucide="scissors" class="w-4 h-4 text-amber-600"></i>
+            <span>SEPARATE SHEET BREAK: Section A (Objective) is collected separately before Subjective Paper (Sections B & C)</span>
+          </div>
+        </div>
+
+        <!-- SHEET 2: PART II (SUBJECTIVE TYPE - SECTIONS B & C COMBINED) -->
+        <div id="paper-sheet-bc" class="paper-sheet paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
+          
+          <!-- Board / School Header -->
+          <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
+            <h3 id="paper-head-school-bc" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
+              Board of Intermediate & Secondary Education Peshawar
+            </h3>
+            <h4 id="paper-head-exam-bc" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-sm font-extrabold text-slate-800">
+              Class 9th Annual Examination 2026 — Mathematics
+            </h4>
+            <div class="pt-1">
+              <span class="inline-block bg-slate-900 text-white text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
+                Part — II (Subjective Type)
+              </span>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2">
+              <span>Time Allowed: <span id="paper-head-time-bc" contenteditable="true" onblur="currentPaper.timeAllowedBC=this.innerText" class="editable-text font-mono">2 Hours 40 Minutes</span></span>
+              <span>Paper Code: <span class="font-mono">914-A</span></span>
+              <span>Total Subjective Marks: <span id="paper-head-marks-bc" class="text-orange-600 font-mono font-black text-sm">60</span></span>
+            </div>
+          </div>
+
+          <!-- Subjective Instructions -->
+          <div class="bg-slate-50/80 p-2.5 rounded-lg border border-slate-200 text-[11px] text-slate-700 space-y-1">
+            <p class="font-black text-slate-900 uppercase">General Instructions (Sections B & C):</p>
+            <p>1. Write answers to short and long questions clearly on the provided answer book.</p>
+            <p>2. Give scientific reasons, relevant formulas, and draw neat labeled diagrams where applicable.</p>
+          </div>
+
           <!-- SECTION B: SHORT QUESTIONS -->
-          <div class="space-y-4 pt-2">
+          <div class="space-y-3 pt-2">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — B (Short Conceptual Questions)</span>
-              <span>Marks: <span id="sec-b-marks">36</span></span>
+              <span>Marks: <span id="sec-b-marks" contenteditable="true" onblur="updateSectionMarks('B', this.innerText)" class="editable-text text-amber-300">36</span></span>
             </div>
+            <p id="sec-b-note" class="text-[11px] font-bold text-slate-700 italic px-1">
+              Note: Attempt any 9 questions. All questions carry equal marks (4 Marks each).
+            </p>
 
             <div id="sec-b-container" class="space-y-3.5 text-xs">
-              <!-- Short questions rendered dynamically -->
+              <!-- Short questions rendered dynamically: numbering restarts from Q1 without per-question marks -->
             </div>
           </div>
 
           <!-- SECTION C: LONG QUESTIONS -->
-          <div class="space-y-4 pt-2">
+          <div class="space-y-3 pt-3">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — C (Descriptive Long Questions)</span>
-              <span>Marks: <span id="sec-c-marks">24</span></span>
+              <span>Marks: <span id="sec-c-marks" contenteditable="true" onblur="updateSectionMarks('C', this.innerText)" class="editable-text text-amber-300">24</span></span>
             </div>
+            <p id="sec-c-note" class="text-[11px] font-bold text-slate-700 italic px-1">
+              Note: Attempt any 3 questions. All questions carry equal marks (8 Marks each).
+            </p>
 
             <div id="sec-c-container" class="space-y-4 text-xs">
-              <!-- Long questions rendered dynamically -->
+              <!-- Long questions rendered dynamically: numbering restarts from Q1 without per-question marks -->
             </div>
           </div>
 
-          <!-- CONFIDENTIAL ANSWER KEY & MARKING SCHEME (Hidden by default) -->
-          <div id="paper-answer-key" class="hidden border-2 border-red-500 bg-red-50/50 p-6 rounded-xl space-y-3 mt-8">
-            <div class="flex items-center space-x-2 text-red-700 font-black text-sm">
-              <i data-lucide="lock" class="w-4 h-4"></i>
-              <span>CONFIDENTIAL TEACHER ANSWER KEY & MARKING CRITERIA</span>
-            </div>
-            <p class="text-xs text-red-900 font-medium">Keep strictly confidential for teachers and examiners only.</p>
-            <div id="answer-key-content" class="text-xs space-y-2 text-slate-800">
-              <!-- Solutions rendered dynamically -->
-            </div>
+          <!-- Footer on Sheet BC -->
+          <div class="text-center text-[10px] text-slate-500 font-bold tracking-wider uppercase border-t border-slate-200 pt-2">
+            [ End of Subjective Paper — Best of Luck ]
           </div>
-
         </div>
+
+        <!-- CONFIDENTIAL ANSWER KEY & MARKING SCHEME (Hidden by default) -->
+        <div id="paper-answer-key" class="hidden border-2 border-red-500 bg-red-50/50 p-6 rounded-xl space-y-3 mt-8">
+          <div class="flex items-center space-x-2 text-red-700 font-black text-sm">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+            <span>CONFIDENTIAL TEACHER ANSWER KEY & MARKING CRITERIA</span>
+          </div>
+          <p class="text-xs text-red-900 font-medium">Keep strictly confidential for teachers and examiners only.</p>
+          <div id="answer-key-content" class="text-xs space-y-2 text-slate-800">
+            <!-- Solutions rendered dynamically -->
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -1235,9 +1329,13 @@
         examTitle,
         grade,
         subject,
-        timeAllowed,
+        timeAllowedA: "20 Minutes",
+        timeAllowedBC: "2 Hours 40 Minutes",
         paperStyle,
         lang: (subject === 'Urdu' || subject === 'Islamiyat') ? 'ur' : 'en',
+        secAMarks: selectedMcqs.length * 1,
+        secBMarks: 36,
+        secCMarks: 24,
         mcqs: selectedMcqs,
         shorts: selectedShorts,
         longs: selectedLongs
@@ -1252,94 +1350,101 @@
     function renderPaperDOM() {
       if (!currentPaper) return;
 
-      const container = document.getElementById("paper-container");
+      const sheetA = document.getElementById("paper-sheet-a");
+      const sheetBC = document.getElementById("paper-sheet-bc");
       const isUrdu = currentPaper.lang === 'ur';
 
-      // Apply Paper Style Class
-      container.className = `p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto ${
+      // Apply Paper Style Class to both sheets
+      const styleClass = `paper-sheet p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm ${
         currentPaper.paperStyle === 'modern-twocol' ? 'paper-modern-twocol' :
         currentPaper.paperStyle === 'compact-test' ? 'paper-compact-test' : 'paper-bisep-classic'
       } ${isUrdu ? 'font-urdu' : ''}`;
 
-      // Update Header Text
-      document.getElementById("paper-head-school").innerText = currentPaper.schoolName;
-      document.getElementById("paper-head-exam").innerText = `${currentPaper.examTitle} — ${currentPaper.subject} Class ${currentPaper.grade}th`;
-      document.getElementById("paper-head-time").innerText = currentPaper.timeAllowed;
+      if (sheetA) sheetA.className = styleClass;
+      if (sheetBC) sheetBC.className = styleClass;
 
-      // Render Section A (MCQs)
+      // Update Header Text for Sheet A (Objective)
+      const examTitleFull = `${currentPaper.examTitle} — ${currentPaper.subject} Class ${currentPaper.grade}th`;
+      if (document.getElementById("paper-head-school-a")) document.getElementById("paper-head-school-a").innerText = currentPaper.schoolName;
+      if (document.getElementById("paper-head-exam-a")) document.getElementById("paper-head-exam-a").innerText = examTitleFull;
+      if (document.getElementById("paper-head-time-a")) document.getElementById("paper-head-time-a").innerText = currentPaper.timeAllowedA || "20 Minutes";
+
+      // Update Header Text for Sheet BC (Subjective)
+      if (document.getElementById("paper-head-school-bc")) document.getElementById("paper-head-school-bc").innerText = currentPaper.schoolName;
+      if (document.getElementById("paper-head-exam-bc")) document.getElementById("paper-head-exam-bc").innerText = examTitleFull;
+      if (document.getElementById("paper-head-time-bc")) document.getElementById("paper-head-time-bc").innerText = currentPaper.timeAllowedBC || "2 Hours 40 Minutes";
+
+      // Render Section A (MCQs) - No per-question marks badge
       const secAContainer = document.getElementById("sec-a-container");
-      secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => `
-        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-2">
-          <div class="flex items-start justify-between gap-2">
+      if (secAContainer) {
+        secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => `
+          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex-1 flex items-start space-x-2">
+                <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
+                <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
+                  ${q.text}
+                </div>
+              </div>
+              <div class="flex items-center space-x-1 shrink-0 no-print">
+                <button onclick="removeQuestion('mcq', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pl-6 text-slate-700">
+              ${q.options.map((opt, optIdx) => `
+                <div class="flex items-center space-x-1.5">
+                  <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
+                  <span contenteditable="true" onblur="updateMcqOption(${idx}, ${optIdx}, this.innerText)" class="editable-text text-[11px] font-medium">${opt}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render Section B (Short Questions) - Question Numbering Starts Again From 1, No individual marks badge
+      const secBContainer = document.getElementById("sec-b-container");
+      if (secBContainer) {
+        secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => `
+          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
               <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
-              <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
+              <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
                 ${q.text}
               </div>
             </div>
-            <div class="flex items-center space-x-1 shrink-0 no-print">
-              <span class="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded">[1 Mark]</span>
-              <button onclick="removeQuestion('mcq', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+            <div class="flex items-center space-x-1.5 shrink-0 no-print">
+              <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pl-6 text-slate-700">
-            ${q.options.map((opt, optIdx) => `
-              <div class="flex items-center space-x-1.5">
-                <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
-                <span contenteditable="true" onblur="updateMcqOption(${idx}, ${optIdx}, this.innerText)" class="editable-text text-[11px] font-medium">${opt}</span>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      `).join("");
+        `).join("");
+      }
 
-      // Render Section B (Short Questions)
-      const secBContainer = document.getElementById("sec-b-container");
-      secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => `
-        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
-          <div class="flex-1 flex items-start space-x-2">
-            <span class="font-black text-slate-900 pt-0.5">Q${currentPaper.mcqs.length + idx + 1}.</span>
-            <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
-              ${q.text}
-            </div>
-          </div>
-          <div class="flex items-center space-x-1.5 shrink-0 no-print">
-            <div class="flex items-center space-x-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              <label class="text-[10px] font-bold text-slate-500">Marks:</label>
-              <input type="number" min="1" max="20" value="${q.marks}" onchange="updateQuestionMarks('short', ${idx}, this.value)" class="w-10 text-center font-bold text-xs bg-transparent border-b border-slate-400 focus:outline-none" />
-            </div>
-            <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
-      `).join("");
-
-      // Render Section C (Long Questions)
+      // Render Section C (Long Questions) - Question Numbering Starts Again From 1, No individual marks badge
       const secCContainer = document.getElementById("sec-c-container");
-      secCContainer.innerHTML = currentPaper.longs.map((q, idx) => `
-        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
-          <div class="flex-1 flex items-start space-x-2">
-            <span class="font-black text-slate-900 pt-0.5">Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}.</span>
-            <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
-              ${q.text}
+      if (secCContainer) {
+        secCContainer.innerHTML = currentPaper.longs.map((q, idx) => `
+          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
+            <div class="flex-1 flex items-start space-x-2">
+              <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
+              <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
+                ${q.text}
+              </div>
+            </div>
+            <div class="flex items-center space-x-1.5 shrink-0 no-print">
+              <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
           </div>
-          <div class="flex items-center space-x-1.5 shrink-0 no-print">
-            <div class="flex items-center space-x-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-              <label class="text-[10px] font-bold text-slate-500">Marks:</label>
-              <input type="number" min="1" max="30" value="${q.marks}" onchange="updateQuestionMarks('long', ${idx}, this.value)" class="w-10 text-center font-bold text-xs bg-transparent border-b border-slate-400 focus:outline-none" />
-            </div>
-            <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
-      `).join("");
+        `).join("");
+      }
 
-      // Recalculate Marks Breakdown
+      // Recalculate Marks Breakdown for Section Only
       recalculateMarks();
 
       // Render Answer Key
@@ -1351,15 +1456,64 @@
     function recalculateMarks() {
       if (!currentPaper) return;
 
-      const marksA = currentPaper.mcqs.reduce((acc, q) => acc + (q.marks || 1), 0);
-      const marksB = currentPaper.shorts.reduce((acc, q) => acc + (q.marks || 4), 0);
-      const marksC = currentPaper.longs.reduce((acc, q) => acc + (q.marks || 8), 0);
-      const grandTotal = marksA + marksB + marksC;
+      const marksA = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : currentPaper.mcqs.length * 1;
+      const marksB = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
+      const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      const marksBC = marksB + marksC;
+      const grandTotal = marksA + marksBC;
 
-      document.getElementById("sec-a-marks").textContent = marksA;
-      document.getElementById("sec-b-marks").textContent = `${marksB} (${currentPaper.shorts.length} Questions)`;
-      document.getElementById("sec-c-marks").textContent = `${marksC} (${currentPaper.longs.length} Questions)`;
-      document.getElementById("paper-head-total-marks").textContent = grandTotal;
+      if (document.getElementById("sec-a-marks")) document.getElementById("sec-a-marks").textContent = marksA;
+      if (document.getElementById("paper-head-marks-a")) document.getElementById("paper-head-marks-a").textContent = marksA;
+
+      if (document.getElementById("sec-b-marks")) document.getElementById("sec-b-marks").textContent = marksB;
+      if (document.getElementById("sec-c-marks")) document.getElementById("sec-c-marks").textContent = marksC;
+      if (document.getElementById("paper-head-marks-bc")) document.getElementById("paper-head-marks-bc").textContent = marksBC;
+
+      // Update Section Notes
+      const attemptShorts = Math.min(9, currentPaper.shorts.length);
+      const perShortMarks = attemptShorts > 0 ? Math.round(marksB / attemptShorts) : 4;
+      const secBNote = document.getElementById("sec-b-note");
+      if (secBNote) {
+        secBNote.textContent = `Note: Attempt any ${attemptShorts} questions. All questions carry equal marks (${perShortMarks} Marks each).`;
+      }
+
+      const attemptLongs = Math.min(3, currentPaper.longs.length);
+      const perLongMarks = attemptLongs > 0 ? Math.round(marksC / attemptLongs) : 8;
+      const secCNote = document.getElementById("sec-c-note");
+      if (secCNote) {
+        secCNote.textContent = `Note: Attempt any ${attemptLongs} questions. All questions carry equal marks (${perLongMarks} Marks each).`;
+      }
+
+      const totalPreview = document.getElementById("calc-total-marks-preview");
+      if (totalPreview) totalPreview.textContent = `${grandTotal} Total Marks`;
+    }
+
+    function updateSectionMarks(section, value) {
+      if (!currentPaper) return;
+      const val = parseInt(value, 10) || 0;
+      if (section === 'A') currentPaper.secAMarks = val;
+      if (section === 'B') currentPaper.secBMarks = val;
+      if (section === 'C') currentPaper.secCMarks = val;
+      recalculateMarks();
+    }
+
+    function syncSchoolName(val) {
+      if (!currentPaper) return;
+      currentPaper.schoolName = val;
+      const elA = document.getElementById("paper-head-school-a");
+      const elBC = document.getElementById("paper-head-school-bc");
+      if (elA && elA.innerText !== val) elA.innerText = val;
+      if (elBC && elBC.innerText !== val) elBC.innerText = val;
+    }
+
+    function syncExamTitle(val) {
+      if (!currentPaper) return;
+      currentPaper.examTitle = val;
+      const titleFull = `${val} — ${currentPaper.subject} Class ${currentPaper.grade}th`;
+      const elA = document.getElementById("paper-head-exam-a");
+      const elBC = document.getElementById("paper-head-exam-bc");
+      if (elA && elA.innerText !== titleFull) elA.innerText = titleFull;
+      if (elBC && elBC.innerText !== titleFull) elBC.innerText = titleFull;
     }
 
     function renderAnswerKeyDOM() {
@@ -1373,12 +1527,15 @@
       });
       html += `</div></div>`;
 
-      html += `<div class="pt-2 space-y-1.5"><strong>Section B & C Marking Criteria:</strong>`;
+      html += `<div class="pt-2 space-y-1.5"><strong>Section B (Short Questions Solutions):</strong>`;
       currentPaper.shorts.forEach((q, idx) => {
-        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${currentPaper.mcqs.length + idx + 1}:</strong> ${q.solution || "Complete conceptual definition & steps (4 Marks)."}</p>`;
+        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${idx + 1}:</strong> ${q.solution || "Complete conceptual definition & steps."}</p>`;
       });
+      html += `</div>`;
+
+      html += `<div class="pt-2 space-y-1.5"><strong>Section C (Long Questions Solutions):</strong>`;
       currentPaper.longs.forEach((q, idx) => {
-        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}:</strong> ${q.solution || "Detailed analytical proof, diagrams and calculations (8 Marks)."}</p>`;
+        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${idx + 1}:</strong> ${q.solution || "Detailed analytical proof, diagrams and calculations."}</p>`;
       });
       html += `</div>`;
 
@@ -1398,16 +1555,12 @@
       }
     }
 
-    function updateQuestionMarks(type, index, value) {
-      const val = parseInt(value, 10) || 1;
-      if (type === 'short' && currentPaper.shorts[index]) currentPaper.shorts[index].marks = val;
-      if (type === 'long' && currentPaper.longs[index]) currentPaper.longs[index].marks = val;
-      recalculateMarks();
-    }
-
     function removeQuestion(type, index) {
       if (!confirm("Are you sure you want to remove this question?")) return;
-      if (type === 'mcq') currentPaper.mcqs.splice(index, 1);
+      if (type === 'mcq') {
+        currentPaper.mcqs.splice(index, 1);
+        currentPaper.secAMarks = currentPaper.mcqs.length * 1;
+      }
       if (type === 'short') currentPaper.shorts.splice(index, 1);
       if (type === 'long') currentPaper.longs.splice(index, 1);
       renderPaperDOM();
@@ -1423,6 +1576,7 @@
           answer: 0,
           marks: 1
         });
+        currentPaper.secAMarks = currentPaper.mcqs.length * 1;
       } else if (type === 'short') {
         currentPaper.shorts.push({
           id: `short-${Date.now()}`,
@@ -1470,14 +1624,21 @@
         return;
       }
 
+      const marksA = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : currentPaper.mcqs.length * 1;
+      const marksB = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
+      const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      const marksBC = marksB + marksC;
+
       // Check if docx library is loaded
       if (typeof docx !== "undefined") {
         try {
-          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } = docx;
+          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, PageBreak } = docx;
 
           const docChildren = [];
 
-          // 1. Board / School Header
+          // ==========================================
+          // SHEET 1: PART I (OBJECTIVE TYPE - SECTION A)
+          // ==========================================
           docChildren.push(
             new Paragraph({
               text: currentPaper.schoolName.toUpperCase(),
@@ -1490,28 +1651,31 @@
               alignment: AlignmentType.CENTER,
             }),
             new Paragraph({
+              text: "PART — I (OBJECTIVE TYPE)",
+              heading: HeadingLevel.HEADING_3,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
               children: [
-                new TextRun({ text: `Time Allowed: ${currentPaper.timeAllowed}            `, bold: true }),
-                new TextRun({ text: `Paper Code: 914-A            `, bold: true }),
-                new TextRun({ text: `Total Marks: ${document.getElementById("paper-head-total-marks").textContent}`, bold: true }),
+                new TextRun({ text: `Roll No: [    ][    ][    ][    ][    ][    ]               `, bold: true }),
+                new TextRun({ text: `Time: ${currentPaper.timeAllowedA || "20 Minutes"}               `, bold: true }),
+                new TextRun({ text: `Code: 914-A               `, bold: true }),
+                new TextRun({ text: `Marks: ${marksA}`, bold: true }),
               ],
               alignment: AlignmentType.CENTER,
             }),
-            new Paragraph({ text: "—".repeat(50), alignment: AlignmentType.CENTER }),
-            new Paragraph({ text: "" })
-          );
-
-          // 2. Section A: Objective MCQs
-          docChildren.push(
+            new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
             new Paragraph({
               children: [
-                new TextRun({ text: "SECTION — A (Objective Multiple Choice Questions)   [Marks: 15]", bold: true }),
+                new TextRun({ text: `SECTION — A (Objective Multiple Choice Questions)   [Marks: ${marksA}]`, bold: true }),
               ],
               heading: HeadingLevel.HEADING_3,
             }),
-            new Paragraph({ text: "Note: Each question carries 1 mark. Fill the corresponding bubble." })
+            new Paragraph({ text: "Note: Attempt all questions. All questions carry equal marks (1 Mark each). Overwriting, cutting or double-filling circles will receive zero credit. Hand over this sheet to the Invigilator after 20 minutes." }),
+            new Paragraph({ text: "" })
           );
 
+          // MCQs (No individual question marks)
           currentPaper.mcqs.forEach((q, idx) => {
             docChildren.push(
               new Paragraph({
@@ -1524,68 +1688,132 @@
                 children: [
                   new TextRun({ text: `     ${q.options[0]}          ${q.options[1]}          ${q.options[2]}          ${q.options[3]}` })
                 ]
-              })
+              }),
+              new Paragraph({ text: "" })
             );
           });
 
-          // 3. Section B: Short Questions
           docChildren.push(
-            new Paragraph({ text: "" }),
+            new Paragraph({
+              text: "[ End of Objective Paper — Collect after 20 Minutes ]",
+              alignment: AlignmentType.CENTER,
+            }),
+            // PAGE BREAK BETWEEN OBJECTIVE AND SUBJECTIVE PAPERS
+            new Paragraph({ children: [new PageBreak()] })
+          );
+
+          // ==========================================
+          // SHEET 2: PART II (SUBJECTIVE TYPE - SECTIONS B & C)
+          // ==========================================
+          docChildren.push(
+            new Paragraph({
+              text: currentPaper.schoolName.toUpperCase(),
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`,
+              heading: HeadingLevel.HEADING_2,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: "PART — II (SUBJECTIVE TYPE)",
+              heading: HeadingLevel.HEADING_3,
+              alignment: AlignmentType.CENTER,
+            }),
             new Paragraph({
               children: [
-                new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Total Marks: ${document.getElementById("sec-b-marks").textContent}]`, bold: true }),
+                new TextRun({ text: `Time Allowed: ${currentPaper.timeAllowedBC || "2 Hours 40 Minutes"}            `, bold: true }),
+                new TextRun({ text: `Paper Code: 914-A            `, bold: true }),
+                new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: "Note: Answer the questions in neat handwriting with proper scientific reasons, headings, formulas, and neat labeled diagrams where applicable on the provided answer book." }),
+            new Paragraph({ text: "" })
+          );
+
+          // SECTION B: Short Questions (Numbering restarts from Q1! No individual marks!)
+          const attemptShorts = Math.min(9, currentPaper.shorts.length);
+          const perShortMarks = attemptShorts > 0 ? Math.round(marksB / attemptShorts) : 4;
+          docChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Marks: ${marksB}]`, bold: true }),
               ],
               heading: HeadingLevel.HEADING_3,
             }),
-            new Paragraph({ text: "Note: Attempt required short questions with neat headings and reasons." })
+            new Paragraph({ text: `Note: Attempt any ${attemptShorts} questions. All questions carry equal marks (${perShortMarks} Marks each).` }),
+            new Paragraph({ text: "" })
           );
 
           currentPaper.shorts.forEach((q, idx) => {
             docChildren.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${currentPaper.mcqs.length + idx + 1}. `, bold: true }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
                   new TextRun({ text: q.text }),
-                  new TextRun({ text: `   [${q.marks} Marks]`, bold: true }),
                 ],
-              })
+              }),
+              new Paragraph({ text: "" })
             );
           });
 
-          // 4. Section C: Long Questions
+          // SECTION C: Long Questions (Numbering restarts from Q1! No individual marks!)
+          const attemptLongs = Math.min(3, currentPaper.longs.length);
+          const perLongMarks = attemptLongs > 0 ? Math.round(marksC / attemptLongs) : 8;
           docChildren.push(
             new Paragraph({ text: "" }),
             new Paragraph({
               children: [
-                new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Total Marks: ${document.getElementById("sec-c-marks").textContent}]`, bold: true }),
+                new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Marks: ${marksC}]`, bold: true }),
               ],
               heading: HeadingLevel.HEADING_3,
             }),
-            new Paragraph({ text: "Note: Answer with complete steps, derivations, and neat labeled diagrams." })
+            new Paragraph({ text: `Note: Attempt any ${attemptLongs} questions. All questions carry equal marks (${perLongMarks} Marks each). Show complete derivations & steps.` }),
+            new Paragraph({ text: "" })
           );
 
           currentPaper.longs.forEach((q, idx) => {
             docChildren.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}. `, bold: true }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
                   new TextRun({ text: q.text }),
-                  new TextRun({ text: `   [${q.marks} Marks]`, bold: true }),
                 ],
-              })
+              }),
+              new Paragraph({ text: "" })
             );
           });
 
-          // 5. Confidential Answer Key Page
           docChildren.push(
-            new Paragraph({ text: "" }),
-            new Paragraph({ text: "—".repeat(50), alignment: AlignmentType.CENTER }),
+            new Paragraph({
+              text: "[ End of Subjective Paper — Best of Luck ]",
+              alignment: AlignmentType.CENTER,
+            }),
+            // PAGE BREAK TO TEACHER ANSWER KEY
+            new Paragraph({ children: [new PageBreak()] })
+          );
+
+          // ==========================================
+          // CONFIDENTIAL TEACHER ANSWER KEY PAGE
+          // ==========================================
+          docChildren.push(
             new Paragraph({
               children: [
                 new TextRun({ text: "CONFIDENTIAL TEACHER ANSWER KEY & MARKING SCHEME", bold: true, color: "CC0000" }),
               ],
-              heading: HeadingLevel.HEADING_3,
+              heading: HeadingLevel.HEADING_2,
               alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ text: "For internal examiner and teacher use only. Do not distribute to candidates." }),
+            new Paragraph({ text: "" }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "SECTION A: MCQs ANSWER KEY", bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
             })
           );
 
@@ -1593,6 +1821,32 @@
             docChildren.push(
               new Paragraph({
                 text: `Q${idx + 1}: ${q.options[q.answer] || q.options[0]}`,
+              })
+            );
+          });
+
+          docChildren.push(
+            new Paragraph({ text: "" }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "SECTION B & C: MARKING CRITERIA", bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            })
+          );
+
+          currentPaper.shorts.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                text: `Section B - Q${idx + 1}: ${q.solution || "Complete conceptual definition & steps."}`,
+              })
+            );
+          });
+
+          currentPaper.longs.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                text: `Section C - Q${idx + 1}: ${q.solution || "Detailed proof, formulas, diagrams & calculations."}`,
               })
             );
           });
@@ -1617,7 +1871,9 @@
     function exportToWordDoc() {
       if (!currentPaper) return;
 
-      const printContent = document.getElementById("paper-container").innerHTML;
+      const sheetA = document.getElementById("paper-sheet-a")?.innerHTML || "";
+      const sheetBC = document.getElementById("paper-sheet-bc")?.innerHTML || "";
+      const answerKey = document.getElementById("paper-answer-key")?.innerHTML || "";
       const fileName = `${currentPaper.subject}_Class_${currentPaper.grade}th_ExamPaper.doc`.replace(/\s+/g, '_');
 
       const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
@@ -1627,12 +1883,19 @@
         .no-print { display: none !important; }
         .editable-text { font-weight: inherit; }
         h3, h4 { text-align: center; margin: 4px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        td, th { padding: 4px 8px; border: 1px solid #333; }
+        .page-break { page-break-before: always; mso-break-type: section-break; clear: both; }
       </style></head><body>`;
       const footer = "</body></html>";
 
-      const sourceHTML = header + printContent + footer;
+      const combined = `
+        <div class="paper-sheet-1">${sheetA}</div>
+        <div class="page-break" style="page-break-before: always; mso-break-type: section-break;"><br clear="all" style="page-break-before:always" /></div>
+        <div class="paper-sheet-2">${sheetBC}</div>
+        <div class="page-break" style="page-break-before: always; mso-break-type: section-break;"><br clear="all" style="page-break-before:always" /></div>
+        <div class="paper-answer-key">${answerKey}</div>
+      `;
+
+      const sourceHTML = header + combined + footer;
       const blob = new Blob(['\ufeff' + sourceHTML], { type: 'application/msword;charset=utf-8' });
       
       const link = document.createElement("a");
