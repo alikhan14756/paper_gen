@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --clay-bg: #f0f4f9;
+    --clay-card-bg: #ffffff;
+    --clay-surface: #f8fafc;
+    --clay-border: rgba(255, 255, 255, 0.85);
+    --clay-primary: #ea580c;
+    --clay-primary-light: #f97316;
+    --clay-navy: #0f172a;
+    --clay-navy-light: #1e293b;
+  }
+
+  body {
+    background-color: var(--clay-bg);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(254, 215, 170, 0.3) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: #1e293b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+}
+
+/* ==========================================================================
+   CLAYMORPHISM DESIGN SYSTEM (Soft 3D Inflated Surfaces & Tactile Elements)
+   ========================================================================== */
+
+/* 1. Clay Cards */
+.clay-card {
+  background: #ffffff;
+  border-radius: 1.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 16px 32px -8px rgba(15, 23, 42, 0.07),
+    0 4px 12px -2px rgba(15, 23, 42, 0.03),
+    inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(15, 23, 42, 0.02);
+}
+
+.clay-card-interactive {
+  background: #ffffff;
+  border-radius: 1.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 14px 28px -6px rgba(15, 23, 42, 0.06),
+    0 4px 10px -2px rgba(15, 23, 42, 0.03),
+    inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px rgba(15, 23, 42, 0.02);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 20px 40px -8px rgba(15, 23, 42, 0.1),
+    0 8px 16px -4px rgba(15, 23, 42, 0.05),
+    inset 0 2px 4px rgba(255, 255, 255, 1);
+}
+
+.clay-card-flat {
+  background: #f8fafc;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 
+    inset 2px 2px 5px rgba(15, 23, 42, 0.03),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+}
+
+/* 2. Clay Buttons */
+.clay-btn-primary {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #ffffff;
+  border-radius: 1.15rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    0 8px 18px -4px rgba(234, 88, 12, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-btn-primary:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 12px 24px -4px rgba(234, 88, 12, 0.55),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.clay-btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 
+    0 4px 10px -2px rgba(234, 88, 12, 0.4),
+    inset 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.clay-btn-dark {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  border-radius: 1.15rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 18px -4px rgba(15, 23, 42, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-btn-dark:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 
+    0 12px 24px -4px rgba(15, 23, 42, 0.45),
+    inset 0 2px 3px rgba(255, 255, 255, 0.3);
+}
+
+.clay-btn-dark:active {
+  transform: scale(0.97);
+  box-shadow: 
+    0 4px 10px -2px rgba(15, 23, 42, 0.3),
+    inset 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.clay-btn-light {
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 1.15rem;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    0 6px 16px -4px rgba(15, 23, 42, 0.06),
+    inset 0 2px 3px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 3px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-btn-light:hover {
+  transform: translateY(-1.5px);
+  color: #ea580c;
+  box-shadow: 
+    0 10px 20px -4px rgba(15, 23, 42, 0.09),
+    inset 0 2px 3px rgba(255, 255, 255, 1);
+}
+
+.clay-btn-light:active {
+  transform: scale(0.97);
+}
+
+.clay-btn-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-radius: 1.15rem;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 
+    0 8px 18px -4px rgba(5, 150, 105, 0.45),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-btn-emerald:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 12px 24px -4px rgba(5, 150, 105, 0.55);
+}
+
+/* 3. Clay Form Inputs */
+.clay-input {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 1.15rem;
+  box-shadow: 
+    inset 2px 2px 5px rgba(15, 23, 42, 0.04),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.clay-input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #f97316;
+  box-shadow: 
+    0 0 0 4px rgba(249, 115, 22, 0.15),
+    inset 1px 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+/* 4. Clay Badges */
+.clay-badge-mint {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 8px -2px rgba(21, 128, 61, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+
+.clay-badge-sky {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 8px -2px rgba(3, 105, 161, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+
+.clay-badge-peach {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 8px -2px rgba(194, 65, 12, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+
+.clay-badge-purple {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 4px 8px -2px rgba(126, 34, 206, 0.15),
+    inset 0 2px 3px rgba(255, 255, 255, 0.8);
+}
+
+/* 5. Clean Authentic Examination Paper Sheet */
+.paper-sheet {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 
+    0 20px 40px -10px rgba(15, 23, 42, 0.15),
+    0 4px 12px rgba(15, 23, 42, 0.05);
+  border: 1px solid #e2e8f0;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* Urdu Typography & RTL Styling */
+.urdu-text {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', Arial, sans-serif;
+  line-height: 2.3;
+}
+
+.english-text {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Suppress Next.js dev activity indicator or sticky badge in bottom left */
+nextjs-portal,
+#nextjs-dev-tools,
+[data-nextjs-toast],
+div[class*="feedback"],
+div[data-nextjs-dev-tools] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

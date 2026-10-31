@@ -1,0 +1,15 @@
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.1
+pydantic-settings==2.16.1
+SQLAlchemy==2.1.6
+alembic==1.20.1
+pymupdf==2.0
+python-docx==1.2.0
+python-multipart==0.0.32
+PyJWT==2.15.1
+bcrypt==5.0.0
+httpx==0.28.1
+email-validator==2.3.0
+pytest==9.1.1
+python-dotenv==1.2.4
