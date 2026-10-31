@@ -10,11 +10,11 @@ class EmailService:
         Sends an email with the 6-digit verification code.
         Supports standard SMTP or logs to console when running in local development mode.
         """
-        smtp_host = os.getenv("SMTP_HOST", "")
+        smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
         smtp_port = int(os.getenv("SMTP_PORT", "587"))
-        smtp_user = os.getenv("SMTP_USER", "")
+        smtp_user = os.getenv("SMTP_USER", "alikhanwebdeveloper@gmail.com")
         smtp_password = os.getenv("SMTP_PASSWORD", "")
-        smtp_from = os.getenv("SMTP_FROM", "noreply@examforge.ai")
+        smtp_from = os.getenv("SMTP_FROM", "Muhammad Ali <alikhanwebdeveloper@gmail.com>")
 
         subject = f"ExamForge AI — Verification Code for {school_name}"
         body_text = f"""

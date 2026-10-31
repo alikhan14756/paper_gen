@@ -220,6 +220,11 @@ export default function RegisterPage() {
               <p className="text-[11px] text-slate-500">
                 Please open your email inbox, copy the 6-digit code, and enter it below to activate your school account.
               </p>
+              <div className="pt-1 text-[11px] text-orange-800 font-semibold bg-orange-50/80 p-2 rounded-xl border border-orange-200/80">
+                <span>Official Sender: </span>
+                <span className="font-bold text-slate-900">alikhanwebdeveloper@gmail.com</span>
+                <span className="text-slate-500"> (Muhammad Ali — AliBuild)</span>
+              </div>
             </div>
 
             <div>
@@ -438,6 +443,12 @@ export default function RegisterPage() {
                         className="w-full clay-input pl-10 pr-3 py-2 text-xs"
                       />
                     </div>
+                  </div>
+                  <div className="mt-3 p-2.5 rounded-xl bg-orange-50/70 border border-orange-200/70 text-[11px] text-slate-700">
+                    <span className="font-bold text-orange-900">Email Sender Note: </span>
+                    <span>The 6-digit verification code will be dispatched from </span>
+                    <strong className="text-slate-900">alikhanwebdeveloper@gmail.com</strong>
+                    <span> (Muhammad Ali — AliBuild).</span>
                   </div>
                 </div>
 

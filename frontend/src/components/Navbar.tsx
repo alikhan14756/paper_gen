@@ -13,7 +13,9 @@ import {
   LogOut,
   UserCheck,
   GraduationCap,
-  Info
+  Info,
+  LogIn,
+  School
 } from "lucide-react";
 
 export const Navbar: React.FC = () => {
@@ -174,15 +176,17 @@ export const Navbar: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="/login"
-                    className="clay-btn-primary px-4 py-2 text-xs"
+                    className="clay-btn-light px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5"
                   >
-                    Sign In
+                    <LogIn className="w-3.5 h-3.5 text-slate-700" />
+                    <span>Sign In</span>
                   </Link>
                   <Link
                     href="/register"
-                    className="clay-btn-light px-3.5 py-2 text-xs"
+                    className="clay-btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5"
                   >
-                    Register School
+                    <School className="w-3.5 h-3.5" />
+                    <span>Register School</span>
                   </Link>
                 </div>
               )
