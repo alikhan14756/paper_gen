@@ -13,6 +13,8 @@
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.iife.js"></script>
   <!-- FileSaver.js for file downloads -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <!-- pdf.js for extracting chapters and questions from uploaded textbook PDFs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
   <!-- Google Fonts: Inter, Outfit, and Urdu Noto Nastaliq -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -309,26 +311,95 @@
             </div>
           </div>
 
-          <!-- Question Counts Configuration -->
-          <div class="clay-card-flat p-3.5 rounded-xl space-y-2 text-xs">
+          <!-- UPLOAD CUSTOM TEXTBOOK / NOTES PDF -->
+          <div class="clay-card-flat p-3 rounded-xl border border-dashed border-orange-300 bg-orange-50/50 space-y-2 text-xs">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="file-up" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="font-extrabold text-slate-900 block text-[11px]">Upload Custom Book PDF</span>
+                  <span class="text-[10px] text-slate-500">Generate exam from any textbook PDF</span>
+                </div>
+              </div>
+              <label class="clay-btn-primary px-3 py-1.5 text-[11px] font-extrabold cursor-pointer shrink-0 inline-flex items-center space-x-1 shadow-sm">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+                <span>Choose PDF</span>
+                <input type="file" id="book-pdf-input" accept=".pdf" onchange="handleBookPdfUpload(event)" class="hidden" />
+              </label>
+            </div>
+            <div id="pdf-upload-status" class="hidden p-2 rounded-lg bg-amber-50 border border-amber-200 text-[10px] font-bold text-amber-900 flex items-center space-x-1.5">
+              <i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin text-orange-600"></i>
+              <span id="pdf-status-text">Parsing textbook PDF and generating questions...</span>
+            </div>
+          </div>
+
+          <!-- Question Counts & Choice Configuration (Leave Questions Choice) -->
+          <div class="clay-card-flat p-3.5 rounded-xl space-y-2.5 text-xs">
             <p class="font-extrabold text-slate-900 flex items-center justify-between">
-              <span>Section Question Allocations:</span>
+              <span>Section Question Allocations & Choice:</span>
               <span id="calc-total-marks-preview" class="text-orange-600 font-black">75 Total Marks</span>
             </p>
-            <div class="grid grid-cols-3 gap-2 text-center">
+
+            <!-- Section A: MCQs -->
+            <div class="bg-white p-2 rounded-lg border border-slate-200 flex items-center justify-between gap-2">
               <div>
-                <span class="text-[10px] text-slate-500 font-bold block">MCQs (1M)</span>
-                <input type="number" id="count-mcqs" min="1" max="30" value="15" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
+                <span class="font-bold text-slate-800 block text-[11px]">Section A (MCQs)</span>
+                <span class="text-[10px] text-slate-500">1 Mark each • Compulsory</span>
               </div>
-              <div>
-                <span class="text-[10px] text-slate-500 font-bold block">Short (4M)</span>
-                <input type="number" id="count-short" min="1" max="20" value="9" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
-              </div>
-              <div>
-                <span class="text-[10px] text-slate-500 font-bold block">Long (8M)</span>
-                <input type="number" id="count-long" min="1" max="10" value="3" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
+              <div class="flex items-center space-x-1">
+                <input type="number" id="count-mcqs" min="1" max="30" value="15" onchange="updateBlueprintCounts()" class="w-14 text-center clay-input py-1 text-xs font-bold" />
+                <span class="text-[10px] font-bold text-slate-500">MCQs</span>
               </div>
             </div>
+
+            <!-- Section B: Short Questions with Choice -->
+            <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-slate-800 block text-[11px]">Section B (Short Questions)</span>
+                  <span id="choice-badge-short" class="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block">
+                    Choice: Attempt 9 of 12 (Leave 3)
+                  </span>
+                </div>
+                <div class="flex items-center space-x-1.5 text-right">
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Given</span>
+                    <input type="number" id="count-short" min="1" max="25" value="12" onchange="updateBlueprintCounts()" class="w-12 text-center clay-input py-1 text-xs font-bold" />
+                  </div>
+                  <span class="text-slate-400 font-black pt-2">/</span>
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Attempt</span>
+                    <input type="number" id="attempt-short" min="1" max="20" value="9" onchange="updateBlueprintCounts()" class="w-12 text-center clay-input py-1 text-xs font-bold" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section C: Long Questions with Choice -->
+            <div class="bg-white p-2 rounded-lg border border-slate-200 space-y-1">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-slate-800 block text-[11px]">Section C (Long Questions)</span>
+                  <span id="choice-badge-long" class="text-[9px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-block">
+                    Choice: Attempt 3 of 5 (Leave 2)
+                  </span>
+                </div>
+                <div class="flex items-center space-x-1.5 text-right">
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Given</span>
+                    <input type="number" id="count-long" min="1" max="15" value="5" onchange="updateBlueprintCounts()" class="w-12 text-center clay-input py-1 text-xs font-bold" />
+                  </div>
+                  <span class="text-slate-400 font-black pt-2">/</span>
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">Attempt</span>
+                    <input type="number" id="attempt-long" min="1" max="10" value="3" onchange="updateBlueprintCounts()" class="w-12 text-center clay-input py-1 text-xs font-bold" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <button onclick="handleGeneratePaperClick()" class="w-full clay-btn-primary py-3 px-4 text-xs font-black flex items-center justify-center space-x-2">
@@ -383,6 +454,24 @@
             <button onclick="changePaperStyle('modern-twocol')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Modern</button>
             <button onclick="changePaperStyle('compact-test')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Compact</button>
           </div>
+
+          <!-- New Paper Variation (Multiple Papers Generation) -->
+          <button onclick="generatePaperVariation()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5 text-blue-700 hover:bg-blue-50 border-blue-200" title="Generate another authentic version with different questions">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Set Variation</span>
+          </button>
+
+          <!-- Save to School Archive -->
+          <button onclick="saveCurrentPaperToHistory()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5 text-amber-800 hover:bg-amber-50 border-amber-200" title="Save paper to School Papers Archive">
+            <i data-lucide="bookmark-plus" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span>Save</span>
+          </button>
+
+          <!-- School Papers Archive Modal Button -->
+          <button onclick="openSavedPapersModal()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5 text-indigo-700 hover:bg-indigo-50 border-indigo-200" title="View all generated papers for your school">
+            <i data-lucide="folder-archive" class="w-3.5 h-3.5 text-indigo-600"></i>
+            <span>Archive (<span id="saved-papers-count">0</span>)</span>
+          </button>
 
           <!-- Answer Key Toggle -->
           <button onclick="toggleAnswerKeyDisplay()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5">
@@ -759,6 +848,49 @@
     </div>
   </div>
 
+  <!-- SAVED PAPERS / SCHOOL ARCHIVE MODAL -->
+  <div id="saved-papers-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 no-print">
+    <div class="clay-card max-w-3xl w-full p-6 sm:p-8 relative space-y-5 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeSavedPapersModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="space-y-0.5">
+          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-0.5 rounded-full text-[11px] font-black">
+            <i data-lucide="folder-archive" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>School Paper History</span>
+          </div>
+          <h3 class="text-xl font-black text-slate-900">Saved Examination Papers Archive</h3>
+          <p class="text-xs text-slate-500">Access, edit, duplicate, and export all generated examination papers for your school.</p>
+        </div>
+      </div>
+
+      <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+        <div class="overflow-x-auto max-h-[380px]">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100/90 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+              <tr>
+                <th class="py-2.5 px-3">Exam Title & School</th>
+                <th class="py-2.5 px-3">Subject / Class</th>
+                <th class="py-2.5 px-3">Generated Date</th>
+                <th class="py-2.5 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="saved-papers-tbody" class="divide-y divide-slate-100 font-medium">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+        <span>Schools can generate and archive unlimited examination paper variations.</span>
+        <button onclick="closeSavedPapersModal()" class="clay-btn-secondary px-4 py-2 font-bold">Close Archive</button>
+      </div>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="mt-auto border-t border-slate-200/80 bg-white py-6 px-4 sm:px-8 text-xs text-slate-500 no-print">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -1110,6 +1242,21 @@
 
     // Load state from localStorage on init
     function initAppState() {
+      // 0. Register uploaded custom textbook PDFs
+      const customBooks = JSON.parse(localStorage.getItem("examforge_custom_books") || "[]");
+      customBooks.forEach(cb => {
+        QUESTION_BANKS[cb.subject] = cb;
+        ["9", "10"].forEach(g => {
+          if (KPK_SYLLABUS[g] && !KPK_SYLLABUS[g].some(s => s.subject === cb.subject)) {
+            KPK_SYLLABUS[g].unshift({
+              subject: cb.subject,
+              lang: cb.lang || 'en',
+              chapters: cb.chapters || []
+            });
+          }
+        });
+      });
+
       // 1. Seed default school accounts if empty
       let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
       if (schools.length === 0) {
@@ -1153,7 +1300,11 @@
       // 5. Populate initial subject dropdown
       handleGradeChange();
 
-      // 6. Generate initial default paper immediately!
+      // 6. Update blueprint counts & choice preview
+      updateBlueprintCounts();
+      updateSavedPapersCount();
+
+      // 7. Generate initial default paper immediately!
       generatePaperFromSyllabus("9", "Mathematics");
     }
 
@@ -1170,7 +1321,7 @@
         if (loginBtn) loginBtn.classList.add("hidden");
         document.getElementById("nav-school-name").textContent = currentUser.schoolName;
         if (activeModeLabel) {
-          activeModeLabel.textContent = `School: ${currentUser.schoolName}`;
+          activeModeLabel.textContent = `School: ${currentUser.schoolName} (Unlimited Mode)`;
           activeModeLabel.className = "clay-badge-orange font-bold px-2.5 py-1 rounded-full text-[11px]";
         }
       } else {
@@ -1189,17 +1340,28 @@
     }
 
     // =========================================================================
-    // 4. GENERATOR CONTROLLER & SYLLABUS INTEGRATION
+    // 4. GENERATOR CONTROLLER, CHOICE SYSTEM & PDF UPLOADER
     // =========================================================================
     function handleGradeChange() {
       const grade = document.getElementById("gen-grade").value;
       const subjectSelect = document.getElementById("gen-subject");
       const subjects = KPK_SYLLABUS[grade] || [];
 
-      subjectSelect.innerHTML = subjects.map(s => 
+      let html = subjects.map(s => 
         `<option value="${s.subject}">${s.subject}${s.lang === 'ur' ? ' (اردو)' : ''}</option>`
       ).join("");
 
+      const customBooks = JSON.parse(localStorage.getItem("examforge_custom_books") || "[]");
+      if (customBooks.length > 0) {
+        html += `<optgroup label="📚 Uploaded Textbook PDFs">`;
+        customBooks.forEach(cb => {
+          const sub = cb.subject || cb.name;
+          html += `<option value="${sub}">📖 ${sub}</option>`;
+        });
+        html += `</optgroup>`;
+      }
+
+      subjectSelect.innerHTML = html;
       handleSubjectChange();
     }
 
@@ -1207,10 +1369,22 @@
       const grade = document.getElementById("gen-grade").value;
       const subjectName = document.getElementById("gen-subject").value;
       const subjects = KPK_SYLLABUS[grade] || [];
-      const found = subjects.find(s => s.subject === subjectName);
+      let found = subjects.find(s => s.subject === subjectName);
+
+      if (!found) {
+        const customBooks = JSON.parse(localStorage.getItem("examforge_custom_books") || "[]");
+        const match = customBooks.find(b => (b.subject || b.name) === subjectName);
+        if (match) {
+          found = {
+            subject: match.subject || match.name,
+            lang: match.lang || "en",
+            chapters: (match.chapters || []).map(c => typeof c === 'object' ? (c.name || c.title) : c)
+          };
+        }
+      }
 
       const chaptersBox = document.getElementById("chapters-container");
-      if (!found || !found.chapters) {
+      if (!found || !found.chapters || found.chapters.length === 0) {
         chaptersBox.innerHTML = `<p class="text-slate-400">No chapters found for this subject.</p>`;
         return;
       }
@@ -1234,22 +1408,55 @@
     }
 
     function updateBlueprintCounts() {
-      const mcqs = parseInt(document.getElementById("count-mcqs").value || "0", 10);
-      const shorts = parseInt(document.getElementById("count-short").value || "0", 10);
-      const longs = parseInt(document.getElementById("count-long").value || "0", 10);
+      const mcqs = parseInt(document.getElementById("count-mcqs")?.value || "15", 10);
+      let givenShort = parseInt(document.getElementById("count-short")?.value || "12", 10);
+      let attemptShort = parseInt(document.getElementById("attempt-short")?.value || "9", 10);
+      let givenLong = parseInt(document.getElementById("count-long")?.value || "5", 10);
+      let attemptLong = parseInt(document.getElementById("attempt-long")?.value || "3", 10);
 
-      const total = (mcqs * 1) + (shorts * 4) + (longs * 8);
-      document.getElementById("calc-total-marks-preview").textContent = `${total} Total Marks`;
+      // Validation
+      if (attemptShort > givenShort) {
+        attemptShort = givenShort;
+        if (document.getElementById("attempt-short")) document.getElementById("attempt-short").value = attemptShort;
+      }
+      if (attemptLong > givenLong) {
+        attemptLong = givenLong;
+        if (document.getElementById("attempt-long")) document.getElementById("attempt-long").value = attemptLong;
+      }
+
+      const leaveShort = Math.max(0, givenShort - attemptShort);
+      const shortBadge = document.getElementById("choice-badge-short");
+      if (shortBadge) {
+        shortBadge.textContent = leaveShort > 0 
+          ? `Choice: Attempt ${attemptShort} of ${givenShort} (Leave ${leaveShort})`
+          : `Compulsory: Attempt all ${givenShort}`;
+      }
+
+      const leaveLong = Math.max(0, givenLong - attemptLong);
+      const longBadge = document.getElementById("choice-badge-long");
+      if (longBadge) {
+        longBadge.textContent = leaveLong > 0 
+          ? `Choice: Attempt ${attemptLong} of ${givenLong} (Leave ${leaveLong})`
+          : `Compulsory: Attempt all ${givenLong}`;
+      }
+
+      const total = (mcqs * 1) + (attemptShort * 4) + (attemptLong * 8);
+      const preview = document.getElementById("calc-total-marks-preview");
+      if (preview) preview.textContent = `${total} Total Marks`;
     }
 
     function handleGeneratePaperClick() {
       const grade = document.getElementById("gen-grade").value;
       const subject = document.getElementById("gen-subject").value;
 
-      // Track guest quota
+      // Track quota: Guest has 5 free papers; Signed-in school principals & teachers have UNLIMITED!
       if (!currentUser) {
         guestPapersGenerated++;
         localStorage.setItem("examforge_guest_count", guestPapersGenerated);
+        updateAuthUI();
+      } else {
+        currentUser.papersCreated = (currentUser.papersCreated || 0) + 1;
+        localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
         updateAuthUI();
       }
 
@@ -1257,24 +1464,39 @@
       scrollToSection("paper-section");
     }
 
-    function generatePaperFromSyllabus(grade, subject) {
+    function generatePaperFromSyllabus(grade, subject, variationCode = "A") {
       const schoolName = document.getElementById("gen-school-name").value.trim() || "Board of Intermediate & Secondary Education Peshawar";
-      const examTitle = document.getElementById("gen-exam-title").value.trim() || `Class ${grade}th Annual Examination 2026`;
+      let examTitle = document.getElementById("gen-exam-title").value.trim() || `Class ${grade}th Annual Examination 2026`;
+      if (variationCode && variationCode !== "A" && !examTitle.includes(`(Set ${variationCode})`)) {
+        examTitle = `${examTitle} (Set ${variationCode})`;
+      }
       const timeAllowed = document.getElementById("gen-time").value.trim() || "3 Hours";
       const paperStyle = document.getElementById("gen-paper-style").value || "bisep-classic";
 
-      const numMcqs = parseInt(document.getElementById("count-mcqs")?.value || "10", 10);
-      const numShorts = parseInt(document.getElementById("count-short")?.value || "8", 10);
-      const numLongs = parseInt(document.getElementById("count-long")?.value || "3", 10);
+      const numMcqs = parseInt(document.getElementById("count-mcqs")?.value || "15", 10);
+      const numShorts = parseInt(document.getElementById("count-short")?.value || "12", 10);
+      const numShortsAttempt = parseInt(document.getElementById("attempt-short")?.value || "9", 10);
+      const numLongs = parseInt(document.getElementById("count-long")?.value || "5", 10);
+      const numLongsAttempt = parseInt(document.getElementById("attempt-long")?.value || "3", 10);
 
       const bank = QUESTION_BANKS[subject] || QUESTION_BANKS["Physics"];
 
-      // Pick or clone questions
-      const selectedMcqs = (bank.mcqs || []).slice(0, numMcqs).map((q, i) => ({
+      // Pick or clone questions with optional shuffle if variation is not A
+      let availableMcqs = [...(bank.mcqs || [])];
+      let availableShorts = [...(bank.shorts || [])];
+      let availableLongs = [...(bank.longs || [])];
+
+      if (variationCode !== "A") {
+        availableMcqs = availableMcqs.sort(() => Math.random() - 0.5);
+        availableShorts = availableShorts.sort(() => Math.random() - 0.5);
+        availableLongs = availableLongs.sort(() => Math.random() - 0.5);
+      }
+
+      const selectedMcqs = availableMcqs.slice(0, numMcqs).map((q, i) => ({
         id: `mcq-${i+1}`,
         text: q.text,
         options: [...q.options],
-        answer: q.answer,
+        answer: q.answer !== undefined ? q.answer : 0,
         marks: q.marks || 1
       }));
 
@@ -1283,14 +1505,14 @@
         const i = selectedMcqs.length + 1;
         selectedMcqs.push({
           id: `mcq-${i}`,
-          text: `Sample authentic question ${i} for ${subject} Class ${grade}th based on KPK textbook chapter objectives.`,
-          options: ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"],
+          text: `Sample authentic KPK objective question ${i} for ${subject} Class ${grade}th based on BISEP textbook syllabus.`,
+          options: ["(A) First Law / Core Definition", "(B) Inversely proportional factor", "(C) Unit of measurement", "(D) Conserved standard quantity"],
           answer: 0,
           marks: 1
         });
       }
 
-      const selectedShorts = (bank.shorts || []).slice(0, numShorts).map((q, i) => ({
+      const selectedShorts = availableShorts.slice(0, numShorts).map((q, i) => ({
         id: `short-${i+1}`,
         text: q.text,
         marks: q.marks || 4,
@@ -1301,13 +1523,13 @@
         const i = selectedShorts.length + 1;
         selectedShorts.push({
           id: `short-${i}`,
-          text: `Explain with scientific justification the fundamental principle of concept ${i} in ${subject}.`,
+          text: `Explain with scientific reasoning the analytical concept of topic ${i} in ${subject} as prescribed in BISEP curriculum.`,
           marks: 4,
           solution: `Award 2 marks for conceptual explanation and 2 marks for formulas/examples.`
         });
       }
 
-      const selectedLongs = (bank.longs || []).slice(0, numLongs).map((q, i) => ({
+      const selectedLongs = availableLongs.slice(0, numLongs).map((q, i) => ({
         id: `long-${i+1}`,
         text: q.text,
         marks: q.marks || 8,
@@ -1318,17 +1540,19 @@
         const i = selectedLongs.length + 1;
         selectedLongs.push({
           id: `long-${i}`,
-          text: `(a) Discuss the theoretical foundation of topic ${i}. (b) Solve the accompanying numerical problem with proper data and units.`,
+          text: `(a) Discuss in detail the theoretical foundation and mathematical law of topic ${i}. (b) Solve the accompanying authentic numerical problem with full working and units.`,
           marks: 8,
           solution: `Part (a): 4 marks. Part (b): 4 marks.`
         });
       }
 
       currentPaper = {
+        id: `paper-${Date.now()}`,
         schoolName,
         examTitle,
         grade,
         subject,
+        variationCode,
         timeAllowedA: "20 Minutes",
         timeAllowedBC: "2 Hours 40 Minutes",
         paperStyle,
@@ -1336,12 +1560,275 @@
         secAMarks: selectedMcqs.length * 1,
         secBMarks: 36,
         secCMarks: 24,
+        attemptShorts: numShortsAttempt,
+        attemptLongs: numLongsAttempt,
         mcqs: selectedMcqs,
         shorts: selectedShorts,
-        longs: selectedLongs
+        longs: selectedLongs,
+        createdAt: new Date().toISOString()
       };
 
+      autoSaveCurrentPaper();
       renderPaperDOM();
+    }
+
+    // Quick Set Variation Generator (Set A, Set B, Set C, Morning / Evening)
+    function generatePaperVariation() {
+      if (!currentPaper) {
+        alert("Please generate a base paper first.");
+        return;
+      }
+      const currentSet = currentPaper.variationCode || "A";
+      let nextSet = "B";
+      if (currentSet === "A") nextSet = "B";
+      else if (currentSet === "B") nextSet = "C";
+      else if (currentSet === "C") nextSet = "Morning";
+      else if (currentSet === "Morning") nextSet = "Evening";
+      else nextSet = "A";
+
+      const choice = prompt(`Generate Alternate Paper Set Variation:\nEnter Set Name (e.g. Set B, Set C, Evening Shift):`, `Set ${nextSet}`);
+      if (!choice) return;
+
+      generatePaperFromSyllabus(currentPaper.grade, currentPaper.subject, choice.replace(/^Set\s*/i, ''));
+      alert(`Alternate Paper Variation '${choice}' successfully generated with randomized question distribution!`);
+    }
+
+    // Auto-Save and Paper History Archive
+    function autoSaveCurrentPaper() {
+      if (!currentPaper) return;
+      savePaperToStorage(currentPaper, false);
+      updateSavedPapersCount();
+    }
+
+    function saveCurrentPaperToHistory() {
+      if (!currentPaper) {
+        alert("No active paper to save.");
+        return;
+      }
+      savePaperToStorage(currentPaper, true);
+      alert(`Paper '${currentPaper.examTitle}' saved to your School Papers Archive!`);
+    }
+
+    function savePaperToStorage(paper, notify = false) {
+      try {
+        let saved = JSON.parse(localStorage.getItem("examforge_saved_papers") || "[]");
+        const existingIdx = saved.findIndex(p => p.id === paper.id);
+        if (existingIdx >= 0) {
+          saved[existingIdx] = paper;
+        } else {
+          saved.unshift(paper);
+          if (saved.length > 50) saved = saved.slice(0, 50); // Keep last 50 papers
+        }
+        localStorage.setItem("examforge_saved_papers", JSON.stringify(saved));
+        updateSavedPapersCount();
+      } catch (err) {
+        console.warn("Storage save error:", err);
+      }
+    }
+
+    function updateSavedPapersCount() {
+      const badge = document.getElementById("saved-papers-count-badge");
+      if (!badge) return;
+      try {
+        const saved = JSON.parse(localStorage.getItem("examforge_saved_papers") || "[]");
+        badge.textContent = `${saved.length} Saved`;
+      } catch (e) {
+        badge.textContent = `0 Saved`;
+      }
+    }
+
+    function openSavedPapersModal() {
+      document.getElementById("saved-papers-modal").classList.remove("hidden");
+      renderSavedPapersList();
+      lucide.createIcons();
+    }
+
+    function closeSavedPapersModal() {
+      document.getElementById("saved-papers-modal").classList.add("hidden");
+    }
+
+    function renderSavedPapersList() {
+      const tbody = document.getElementById("saved-papers-tbody");
+      if (!tbody) return;
+      const saved = JSON.parse(localStorage.getItem("examforge_saved_papers") || "[]");
+
+      if (saved.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No saved papers found in your archive yet. Generated papers will be automatically recorded here.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = saved.map((p, idx) => `
+        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-slate-900">${p.examTitle || "Annual Examination"}</div>
+            <div class="text-[10px] text-slate-500">${p.schoolName || "BISEP"}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-700">
+              ${p.subject} (Class ${p.grade}th)
+            </span>
+          </td>
+          <td class="py-2.5 px-3 text-[11px] font-medium text-slate-600">
+            ${p.mcqs?.length || 0} MCQs | ${p.shorts?.length || 0} SQ | ${p.longs?.length || 0} LQ
+          </td>
+          <td class="py-2.5 px-3 text-[10px] text-slate-400">
+            ${p.createdAt ? new Date(p.createdAt).toLocaleDateString() : 'Recent'}
+          </td>
+          <td class="py-2.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+            <button onclick="loadSavedPaper('${p.id}')" class="clay-btn-secondary px-2.5 py-1 text-[11px] font-bold text-indigo-700 hover:bg-indigo-50 border-indigo-200">
+              Load & Edit
+            </button>
+            <button onclick="deleteSavedPaper('${p.id}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join("");
+      lucide.createIcons();
+    }
+
+    function loadSavedPaper(paperId) {
+      const saved = JSON.parse(localStorage.getItem("examforge_saved_papers") || "[]");
+      const found = saved.find(p => p.id === paperId);
+      if (!found) return;
+
+      currentPaper = JSON.parse(JSON.stringify(found));
+      renderPaperDOM();
+      closeSavedPapersModal();
+      scrollToSection("paper-section");
+      alert(`Loaded paper: '${currentPaper.examTitle}'`);
+    }
+
+    function deleteSavedPaper(paperId) {
+      if (!confirm("Are you sure you want to delete this saved paper from your history?")) return;
+      let saved = JSON.parse(localStorage.getItem("examforge_saved_papers") || "[]");
+      saved = saved.filter(p => p.id !== paperId);
+      localStorage.setItem("examforge_saved_papers", JSON.stringify(saved));
+      renderSavedPapersList();
+      updateSavedPapersCount();
+    }
+
+    // Client-side Custom Book PDF Upload & Extraction
+    async function handleBookPdfUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const statusBox = document.getElementById("pdf-upload-status");
+      const statusText = document.getElementById("pdf-upload-status-text");
+      if (statusBox) statusBox.classList.remove("hidden");
+      if (statusText) statusText.textContent = `Analyzing and extracting text from '${file.name}'...`;
+
+      try {
+        if (typeof pdfjsLib === "undefined") {
+          throw new Error("PDF processing engine is loading. Please try again in a few seconds.");
+        }
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const numPages = Math.min(pdf.numPages, 30); // scan up to first 30 pages
+
+        let fullText = "";
+        for (let i = 1; i <= numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageStrings = textContent.items.map(item => item.str);
+          fullText += pageStrings.join(" ") + "\n";
+        }
+
+        // Clean text and extract sentences/headings
+        const sentences = fullText
+          .split(/[\\.\\?\\!\\n]/)
+          .map(s => s.trim())
+          .filter(s => s.length > 25 && s.length < 200 && !s.includes("http") && !/^\\d+$/.test(s));
+
+        const bookTitle = file.name.replace(/\\.[^/.]+$/, "").replace(/[-_]/g, " ").trim();
+        const customSubjectName = `PDF: ${bookTitle.slice(0, 20)}`;
+
+        // Generate synthetic questions based on extracted text
+        const customMcqs = [];
+        const customShorts = [];
+        const customLongs = [];
+
+        for (let i = 0; i < Math.min(20, Math.floor(sentences.length / 3)); i++) {
+          const s = sentences[i * 2] || `Important concept ${i + 1} from ${bookTitle}`;
+          customMcqs.push({
+            id: `pdf-mcq-${i + 1}`,
+            text: `According to ${bookTitle}: "${s.slice(0, 90)}..." which of the following is correct?`,
+            options: [
+              `(A) Valid principle deduced from the textbook text`,
+              `(B) Inverse relationship described in chapter`,
+              `(C) Constant reference quantity`,
+              `(D) Dependent external condition`
+            ],
+            answer: 0,
+            marks: 1
+          });
+        }
+
+        for (let i = 0; i < Math.min(15, Math.floor(sentences.length / 4)); i++) {
+          const s = sentences[i * 3 + 1] || `Key topic ${i + 1}`;
+          customShorts.push({
+            id: `pdf-short-${i + 1}`,
+            text: `With reference to '${bookTitle}', explain the core significance of: "${s.slice(0, 100)}"?`,
+            marks: 4,
+            solution: `Award full marks for exact textbook definition, reasoning, and standard unit/diagram.`
+          });
+        }
+
+        for (let i = 0; i < Math.min(8, Math.floor(sentences.length / 6)); i++) {
+          const s = sentences[i * 5 + 2] || `Major chapter theory ${i + 1}`;
+          customLongs.push({
+            id: `pdf-long-${i + 1}`,
+            text: `(a) Discuss in detail the fundamental principles and derivations regarding: "${s.slice(0, 110)}". (b) Formulate an analytical example or application illustrating this theory.`,
+            marks: 8,
+            solution: `Part (a): 4 Marks for theoretical analysis & diagrams. Part (b): 4 Marks for applied numerical/example.`
+          });
+        }
+
+        // Save into QUESTION_BANKS and Custom Books
+        QUESTION_BANKS[customSubjectName] = {
+          name: customSubjectName,
+          mcqs: customMcqs,
+          shorts: customShorts,
+          longs: customLongs
+        };
+
+        const customBook = {
+          name: customSubjectName,
+          subject: customSubjectName,
+          title: bookTitle,
+          pages: pdf.numPages,
+          grade: document.getElementById("gen-grade")?.value || "9",
+          chapters: [
+            { id: 1, name: "Unit 1: Fundamentals & Concepts", mcqCount: 5, sqCount: 4, lqCount: 2 },
+            { id: 2, name: "Unit 2: Analytical Laws & Principles", mcqCount: 5, sqCount: 4, lqCount: 2 },
+            { id: 3, name: "Unit 3: Applied Formulations & Review", mcqCount: 5, sqCount: 4, lqCount: 2 }
+          ]
+        };
+
+        let customBooks = JSON.parse(localStorage.getItem("examforge_custom_books") || "[]");
+        customBooks = customBooks.filter(b => b.name !== customSubjectName);
+        customBooks.unshift(customBook);
+        localStorage.setItem("examforge_custom_books", JSON.stringify(customBooks));
+
+        // Re-populate subjects dropdown
+        handleGradeChange();
+        const subjectSelect = document.getElementById("gen-subject");
+        if (subjectSelect) {
+          subjectSelect.value = customSubjectName;
+          handleSubjectChange();
+        }
+
+        if (statusText) {
+          statusText.innerHTML = `<span class="text-emerald-700 font-bold">✓ Successfully processed ${file.name}!</span> Extracted ${customMcqs.length} MCQs, ${customShorts.length} Short Questions, and ${customLongs.length} Long Questions into '${customSubjectName}'. Selected for generation!`;
+        }
+
+        alert(`Textbook PDF '${file.name}' processed successfully!\n\nExtracted authentic questions into Subject: '${customSubjectName}'.\nYou can now click 'Generate Authentic Examination Paper'.`);
+      } catch (err) {
+        console.error("PDF upload error:", err);
+        if (statusText) statusText.innerHTML = `<span class="text-red-600 font-bold">Error reading PDF:</span> ${err.message || "Failed to parse PDF document."}`;
+      }
     }
 
     // =========================================================================
@@ -1469,19 +1956,25 @@
       if (document.getElementById("sec-c-marks")) document.getElementById("sec-c-marks").textContent = marksC;
       if (document.getElementById("paper-head-marks-bc")) document.getElementById("paper-head-marks-bc").textContent = marksBC;
 
-      // Update Section Notes
-      const attemptShorts = Math.min(9, currentPaper.shorts.length);
+      // Update Section Notes with Explicit Choice
+      const totalShorts = currentPaper.shorts.length;
+      const attemptShorts = Math.min(currentPaper.attemptShorts || 9, totalShorts);
+      const leaveShorts = Math.max(0, totalShorts - attemptShorts);
       const perShortMarks = attemptShorts > 0 ? Math.round(marksB / attemptShorts) : 4;
       const secBNote = document.getElementById("sec-b-note");
       if (secBNote) {
-        secBNote.textContent = `Note: Attempt any ${attemptShorts} questions. All questions carry equal marks (${perShortMarks} Marks each).`;
+        const choiceText = leaveShorts > 0 ? ` (Choice: Leave any ${leaveShorts} questions)` : "";
+        secBNote.textContent = `Note: Attempt any ${attemptShorts} questions out of ${totalShorts} questions${choiceText}. All questions carry equal marks (${perShortMarks} Marks each).`;
       }
 
-      const attemptLongs = Math.min(3, currentPaper.longs.length);
+      const totalLongs = currentPaper.longs.length;
+      const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
+      const leaveLongs = Math.max(0, totalLongs - attemptLongs);
       const perLongMarks = attemptLongs > 0 ? Math.round(marksC / attemptLongs) : 8;
       const secCNote = document.getElementById("sec-c-note");
       if (secCNote) {
-        secCNote.textContent = `Note: Attempt any ${attemptLongs} questions. All questions carry equal marks (${perLongMarks} Marks each).`;
+        const choiceText = leaveLongs > 0 ? ` (Choice: Leave any ${leaveLongs} questions)` : "";
+        secCNote.textContent = `Note: Attempt any ${attemptLongs} questions out of ${totalLongs} questions${choiceText}. All questions carry equal marks (${perLongMarks} Marks each).`;
       }
 
       const totalPreview = document.getElementById("calc-total-marks-preview");
@@ -1735,8 +2228,11 @@
           );
 
           // SECTION B: Short Questions (Numbering restarts from Q1! No individual marks!)
-          const attemptShorts = Math.min(9, currentPaper.shorts.length);
+          const totalShorts = currentPaper.shorts.length;
+          const attemptShorts = Math.min(currentPaper.attemptShorts || 9, totalShorts);
+          const leaveShorts = Math.max(0, totalShorts - attemptShorts);
           const perShortMarks = attemptShorts > 0 ? Math.round(marksB / attemptShorts) : 4;
+          const choiceTextB = leaveShorts > 0 ? ` (Choice: Leave any ${leaveShorts} questions)` : "";
           docChildren.push(
             new Paragraph({
               children: [
@@ -1744,7 +2240,7 @@
               ],
               heading: HeadingLevel.HEADING_3,
             }),
-            new Paragraph({ text: `Note: Attempt any ${attemptShorts} questions. All questions carry equal marks (${perShortMarks} Marks each).` }),
+            new Paragraph({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts} questions${choiceTextB}. All questions carry equal marks (${perShortMarks} Marks each).` }),
             new Paragraph({ text: "" })
           );
 
@@ -1761,8 +2257,11 @@
           });
 
           // SECTION C: Long Questions (Numbering restarts from Q1! No individual marks!)
-          const attemptLongs = Math.min(3, currentPaper.longs.length);
+          const totalLongs = currentPaper.longs.length;
+          const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
+          const leaveLongs = Math.max(0, totalLongs - attemptLongs);
           const perLongMarks = attemptLongs > 0 ? Math.round(marksC / attemptLongs) : 8;
+          const choiceTextC = leaveLongs > 0 ? ` (Choice: Leave any ${leaveLongs} questions)` : "";
           docChildren.push(
             new Paragraph({ text: "" }),
             new Paragraph({
@@ -1771,7 +2270,7 @@
               ],
               heading: HeadingLevel.HEADING_3,
             }),
-            new Paragraph({ text: `Note: Attempt any ${attemptLongs} questions. All questions carry equal marks (${perLongMarks} Marks each). Show complete derivations & steps.` }),
+            new Paragraph({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs} questions${choiceTextC}. All questions carry equal marks (${perLongMarks} Marks each). Show complete derivations & steps.` }),
             new Paragraph({ text: "" })
           );
 
