@@ -3,112 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ExamForge AI — Bilingual Examination Paper Generator | BISE Peshawar & KPK Board</title>
-  <meta name="description" content="Production-ready AI examination paper generator grounded in official KPK Textbook Board Peshawar textbooks for Class 9th and 10th. Developed by Muhammad Ali (AliBuild).">
-  <meta name="author" content="Muhammad Ali — AliBuild">
-  
-  <!-- Tailwind CSS CDN & Lucide Icons -->
+  <title>ExamForge AI — Authentic KPK BISEP Examination Paper Generator</title>
+
+  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- docx.js for genuine Microsoft Word (.docx) generation -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.iife.js"></script>
+  <!-- FileSaver.js for file downloads -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <!-- Google Fonts: Inter, Outfit, and Urdu Noto Nastaliq -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
       color: #0f172a;
     }
-    .urdu-font {
-      font-family: 'Noto Nastaliq Urdu', serif;
+    .font-urdu {
+      font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
       direction: rtl;
-      line-height: 2.2;
     }
-    /* Claymorphism Theme Styles matching ExamForge AI Next.js UI */
     .clay-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border-radius: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 
-        8px 8px 20px rgba(226, 232, 240, 0.8),
-        -8px -8px 20px rgba(255, 255, 255, 0.9),
-        inset 2px 2px 4px rgba(255, 255, 255, 0.9);
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
     }
     .clay-card-flat {
-      background: #f1f5f9;
-      border-radius: 1rem;
-      box-shadow: 
-        inset 3px 3px 6px rgba(203, 213, 225, 0.5),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
     }
     .clay-btn-primary {
       background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
       color: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 
-        4px 4px 10px rgba(234, 88, 12, 0.35),
-        -2px -2px 6px rgba(255, 255, 255, 0.8),
-        inset 1px 1px 2px rgba(255, 255, 255, 0.4);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .clay-btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 
-        6px 6px 14px rgba(234, 88, 12, 0.45),
-        -2px -2px 6px rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(234, 88, 12, 0.45);
     }
     .clay-btn-secondary {
       background: #ffffff;
-      color: #0f172a;
-      border-radius: 1rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 
-        3px 3px 8px rgba(226, 232, 240, 0.8),
-        -3px -3px 8px rgba(255, 255, 255, 0.9);
+      color: #334155;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
       transition: all 0.2s ease;
     }
     .clay-btn-secondary:hover {
-      background: #f8fafc;
-      transform: translateY(-1px);
+      background: #f1f5f9;
+      border-color: #94a3b8;
     }
     .clay-input {
-      background: #f8fafc;
-      border-radius: 0.875rem;
-      border: 1.5px solid #e2e8f0;
-      box-shadow: inset 2px 2px 5px rgba(203, 213, 225, 0.3);
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
       transition: all 0.2s ease;
     }
     .clay-input:focus {
       outline: none;
       border-color: #f97316;
-      background: #ffffff;
       box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
     }
     .clay-badge-mint {
       background: #ecfdf5;
       color: #059669;
       border: 1px solid #a7f3d0;
-      box-shadow: 2px 2px 5px rgba(16, 185, 129, 0.1);
     }
     .clay-badge-orange {
       background: #fff7ed;
       color: #c2410c;
       border: 1px solid #fed7aa;
-      box-shadow: 2px 2px 5px rgba(234, 88, 12, 0.1);
     }
-    .exam-paper-page {
+    .editable-text {
+      outline: none;
+      border-radius: 4px;
+      padding: 1px 4px;
+      transition: background 0.15s ease;
+    }
+    .editable-text:hover {
+      background-color: #fef3c7;
+      cursor: text;
+    }
+    .editable-text:focus {
+      background-color: #fed7aa;
+      box-shadow: 0 0 0 2px #ea580c;
+    }
+    
+    /* Paper Formats */
+    .paper-bisep-classic {
+      border: 3px double #0f172a;
       background: #ffffff;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      font-family: 'Times New Roman', Georgia, serif;
+    }
+    .paper-modern-twocol {
       border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+    .paper-compact-test {
+      border: 1px dashed #64748b;
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #paper-print-area, #paper-print-area * {
+        visibility: visible;
+      }
+      #paper-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 15mm;
+        box-shadow: none;
+        border: none;
+      }
+      .no-print {
+        display: none !important;
+      }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
 
-  <!-- TOP BRANDING NAVBAR -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/85 border-b border-slate-200/80 px-4 sm:px-8 py-3.5 shadow-sm">
+  <!-- TOP NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-slate-200/80 px-4 sm:px-8 py-3 shadow-sm no-print">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       <div class="flex items-center space-x-3">
         <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30">
@@ -123,167 +159,120 @@
         </div>
       </div>
 
-      <!-- Nav Links, Quota Badge & Auth Actions -->
+      <!-- Action buttons & Auth states -->
       <div class="flex items-center space-x-2.5 sm:space-x-3">
-        <div class="hidden lg:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-orange-50 border border-orange-200 text-xs font-bold text-orange-800">
-          <i data-lucide="gift" class="w-3.5 h-3.5 text-orange-600"></i>
-          <span id="nav-quota-summary">Free Trial: 2 Free Papers / Subject</span>
+        <!-- Guest status indicator -->
+        <div id="nav-guest-status" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800">
+          <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span id="guest-quota-badge">Guest Free Access: Instant Paper Generation</span>
         </div>
 
-        <button onclick="scrollToSection('generator')" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold hidden sm:flex items-center space-x-1.5">
-          <i data-lucide="file-plus" class="w-4 h-4 text-orange-600"></i>
-          <span>Create Exam Paper</span>
-        </button>
-
-        <!-- SEPARATE LOGIN & REGISTER BUTTONS (Guest State) -->
-        <div id="nav-guest-actions" class="flex items-center space-x-2">
-          <button onclick="openLoginModal()" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 hover:border-slate-400 transition" id="btn-nav-login">
-            <i data-lucide="log-in" class="w-4 h-4 text-slate-700"></i>
-            <span>Sign In</span>
-          </button>
-
-          <button onclick="openRegisterModal()" class="clay-btn-primary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5" id="btn-nav-register">
-            <i data-lucide="school" class="w-4 h-4"></i>
-            <span>Register School</span>
-          </button>
-        </div>
-
-        <!-- AUTHENTICATED STATE: Active School Pill & Logout -->
-        <div id="nav-user-actions" class="hidden flex items-center space-x-2">
-          <div class="clay-card-flat px-3 py-1.5 rounded-xl flex items-center space-x-2 border border-orange-200/80 bg-orange-50/50">
+        <!-- School Signed In Status (Hidden by default) -->
+        <div id="nav-school-status" class="hidden flex items-center space-x-2">
+          <div class="clay-card-flat px-3 py-1.5 rounded-xl flex items-center space-x-2 border border-orange-200 bg-orange-50/50">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[140px] truncate">School Name</span>
-            <span class="clay-badge-mint text-[10px] font-extrabold px-2 py-0.5 rounded-full hidden sm:inline-block">Free Trial Active</span>
+            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[150px] truncate">Peshawar Model School</span>
+            <span class="clay-badge-mint text-[10px] font-bold px-2 py-0.5 rounded-full">Pro School</span>
           </div>
-          <button onclick="handleLogout()" title="Sign Out" class="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200">
+          <button onclick="handleSchoolLogout()" title="Sign Out" class="p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </button>
         </div>
+
+        <!-- School Sign In Button -->
+        <button onclick="openSchoolLoginModal()" id="btn-nav-login" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5">
+          <i data-lucide="log-in" class="w-4 h-4 text-slate-700"></i>
+          <span>School Sign In</span>
+        </button>
+
+        <!-- Muhammad Ali Owner Portal Button -->
+        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shadow-sm">
+          <i data-lucide="shield-check" class="w-4 h-4"></i>
+          <span>Owner Portal</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- TOP CELEBRATION / WELCOME BANNER (Shown upon verification or login) -->
-  <div id="welcome-banner" class="hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white px-4 py-3 shadow-md transition-all">
-    <div class="max-w-7xl mx-auto flex items-center justify-between text-xs sm:text-sm font-bold">
-      <div class="flex items-center space-x-2">
-        <i data-lucide="party-popper" class="w-5 h-5 flex-shrink-0 text-amber-300"></i>
-        <span>Welcome, <strong id="welcome-banner-school">Peshawar Model School</strong>! Your account is verified. Free Trial Active: <strong>2 Free Papers per subject</strong> across all 18 KPK Textbooks.</span>
-      </div>
-      <button onclick="dismissWelcomeBanner()" class="text-white/80 hover:text-white p-1 ml-2">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- HERO SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-12">
-    <div class="clay-card p-8 sm:p-12 relative overflow-hidden">
-      <div class="max-w-3xl space-y-4">
-        <div class="inline-flex items-center space-x-2 clay-badge-orange px-3 py-1 rounded-full text-xs font-extrabold">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-orange-600"></i>
-          <span>Official BISE Peshawar & KPK Board Curriculum Grounded</span>
+  <!-- HERO / NOTICE BANNER -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-8 pt-8 pb-4 no-print">
+    <div class="clay-card p-6 sm:p-8 bg-gradient-to-r from-orange-50/60 via-amber-50/40 to-white relative overflow-hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-2 max-w-2xl">
+          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-3 py-1 rounded-full text-xs font-extrabold">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>100% Free Paper Generation — No Sign-Up or OTP Required</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            Generate & Edit <span class="text-orange-600">Class 9th & 10th</span> Exam Papers Instantly
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Select any subject from authentic KPK BISEP textbooks. Add, remove, or edit questions, customize marks, switch paper styles, and download in real Microsoft Word (.docx) format!
+          </p>
         </div>
-        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-          Generate Authentic Examination Papers for <span class="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Class 9th & 10th</span> in Seconds.
-        </h2>
-        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
-          Ground questions in 100% authentic textbooks with every single chapter. Features bilingual Urdu/English typography, objective bubble MCQs, conceptual short questions, marking rubrics, and confidential teacher answer keys.
-        </p>
 
-        <!-- CTA Action Row -->
-        <div class="pt-4 flex flex-wrap items-center gap-3">
-          <button onclick="openRegisterModal()" class="clay-btn-primary px-6 py-3 text-xs sm:text-sm font-extrabold flex items-center space-x-2">
-            <i data-lucide="school" class="w-4 h-4"></i>
-            <span>Register School (Free Trial)</span>
+        <div class="flex flex-col sm:flex-row items-center gap-2">
+          <button onclick="scrollToSection('generator')" class="w-full sm:w-auto clay-btn-primary px-5 py-3 text-xs font-extrabold flex items-center justify-center space-x-2">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Create Paper Now</span>
           </button>
-          <button onclick="openLoginModal()" class="clay-btn-secondary px-5 py-3 text-xs sm:text-sm font-extrabold flex items-center space-x-2">
-            <i data-lucide="log-in" class="w-4 h-4 text-slate-700"></i>
-            <span>Sign In</span>
+          <button onclick="openSchoolLoginModal()" class="w-full sm:w-auto clay-btn-secondary px-4 py-3 text-xs font-bold flex items-center justify-center space-x-1.5">
+            <i data-lucide="school" class="w-4 h-4 text-slate-700"></i>
+            <span>School Login</span>
           </button>
-          <button onclick="scrollToSection('curriculum')" class="clay-btn-secondary px-5 py-3 text-xs sm:text-sm font-extrabold flex items-center space-x-2">
-            <i data-lucide="book-open" class="w-4 h-4 text-orange-600"></i>
-            <span>18 KPK Textbooks</span>
-          </button>
-          <a href="https://alibuild.site" target="_blank" class="px-4 py-3 text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1.5">
-            <span>By Muhammad Ali (AliBuild)</span>
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- AUTHENTIC CURRICULUM EXPLORER (18 BOOKS) -->
-  <section id="curriculum" class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-3">
-      <div>
-        <div class="inline-flex items-center space-x-1.5 text-orange-600 text-xs font-black uppercase tracking-wider mb-1">
-          <i data-lucide="library" class="w-4 h-4"></i>
-          <span>Official Syllabus</span>
-        </div>
-        <h3 class="text-2xl font-black text-slate-900 tracking-tight">KPK Peshawar Textbook Board Syllabus (18 Core Books)</h3>
-        <p class="text-xs text-slate-500">Every textbook includes 100% complete chapters — zero missing chapters.</p>
-      </div>
-
-      <!-- Grade Filter Pills -->
-      <div class="clay-card-flat p-1 flex self-start sm:self-auto">
-        <button id="btn-grade-all" onclick="filterBooks('all')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-sm transition">All (18)</button>
-        <button id="btn-grade-9" onclick="filterBooks('9')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition">Class 9th (9)</button>
-        <button id="btn-grade-10" onclick="filterBooks('10')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition">Class 10th (9)</button>
-      </div>
-    </div>
-
-    <!-- Books Grid -->
-    <div id="books-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      <!-- Dynamic books populated by JS -->
-    </div>
-  </section>
-
-  <!-- INTERACTIVE EXAMINATION GENERATOR -->
-  <section id="generator" class="max-w-7xl mx-auto px-4 sm:px-8 py-10">
-    <div class="clay-card p-6 sm:p-10 space-y-8">
-      <div class="border-b border-slate-200/80 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <!-- MAIN GENERATOR CONFIGURATION SECTION -->
+  <section id="generator" class="max-w-7xl mx-auto px-4 sm:px-8 py-6 no-print">
+    <div class="clay-card p-6 sm:p-8 space-y-6">
+      
+      <div class="border-b border-slate-200/80 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-1 rounded-full text-[11px] font-black mb-2">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>Interactive Examination Blueprint Engine</span>
+          <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
+            <i data-lucide="sliders" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>Blueprint Builder</span>
           </div>
-          <h3 class="text-2xl font-black text-slate-900 tracking-tight">Configure & Generate Examination Paper</h3>
-          <p class="text-xs text-slate-500">Select curriculum chapters, question distributions, and generate printable papers.</p>
+          <h3 class="text-xl font-black text-slate-900">Step 1: Configure Examination Paper</h3>
+          <p class="text-xs text-slate-500">Choose Grade, Subject, Chapters, Question counts, and Paper Layout Style.</p>
         </div>
 
-        <div class="clay-card-flat px-4 py-2.5 flex items-center space-x-3 bg-amber-50/60 border border-amber-200/80">
-          <i data-lucide="shield-alert" class="w-5 h-5 text-orange-600"></i>
-          <div class="text-xs">
-            <p class="font-bold text-slate-900">Free Trial Quota: <span id="quota-display" class="text-orange-600">0 / 2 Papers Used</span></p>
-            <p class="text-[11px] text-slate-500">2 free papers per subject. Unlimited on Pro subscription.</p>
-          </div>
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="text-slate-500 font-semibold">Active Mode:</span>
+          <span id="active-mode-label" class="clay-badge-mint font-bold px-2.5 py-1 rounded-full text-[11px]">Free Guest Mode</span>
         </div>
       </div>
 
-      <!-- Form Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Settings Column -->
-        <div class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Target Class / Grade</label>
-            <select id="gen-grade" onchange="updateSubjectOptions()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
-              <option value="9">Class 9th (Matric Part I)</option>
-              <option value="10">Class 10th (Matric Part II)</option>
-            </select>
+      <!-- Generator Settings Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Column 1: Core Parameters -->
+        <div class="space-y-3.5">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Target Class</label>
+              <select id="gen-grade" onchange="handleGradeChange()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
+                <option value="9">Class 9th (Matric-I)</option>
+                <option value="10">Class 10th (Matric-II)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Subject</label>
+              <select id="gen-subject" onchange="handleSubjectChange()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
+                <!-- Dynamically Populated -->
+              </select>
+            </div>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Subject</label>
-            <select id="gen-subject" onchange="renderChapterSelector()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
-              <!-- Dynamically populated -->
-            </select>
+            <label class="block text-xs font-bold text-slate-700 mb-1">School / Institution Header Name</label>
+            <input type="text" id="gen-school-name" value="Board of Intermediate & Secondary Education Peshawar" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1">Examination Title</label>
-            <input type="text" id="gen-title" value="Class 9th Annual Examination 2026" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
+            <input type="text" id="gen-exam-title" value="Annual Examination 2026" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800" />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -292,576 +281,408 @@
               <input type="text" id="gen-time" value="3 Hours" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Total Marks</label>
-              <input type="number" id="gen-marks" value="75" class="w-full clay-input p-2.5 text-xs font-semibold text-slate-800" />
+              <label class="block text-xs font-bold text-slate-700 mb-1">Paper Layout Style</label>
+              <select id="gen-paper-style" onchange="changePaperStyle(this.value)" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
+                <option value="bisep-classic">🏛 BISEP Board Classical</option>
+                <option value="modern-twocol">🏢 Modern Institutional</option>
+                <option value="compact-test">📄 Compact Print-Saver</option>
+              </select>
             </div>
           </div>
 
-          <div class="clay-card-flat p-4 rounded-xl space-y-2 text-xs">
-            <p class="font-extrabold text-slate-800">Section Distribution Blueprint:</p>
-            <div class="flex justify-between text-slate-600">
-              <span>Section A (MCQs - 1 Mark each):</span>
-              <strong class="text-slate-900">15 Marks</strong>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>Section B (Short Questions - 4 Marks):</span>
-              <strong class="text-slate-900">36 Marks</strong>
-            </div>
-            <div class="flex justify-between text-slate-600">
-              <span>Section C (Long Questions - 8 Marks):</span>
-              <strong class="text-slate-900">24 Marks</strong>
-            </div>
-            <div class="border-t border-slate-300 pt-1.5 flex justify-between font-black text-slate-900">
-              <span>Total Calculated:</span>
-              <span class="text-orange-600">75 / 75 Marks (Valid)</span>
+          <!-- Question Counts Configuration -->
+          <div class="clay-card-flat p-3.5 rounded-xl space-y-2 text-xs">
+            <p class="font-extrabold text-slate-900 flex items-center justify-between">
+              <span>Section Question Allocations:</span>
+              <span id="calc-total-marks-preview" class="text-orange-600 font-black">75 Total Marks</span>
+            </p>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <span class="text-[10px] text-slate-500 font-bold block">MCQs (1M)</span>
+                <input type="number" id="count-mcqs" min="1" max="30" value="15" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 font-bold block">Short (4M)</span>
+                <input type="number" id="count-short" min="1" max="20" value="9" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-500 font-bold block">Long (8M)</span>
+                <input type="number" id="count-long" min="1" max="10" value="3" onchange="updateBlueprintCounts()" class="w-full text-center clay-input py-1 text-xs font-bold" />
+              </div>
             </div>
           </div>
 
-          <button onclick="generateMockPaper()" class="w-full clay-btn-primary py-3 px-4 text-xs font-extrabold flex items-center justify-center space-x-2">
-            <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>Generate & Render Examination Paper</span>
+          <button onclick="handleGeneratePaperClick()" class="w-full clay-btn-primary py-3 px-4 text-xs font-black flex items-center justify-center space-x-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Generate Examination Paper Now</span>
           </button>
         </div>
 
-        <!-- Chapters Selection Column (2 Cols wide) -->
+        <!-- Column 2 & 3: Chapter Selection Grid -->
         <div class="lg:col-span-2 space-y-3">
           <div class="flex items-center justify-between">
-            <label class="block text-xs font-bold text-slate-700">Select Textbook Chapters to Include</label>
-            <div class="space-x-2">
-              <button onclick="selectAllChapters(true)" class="text-[11px] font-bold text-orange-600 hover:underline">Select All</button>
-              <span class="text-slate-300">•</span>
-              <button onclick="selectAllChapters(false)" class="text-[11px] font-bold text-slate-500 hover:underline">Deselect All</button>
+            <div>
+              <label class="block text-xs font-bold text-slate-700">Select Syllabus Chapters to Include</label>
+              <p class="text-[11px] text-slate-500">Pick specific chapters for monthly tests or select all for full-book board exams.</p>
+            </div>
+            <div class="space-x-2 text-xs">
+              <button type="button" onclick="toggleAllChapters(true)" class="font-bold text-orange-600 hover:underline">Select All</button>
+              <span class="text-slate-300">&bull;</span>
+              <button type="button" onclick="toggleAllChapters(false)" class="font-bold text-slate-500 hover:underline">Deselect All</button>
             </div>
           </div>
 
-          <div id="chapters-checkbox-container" class="clay-card-flat p-4 rounded-2xl max-h-[380px] overflow-y-auto space-y-2 text-xs">
-            <!-- Checkboxes injected by JS -->
+          <div id="chapters-container" class="clay-card-flat p-4 rounded-xl max-h-[380px] overflow-y-auto space-y-1.5 text-xs">
+            <!-- Dynamically populated chapters checkboxes -->
           </div>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- LIVE EXAMINATION PAPER & ANSWER KEY PREVIEW -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+  <!-- STEP 2: LIVE EDITABLE EXAMINATION PAPER VIEW & TOOLBAR -->
+  <section id="paper-section" class="max-w-7xl mx-auto px-4 sm:px-8 py-6">
     <div class="clay-card p-6 sm:p-10 space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+
+      <!-- Editor Action Toolbar -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/90 pb-4 no-print">
         <div>
           <div class="inline-flex items-center space-x-1.5 clay-badge-mint px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
-            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
-            <span>Preview Mode</span>
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span>Interactive Editor Active</span>
           </div>
-          <h3 class="text-xl font-black text-slate-900">Generated BISEP Examination Paper</h3>
+          <h3 class="text-xl font-black text-slate-900">Custom Examination Paper</h3>
+          <p class="text-xs text-slate-500">Click any question or option to edit inline. Change marks, add/delete questions, and export.</p>
         </div>
 
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Format style quick buttons -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <button onclick="changePaperStyle('bisep-classic')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Classical</button>
+            <button onclick="changePaperStyle('modern-twocol')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Modern</button>
+            <button onclick="changePaperStyle('compact-test')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Compact</button>
+          </div>
+
+          <!-- Answer Key Toggle -->
+          <button onclick="toggleAnswerKeyDisplay()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1.5">
+            <i data-lucide="key" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span id="answer-key-btn-text">View Answer Key</span>
+          </button>
+
+          <!-- Download MS Word (.docx) Button -->
+          <button onclick="exportToWordDocx()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center space-x-1.5 shadow-md">
+            <i data-lucide="file-down" class="w-4 h-4"></i>
+            <span>Download MS Word (.docx)</span>
+          </button>
+
+          <!-- Download Word (.doc) Fallback -->
+          <button onclick="exportToWordDoc()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
+            <span>Word (.doc)</span>
+          </button>
+
+          <!-- Print / PDF -->
+          <button onclick="window.print()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1">
+            <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-600"></i>
+            <span>Print</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Add Question Toolbar (No Print) -->
+      <div class="clay-card-flat p-3 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs no-print bg-orange-50/50 border border-orange-200/60">
+        <span class="font-extrabold text-orange-950 flex items-center">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-orange-600 mr-1.5"></i> Add Custom Questions:
+        </span>
         <div class="flex items-center space-x-2">
-          <button onclick="toggleAnswerKey()" id="btn-toggle-key" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5">
-            <i data-lucide="eye" class="w-4 h-4 text-orange-600"></i>
-            <span id="key-label">View Confidential Answer Key</span>
+          <button onclick="addNewQuestion('mcq')" class="clay-btn-secondary px-3 py-1.5 font-bold hover:bg-white text-slate-800">
+            + Add MCQ
           </button>
-          <button onclick="window.print()" class="clay-btn-primary px-4 py-2 text-xs font-bold flex items-center space-x-1.5">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            <span>Print / Save DOCX</span>
+          <button onclick="addNewQuestion('short')" class="clay-btn-secondary px-3 py-1.5 font-bold hover:bg-white text-slate-800">
+            + Add Short Question
+          </button>
+          <button onclick="addNewQuestion('long')" class="clay-btn-secondary px-3 py-1.5 font-bold hover:bg-white text-slate-800">
+            + Add Long Question
           </button>
         </div>
       </div>
 
-      <!-- Paper Page Sheet Container -->
-      <div id="paper-view-container" class="exam-paper-page p-8 sm:p-12 rounded-xl text-slate-900 space-y-8 max-w-4xl mx-auto">
-        
-        <!-- Board Header -->
-        <div class="text-center border-b-2 border-slate-900 pb-4 space-y-1">
-          <h4 class="text-base sm:text-lg font-black uppercase tracking-wider">Board of Intermediate & Secondary Education Peshawar</h4>
-          <h5 id="paper-heading-title" class="text-sm font-extrabold text-slate-800">Class 9th Annual Examination 2026 — Mathematics</h5>
-          <div class="flex justify-between text-xs font-bold text-slate-700 pt-2 border-t border-slate-300 mt-2">
-            <span>Time Allowed: <span id="paper-display-time">3 Hours</span></span>
-            <span>Total Marks: <span id="paper-display-marks">75</span></span>
-          </div>
-        </div>
-
-        <!-- Student Instructions -->
-        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px] text-slate-600 space-y-1">
-          <p class="font-bold text-slate-800">General Instructions:</p>
-          <p>1. Section A is compulsory. All candidates must fill the rounded bubbles corresponding to the correct option.</p>
-          <p>2. Section B contains conceptual short questions. Attempt any 9 questions out of 12.</p>
-          <p>3. Section C contains descriptive analytical questions. Attempt any 3 questions out of 4.</p>
-        </div>
-
-        <!-- Section A: Objective MCQs -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
-            <span>SECTION - A (Objective MCQs)</span>
-            <span>Marks: 15</span>
-          </div>
-
-          <div id="mcqs-container" class="space-y-4 text-xs">
-            <!-- Sample MCQs -->
-            <div class="space-y-2">
-              <p class="font-bold">Q1. If A = [[2, 1], [0, 3]], then the determinant of matrix A (|A|) is:</p>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) 5</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) 6</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) 0</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) 2</span></label>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <p class="font-bold">Q2. The value of log_10(1000) according to laws of logarithms is equal to:</p>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) 1</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) 2</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) 3</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) 10</span></label>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <p class="font-bold">Q3. In a right-angled triangle, the relation between hypotenuse (c), base (b), and perpendicular (a) is:</p>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-slate-700">
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(A) c^2 = a^2 + b^2</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(B) c = a + b</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(C) a^2 = b^2 + c^2</span></label>
-                <label class="flex items-center space-x-1.5 cursor-pointer"><span class="w-4 h-4 rounded-full border border-slate-600 inline-block"></span> <span>(D) b^2 = a^2 + c^2</span></label>
-              </div>
+      <!-- PRINTABLE & EDITABLE EXAMINATION PAPER SHEET -->
+      <div id="paper-print-area">
+        <div id="paper-container" class="paper-bisep-classic p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto">
+          
+          <!-- Board / School Header -->
+          <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
+            <h3 id="paper-head-school" contenteditable="true" onblur="currentPaper.schoolName=this.innerText" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
+              Board of Intermediate & Secondary Education Peshawar
+            </h3>
+            <h4 id="paper-head-exam" contenteditable="true" onblur="currentPaper.examTitle=this.innerText" class="editable-text text-sm font-extrabold text-slate-800">
+              Class 9th Annual Examination 2026 — Mathematics
+            </h4>
+            <div class="flex justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2">
+              <span>Time Allowed: <span id="paper-head-time" contenteditable="true" onblur="currentPaper.timeAllowed=this.innerText" class="editable-text font-mono">3 Hours</span></span>
+              <span>Paper Code: <span class="font-mono">914-A</span></span>
+              <span>Total Marks: <span id="paper-head-total-marks" class="text-orange-600 font-mono font-black text-sm">75</span></span>
             </div>
           </div>
+
+          <!-- General Student Instructions -->
+          <div class="bg-slate-50/80 p-3 rounded-lg border border-slate-200 text-[11px] text-slate-700 space-y-1">
+            <p class="font-black text-slate-900 uppercase">General Instructions for Candidates:</p>
+            <p>1. Section A is compulsory. All candidates must fill the bubbles corresponding to the correct answer on the OMR sheet.</p>
+            <p>2. Section B contains conceptual short questions. Attempt required questions with neat headings and scientific reasons.</p>
+            <p>3. Section C contains descriptive analytical questions. Show complete steps and diagrams where applicable.</p>
+          </div>
+
+          <!-- SECTION A: OBJECTIVE MCQS -->
+          <div class="space-y-4">
+            <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
+              <span>SECTION — A (Objective Multiple Choice Questions)</span>
+              <span>Marks: <span id="sec-a-marks">15</span></span>
+            </div>
+
+            <div id="sec-a-container" class="space-y-4 text-xs">
+              <!-- MCQs rendered dynamically with inline edit, delete, and options -->
+            </div>
+          </div>
+
+          <!-- SECTION B: SHORT QUESTIONS -->
+          <div class="space-y-4 pt-2">
+            <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
+              <span>SECTION — B (Short Conceptual Questions)</span>
+              <span>Marks: <span id="sec-b-marks">36</span></span>
+            </div>
+
+            <div id="sec-b-container" class="space-y-3.5 text-xs">
+              <!-- Short questions rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- SECTION C: LONG QUESTIONS -->
+          <div class="space-y-4 pt-2">
+            <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
+              <span>SECTION — C (Descriptive Long Questions)</span>
+              <span>Marks: <span id="sec-c-marks">24</span></span>
+            </div>
+
+            <div id="sec-c-container" class="space-y-4 text-xs">
+              <!-- Long questions rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- CONFIDENTIAL ANSWER KEY & MARKING SCHEME (Hidden by default) -->
+          <div id="paper-answer-key" class="hidden border-2 border-red-500 bg-red-50/50 p-6 rounded-xl space-y-3 mt-8">
+            <div class="flex items-center space-x-2 text-red-700 font-black text-sm">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+              <span>CONFIDENTIAL TEACHER ANSWER KEY & MARKING CRITERIA</span>
+            </div>
+            <p class="text-xs text-red-900 font-medium">Keep strictly confidential for teachers and examiners only.</p>
+            <div id="answer-key-content" class="text-xs space-y-2 text-slate-800">
+              <!-- Solutions rendered dynamically -->
+            </div>
+          </div>
+
         </div>
-
-        <!-- Section B: Short Questions -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
-            <span>SECTION - B (Short Conceptual Questions)</span>
-            <span>Marks: 36 (9 x 4)</span>
-          </div>
-
-          <div id="short-container" class="space-y-3 text-xs">
-            <p><strong>Q2.</strong> Define a Singular Matrix and determine whether B = [[4, 2], [6, 3]] is singular or non-singular. [4 Marks]</p>
-            <p><strong>Q3.</strong> Solve for x: log_3(x) = 4 using the fundamental definition of logarithms. [4 Marks]</p>
-            <p><strong>Q4.</strong> Simplify the radical expression and rationalize the denominator: (3 + sqrt(5)) / (3 - sqrt(5)). [4 Marks]</p>
-            <p><strong>Q5.</strong> State the SAS (Side-Angle-Side) Congruence Postulate for two triangles. [4 Marks]</p>
-          </div>
-        </div>
-
-        <!-- Section C: Long Descriptive Questions -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 text-white px-3 py-1.5 rounded text-xs font-black tracking-wide flex justify-between">
-            <span>SECTION - C (Descriptive Long Questions)</span>
-            <span>Marks: 24 (3 x 8)</span>
-          </div>
-
-          <div id="long-container" class="space-y-3 text-xs">
-            <p><strong>Q6.</strong> Solve the following system of linear equations by using Cramer's Rule: 2x + y = 3 and 6x + 5y = 1. [8 Marks]</p>
-            <p><strong>Q7.</strong> Prove that any point on the right bisector of a line segment is equidistant from its end points. Draw a neat geometric diagram and write Given, To Prove, and Proof. [8 Marks]</p>
-          </div>
-        </div>
-
-        <!-- Confidential Answer Key Box (Hidden by Default) -->
-        <div id="answer-key-box" class="hidden border-2 border-red-500 bg-red-50/50 p-6 rounded-xl space-y-3">
-          <div class="flex items-center space-x-2 text-red-700 font-black text-sm">
-            <i data-lucide="lock" class="w-4 h-4"></i>
-            <span>CONFIDENTIAL TEACHER ANSWER KEY & MARKING SCHEME</span>
-          </div>
-          <p class="text-xs text-red-900 font-semibold">Keep this document separate and confidential. For examiner evaluation only.</p>
-          <div class="text-xs space-y-2 text-slate-800">
-            <p><strong>Q1:</strong> Option (B) 6 [Calculation: 2x3 - 1x0 = 6]</p>
-            <p><strong>Q2:</strong> Option (C) 3 [Calculation: 10^3 = 1000 => log_10(1000) = 3]</p>
-            <p><strong>Q3:</strong> Option (A) c^2 = a^2 + b^2 [Pythagoras' theorem fundamental formula]</p>
-            <p><strong>Q6:</strong> Cramer's Rule steps: Det(A) = 4, Det(Ax) = 14, Det(Ay) = -16. Solution: x = 3.5, y = -4. (Award 2 marks for determinants, 4 marks for substitutions, 2 marks for final values).</p>
-          </div>
-        </div>
-
       </div>
+
     </div>
   </section>
 
-  <!-- DEDICATED SIGN IN MODAL -->
-  <div id="login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <!-- SIMPLE SCHOOL SIGN IN MODAL (Username & Password Only — No OTP) -->
+  <div id="school-login-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 no-print">
     <div class="clay-card max-w-md w-full p-8 relative space-y-5">
-      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+      <button onclick="closeSchoolLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
       <div class="text-center space-y-1">
         <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-700 text-white flex items-center justify-center mx-auto shadow-md">
-          <i data-lucide="log-in" class="w-5 h-5"></i>
+          <i data-lucide="school" class="w-5 h-5"></i>
         </div>
         <h4 class="text-xl font-black text-slate-900">School Sign In</h4>
-        <p class="text-xs text-slate-500">Access your school dashboard and examination papers</p>
+        <p class="text-xs text-slate-500">Sign in with the Username & Password assigned to your school.</p>
       </div>
 
       <div id="login-error-msg" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700"></div>
 
-      <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-3.5">
+      <form id="school-login-form" onsubmit="handleSchoolLoginSubmit(event)" class="space-y-3.5">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Principal / Administrator Email</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">School Username *</label>
           <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="email" required id="login-email" placeholder="principal@school.edu.pk" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
+            <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="text" required id="login-username" placeholder="e.g. peshawarmodel" class="w-full clay-input pl-9 p-2.5 text-xs font-bold text-slate-800" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Password *</label>
           <div class="relative">
             <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="password" required id="login-password" placeholder="Enter your password" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
+            <input type="password" required id="login-password" placeholder="Enter school password" class="w-full clay-input pl-9 p-2.5 text-xs font-bold text-slate-800" />
           </div>
         </div>
 
-        <button type="submit" id="btn-login-submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-bold flex items-center justify-center space-x-2">
-          <span>Sign In to School Dashboard</span>
+        <button type="submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-bold flex items-center justify-center space-x-2">
+          <span>Sign In to School Portal</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
 
         <div class="clay-card-flat p-2.5 rounded-xl text-[11px] text-slate-600 bg-slate-100/80 space-y-1">
-          <p class="font-bold text-slate-800 flex items-center"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-600 mr-1"></i> Quick Demo Access:</p>
-          <p class="font-mono text-[10px] text-slate-600">Email: principal@peshawarmodel.edu.pk</p>
-          <p class="font-mono text-[10px] text-slate-600">Password: TeacherPass2026!</p>
-          <button type="button" onclick="fillDemoCredentials()" class="text-[11px] font-bold text-orange-600 hover:underline pt-0.5">Click to auto-fill demo credentials</button>
+          <p class="font-bold text-slate-800 flex items-center"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-600 mr-1"></i> Demo School Credentials:</p>
+          <p class="font-mono text-[10px] text-slate-700">Username: <strong>peshawarmodel</strong> &bull; Password: <strong>Model2026!</strong></p>
+          <p class="font-mono text-[10px] text-slate-700">Username: <strong>islamia</strong> &bull; Password: <strong>Islamia2026!</strong></p>
         </div>
 
-        <div class="pt-2 text-center text-xs text-slate-600 border-t border-slate-100">
-          <span>Don't have a school account yet?</span>
-          <button type="button" onclick="switchToRegister()" class="font-bold text-orange-600 hover:underline ml-1">Register School</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- DEDICATED REGISTRATION & AUTOMATIC OTP MODAL -->
-  <div id="register-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="clay-card max-w-lg w-full p-6 sm:p-8 relative space-y-5 max-h-[92vh] overflow-y-auto">
-      <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
-        <i data-lucide="x" class="w-5 h-5"></i>
-      </button>
-
-      <div class="text-center space-y-1">
-        <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 text-white flex items-center justify-center mx-auto shadow-md">
-          <i data-lucide="school" class="w-5 h-5"></i>
-        </div>
-        <h4 id="modal-title" class="text-xl font-black text-slate-900">Register School / Institution</h4>
-        <p class="text-xs text-slate-500">Free Trial: 2 Free Examination Papers per subject activated on verification</p>
-      </div>
-
-      <div id="reg-status-msg" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800"></div>
-      <div id="reg-error-msg" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700"></div>
-
-      <!-- Step 1: Registration Form -->
-      <form id="reg-form" onsubmit="handleRegistrationSubmit(event)" class="space-y-3.5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">School / College Name *</label>
-            <div class="relative">
-              <i data-lucide="building" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="text" required id="reg-school-name" placeholder="e.g. Peshawar Model School" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Principal / Admin Full Name *</label>
-            <div class="relative">
-              <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="text" required id="reg-principal-name" placeholder="e.g. Principal Ahmad Raza" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Official School Email *</label>
-            <div class="relative">
-              <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="email" required id="reg-email" placeholder="principal@school.edu.pk" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Mobile Number *</label>
-            <div class="relative">
-              <i data-lucide="smartphone" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-              <input type="text" required id="reg-phone" placeholder="03215423874 or +92..." class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Account Password *</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-            <input type="password" required id="reg-password" placeholder="Create strong password" class="w-full clay-input pl-9 p-2.5 text-xs font-medium text-slate-800" />
-          </div>
-        </div>
-
-        <!-- Verification Channel Selector -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Preferred OTP Verification Channel *</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="clay-card-flat p-2.5 rounded-xl flex items-center space-x-2.5 cursor-pointer border border-transparent hover:border-orange-300 transition has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/70">
-              <input type="radio" name="otp_channel" value="whatsapp" checked class="text-orange-600 focus:ring-orange-500" />
-              <div class="text-left">
-                <p class="text-xs font-black text-slate-900 flex items-center">
-                  <i data-lucide="message-square" class="w-3.5 h-3.5 text-emerald-600 mr-1"></i> WhatsApp
-                </p>
-                <p class="text-[10px] text-slate-500">Via +923215423874</p>
-              </div>
-            </label>
-
-            <label class="clay-card-flat p-2.5 rounded-xl flex items-center space-x-2.5 cursor-pointer border border-transparent hover:border-orange-300 transition has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/70">
-              <input type="radio" name="otp_channel" value="email" class="text-orange-600 focus:ring-orange-500" />
-              <div class="text-left">
-                <p class="text-xs font-black text-slate-900 flex items-center">
-                  <i data-lucide="mail" class="w-3.5 h-3.5 text-blue-600 mr-1"></i> Email
-                </p>
-                <p class="text-[10px] text-slate-500">alikhanwebdeveloper@gmail.com</p>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <!-- Official Sender Attribution -->
-        <div class="clay-card-flat p-2.5 rounded-xl text-[11px] text-slate-600 bg-orange-50/60 border border-orange-200/60">
-          <div class="flex items-center space-x-1.5 text-orange-900 font-bold">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-orange-600"></i>
-            <span>Official Portal Sender Credentials:</span>
-          </div>
-          <p class="text-[10px] text-slate-600 mt-0.5">
-            Email: <strong class="text-slate-900">alikhanwebdeveloper@gmail.com</strong> &bull; WhatsApp: <strong class="text-slate-900">+923215423874</strong>
-          </p>
-        </div>
-
-        <button type="submit" id="btn-reg-submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-bold flex items-center justify-center space-x-2">
-          <span id="btn-reg-text">Send 6-Digit Verification Code</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
-
-        <div class="pt-2 text-center text-xs text-slate-600 border-t border-slate-100">
-          <span>Already registered?</span>
-          <button type="button" onclick="switchToLogin()" class="font-bold text-orange-600 hover:underline ml-1">Sign In</button>
-        </div>
-      </form>
-
-      <!-- Step 2: 6-Digit OTP Verification Form -->
-      <form id="otp-form" onsubmit="handleOtpSubmit(event)" class="hidden space-y-3.5">
-        <div class="clay-card-flat p-3.5 rounded-xl text-center space-y-1.5 border border-emerald-200 bg-emerald-50/50">
-          <div id="otp-channel-icon" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-            <i data-lucide="smartphone" class="w-4 h-4"></i>
-          </div>
-          <p class="text-xs font-extrabold text-slate-900">6-Digit Security Code Generated & Dispatched!</p>
-          <p class="text-[11px] text-slate-600 leading-relaxed">
-            Target Destination: <strong id="otp-target-destination" class="text-slate-900 font-mono">+923215423874</strong><br>
-            Official Sender: <strong id="otp-sender-source" class="text-orange-600 font-semibold">+923215423874</strong>
-          </p>
-          <p class="text-[10px] text-amber-800 font-bold bg-amber-100/70 inline-block px-2.5 py-0.5 rounded-full">
-            ⏱ Valid for 5 minutes only &bull; Max 3 attempts
-          </p>
-        </div>
-
-        <!-- 1-Click WhatsApp Direct Receiver / Support Button -->
-        <div id="otp-direct-action-container" class="space-y-1.5">
-          <button type="button" onclick="openDirectWhatsApp()" id="btn-open-whatsapp" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center space-x-2 shadow-sm transition">
-            <i data-lucide="message-square" class="w-4 h-4"></i>
-            <span>Open in WhatsApp to View / Receive Code (+923215423874)</span>
-          </button>
-        </div>
-
-        <!-- Instant Verification Code Display & 1-Click Auto-Fill -->
-        <div class="clay-card-flat p-3 rounded-xl border border-amber-200 bg-amber-50/80 text-center space-y-1.5">
-          <div class="flex items-center justify-center space-x-2 text-xs font-extrabold text-slate-800">
-            <i data-lucide="key" class="w-4 h-4 text-orange-600"></i>
-            <span>Instant Access Security Code:</span>
-            <span id="instant-otp-display" class="font-mono text-base font-black bg-white px-2.5 py-0.5 rounded-lg border border-orange-300 text-orange-600 tracking-wider">------</span>
-          </div>
-          <p class="text-[10px] text-slate-500">
-            Telecom SMS or spam filters causing a delay? Click below to auto-fill and open dashboard instantly:
-          </p>
-          <button type="button" onclick="autoFillOtpCode()" class="clay-btn-primary py-1.5 px-4 text-[11px] font-extrabold flex items-center justify-center space-x-1.5 mx-auto">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-            <span>Auto-Fill Code & Open Dashboard Instantly</span>
-          </button>
-        </div>
-
-        <!-- 6 Separate Input Boxes with Auto-Tabbing -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-2 text-center">Or Enter 6-Digit Code Manually</label>
-          <div class="flex items-center justify-center space-x-2 sm:space-x-3" id="otp-boxes-container">
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-0" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-1" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-2" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-3" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-4" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-            <input type="text" maxlength="1" pattern="[0-9]" id="otp-box-5" class="otp-box w-11 h-13 text-center text-xl font-mono font-black clay-input focus:border-orange-500 focus:scale-105 transition" autocomplete="off" />
-          </div>
-        </div>
-
-        <button type="submit" id="btn-verify-submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-extrabold flex items-center justify-center space-x-2">
-          <span>Verify Code & Open Dashboard</span>
-          <i data-lucide="check-circle" class="w-4 h-4"></i>
-        </button>
-
-        <div class="flex items-center justify-between text-xs pt-1">
-          <button type="button" onclick="resendVerificationCode()" id="btn-resend-countdown" class="text-orange-600 font-bold hover:underline flex items-center space-x-1 disabled:opacity-50">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-            <span id="resend-timer-text">Resend Code (60s)</span>
-          </button>
-          <button type="button" onclick="backToRegStep1()" class="text-slate-500 hover:text-slate-700 font-medium">Change Details</button>
+        <div class="text-center text-xs text-slate-500 pt-1">
+          <span>Need an account for your school? Contact the site owner:</span>
+          <a href="https://api.whatsapp.com/send?phone=923215423874&text=Assalam-o-Alaikum%20Muhammad%20Ali!%20Please%20create%20an%20ExamForge%20AI%20school%20account%20for%20my%20institution." target="_blank" class="block font-bold text-emerald-600 hover:underline mt-1">
+            WhatsApp Muhammad Ali (+923215423874)
+          </a>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- UPGRADE MODAL (Contact Muhammad Ali) -->
-  <div id="upgrade-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="clay-card max-w-md w-full p-8 text-center space-y-4">
-      <div class="h-12 w-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center mx-auto shadow-md">
-        <i data-lucide="crown" class="w-6 h-6"></i>
-      </div>
-      <h4 class="text-xl font-black text-slate-900">Free Trial Limit Reached</h4>
-      <p class="text-xs text-slate-600">
-        You have generated the <strong>2 free examination papers</strong> allocated for this subject. To unlock unlimited generation across all 18 KPK BISEP textbooks, please upgrade to a Paid Subscription or contact the founder:
-      </p>
-
-      <div class="clay-card-flat p-4 rounded-xl text-left space-y-1.5 text-xs">
-        <p class="font-extrabold text-slate-900">Muhammad Ali — Founder & Lead Architect</p>
-        <p class="text-slate-600">Company: <strong>AliBuild</strong></p>
-        <p class="text-slate-600">Email: <a href="mailto:alikhanwebdeveloper@gmail.com" class="text-orange-600 font-bold hover:underline">alikhanwebdeveloper@gmail.com</a></p>
-        <p class="text-slate-600">Portfolio: <a href="https://alibuild.site" target="_blank" class="text-orange-600 font-bold hover:underline">https://alibuild.site</a></p>
-      </div>
-
-      <button onclick="closeUpgradeModal()" class="w-full clay-btn-primary py-2.5 text-xs font-bold">
-        Got it, Thank You
-      </button>
-    </div>
-  </div>
-
-  <!-- OWNER / SITE CODER MANAGEMENT INTERFACE (ADMIN PANEL MODAL) -->
-  <div id="owner-console-modal" class="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6">
+  <!-- MUHAMMAD ALI OWNER MASTER PORTAL (CREATE & MANAGE SCHOOL ACCOUNTS) -->
+  <div id="owner-master-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
     <div class="clay-card max-w-5xl w-full p-6 sm:p-8 relative space-y-6 max-h-[92vh] overflow-y-auto">
-      <button onclick="closeOwnerConsoleModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+      <button onclick="closeOwnerMasterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
         <i data-lucide="x" class="w-6 h-6"></i>
       </button>
 
-      <!-- Modal Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+      <!-- Owner Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
           <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-orange-600"></i>
-            <span>Owner & Site Coder Portal</span>
+            <i data-lucide="crown" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>Owner & Master Admin Console</span>
           </div>
-          <h3 class="text-xl sm:text-2xl font-black text-slate-900">OTP Verifications & School Approvals Console</h3>
-          <p class="text-xs text-slate-500">Live monitoring of WhatsApp (+923215423874) and Email deliveries with manual approval controls.</p>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">Muhammad Ali's School Management Section</h3>
+          <p class="text-xs text-slate-500">Create login accounts for schools with direct usernames & passwords. No verification hurdles.</p>
         </div>
-
         <div class="text-right text-xs">
           <p class="font-extrabold text-slate-900">Muhammad Ali (AliBuild)</p>
-          <p class="text-[11px] text-slate-500">Official Sender: alikhanwebdeveloper@gmail.com</p>
-          <button onclick="refreshOwnerVerifications()" class="text-orange-600 font-bold hover:underline flex items-center justify-end space-x-1 mt-0.5">
-            <i data-lucide="refresh-cw" class="w-3 h-3"></i>
-            <span>Refresh Live Logs</span>
-          </button>
+          <p class="text-slate-500 font-mono text-[11px]">alikhanwebdeveloper@gmail.com</p>
+          <p class="text-emerald-600 font-bold text-[11px]">WhatsApp: +923215423874</p>
         </div>
       </div>
 
-      <!-- Action Toast / Notice -->
-      <div id="owner-action-alert" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center space-x-2">
+      <!-- Action Toast Notice -->
+      <div id="owner-toast" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center space-x-2">
         <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-        <span id="owner-action-alert-text">Action completed successfully.</span>
+        <span id="owner-toast-text">School account created successfully!</span>
       </div>
 
-      <!-- Metric Cards Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
-        <div class="clay-card-flat p-3.5 rounded-xl space-y-1">
-          <p class="text-[11px] font-bold text-slate-500">Total Schools</p>
-          <h4 id="metric-total-schools" class="text-xl font-black text-slate-900">0</h4>
-          <p class="text-[10px] text-slate-400">Registered</p>
-        </div>
-        <div class="clay-card-flat p-3.5 rounded-xl space-y-1 bg-emerald-50/60 border border-emerald-200/60">
-          <p class="text-[11px] font-bold text-emerald-700">Verified Schools</p>
-          <h4 id="metric-verified-schools" class="text-xl font-black text-emerald-700">0</h4>
-          <p class="text-[10px] text-emerald-600">Free Trial Active</p>
-        </div>
-        <div class="clay-card-flat p-3.5 rounded-xl space-y-1 bg-orange-50/60 border border-orange-200/60">
-          <p class="text-[11px] font-bold text-orange-700">Pending OTPs</p>
-          <h4 id="metric-pending-otps" class="text-xl font-black text-orange-700">0</h4>
-          <p class="text-[10px] text-orange-600">Awaiting code</p>
-        </div>
-        <div class="clay-card-flat p-3.5 rounded-xl space-y-1 bg-red-50/60 border border-red-200/60">
-          <p class="text-[11px] font-bold text-red-700">Locked / Failed</p>
-          <h4 id="metric-locked-otps" class="text-xl font-black text-red-700">0</h4>
-          <p class="text-[10px] text-red-600">&ge; 3 failed attempts</p>
-        </div>
+      <!-- CREATE NEW SCHOOL ACCOUNT FORM -->
+      <div class="clay-card-flat p-5 rounded-2xl border border-orange-200/80 bg-orange-50/40 space-y-4">
+        <h4 class="text-sm font-black text-slate-900 flex items-center space-x-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-orange-600"></i>
+          <span>Create New School Account</span>
+        </h4>
+
+        <form id="create-school-form" onsubmit="handleCreateSchoolSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">School / College Name *</label>
+            <input type="text" required id="new-school-name" placeholder="e.g. Frontier Model School" class="w-full clay-input p-2 text-xs font-bold text-slate-800" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Principal / Admin Name</label>
+            <input type="text" id="new-principal-name" placeholder="e.g. Prof. Tariq Ahmad" class="w-full clay-input p-2 text-xs font-semibold text-slate-800" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Assign Username *</label>
+            <input type="text" required id="new-username" placeholder="e.g. frontiermodel" class="w-full clay-input p-2 text-xs font-mono font-bold text-slate-800" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Assign Password *</label>
+            <input type="text" required id="new-password" placeholder="e.g. Frontier2026!" class="w-full clay-input p-2 text-xs font-mono font-bold text-slate-800" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Principal WhatsApp / Phone</label>
+            <input type="text" id="new-phone" placeholder="03215423874" class="w-full clay-input p-2 text-xs font-bold text-slate-800" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Paper Generation Quota</label>
+            <select id="new-quota" class="w-full clay-input p-2 text-xs font-bold text-slate-800">
+              <option value="Unlimited">Unlimited Papers</option>
+              <option value="100">100 Papers</option>
+              <option value="50">50 Papers</option>
+              <option value="25">25 Papers</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2 lg:col-span-3 pt-1">
+            <button type="submit" class="clay-btn-primary py-2.5 px-5 text-xs font-extrabold flex items-center justify-center space-x-2">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Create School Account & Generate Login Credentials</span>
+            </button>
+          </div>
+        </form>
       </div>
 
-      <!-- Filters & Search Toolbar -->
-      <div class="clay-card-flat p-3 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-2.5">
-        <div class="w-full sm:flex-1 relative">
-          <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
-          <input type="text" id="owner-search-input" oninput="filterOwnerTable()" placeholder="Search by school, principal name, +92 phone, or email..." class="w-full clay-input pl-8 p-2 text-xs" />
+      <!-- CREATED SCHOOLS TABLE -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-black text-slate-900 flex items-center space-x-2">
+            <i data-lucide="building" class="w-4 h-4 text-slate-600"></i>
+            <span>Active Registered Schools (<span id="total-schools-count">0</span>)</span>
+          </h4>
+          <span class="text-[11px] text-slate-500 font-medium">Click "Send via WhatsApp" to message the principal directly</span>
         </div>
 
-        <div class="flex items-center space-x-2 w-full sm:w-auto">
-          <select id="owner-channel-filter" onchange="filterOwnerTable()" class="clay-input p-2 text-xs font-semibold text-slate-700">
-            <option value="all">All Channels</option>
-            <option value="whatsapp">WhatsApp (+92)</option>
-            <option value="email">Email</option>
-          </select>
-
-          <select id="owner-status-filter" onchange="filterOwnerTable()" class="clay-input p-2 text-xs font-semibold text-slate-700">
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="verified">Verified</option>
-            <option value="locked">Locked</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Live Verifications Attempts Table -->
-      <div class="border border-slate-200/80 rounded-xl overflow-hidden bg-white">
-        <div class="overflow-x-auto max-h-[340px]">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100/80 sticky top-0 z-10 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
-              <tr>
-                <th class="py-2.5 px-3">Time</th>
-                <th class="py-2.5 px-3">School & Principal</th>
-                <th class="py-2.5 px-3">Destination</th>
-                <th class="py-2.5 px-3">Channel</th>
-                <th class="py-2.5 px-3">Attempts</th>
-                <th class="py-2.5 px-3">Status</th>
-                <th class="py-2.5 px-3 text-right">Owner Controls</th>
-              </tr>
-            </thead>
-            <tbody id="owner-table-body" class="divide-y divide-slate-100 font-medium">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
+        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+          <div class="overflow-x-auto max-h-[320px]">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100/90 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">School Name</th>
+                  <th class="py-2.5 px-3">Username</th>
+                  <th class="py-2.5 px-3">Password</th>
+                  <th class="py-2.5 px-3">Quota</th>
+                  <th class="py-2.5 px-3">Principal Phone</th>
+                  <th class="py-2.5 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="owner-schools-tbody" class="divide-y divide-slate-100 font-medium">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
-        <span>Owner Controls allow overriding SMS/WhatsApp telecom delays with 1-click verified activation.</span>
-        <button onclick="closeOwnerConsoleModal()" class="clay-btn-secondary px-4 py-2 font-bold">Close Console</button>
+        <span>Owner Portal automatically syncs created schools across local and cloud environments.</span>
+        <button onclick="closeOwnerMasterModal()" class="clay-btn-secondary px-4 py-2 font-bold">Close Console</button>
       </div>
     </div>
   </div>
 
   <!-- FOOTER -->
-  <footer class="mt-auto border-t border-slate-200/80 bg-white/80 py-8 px-4 sm:px-8 text-xs text-slate-500">
+  <footer class="mt-auto border-t border-slate-200/80 bg-white py-6 px-4 sm:px-8 text-xs text-slate-500 no-print">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center space-x-2">
         <div class="h-6 w-6 rounded-lg bg-orange-500 flex items-center justify-center text-white text-[10px] font-bold">EF</div>
         <span class="font-bold text-slate-800">ExamForge AI</span>
-        <span>•</span>
-        <span>KPK Textbook Board & BISE Peshawar Edition</span>
+        <span>&bull;</span>
+        <span>Authentic KPK Textbook Board & BISE Peshawar Edition</span>
       </div>
 
       <div class="flex items-center space-x-4">
-        <button onclick="openOwnerConsoleModal()" class="hover:text-orange-600 flex items-center space-x-1 font-bold text-slate-700">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-orange-600"></i>
-          <span>Owner / Admin Console</span>
+        <button onclick="openOwnerMasterModal()" class="hover:text-orange-600 flex items-center space-x-1 font-bold text-slate-700">
+          <i data-lucide="crown" class="w-3.5 h-3.5 text-orange-600"></i>
+          <span>Owner Portal (Muhammad Ali)</span>
         </button>
-        <span>•</span>
-        <span>Architected by <a href="https://alibuild.site" target="_blank" class="font-extrabold text-orange-600 hover:underline">Muhammad Ali (AliBuild)</a></span>
-        <span>•</span>
+        <span>&bull;</span>
+        <span>Developer: <a href="https://alibuild.site" target="_blank" class="font-extrabold text-orange-600 hover:underline">Muhammad Ali (AliBuild)</a></span>
+        <span>&bull;</span>
         <a href="https://github.com/alikhan14756/prompt" target="_blank" class="hover:text-slate-900 flex items-center space-x-1">
           <i data-lucide="github" class="w-3.5 h-3.5"></i>
           <span>GitHub</span>
@@ -872,1340 +693,1141 @@
 
   <!-- SCRIPT DATA & APP CONTROLLER -->
   <script>
-    // Authentic KPK Textbook Board Syllabus (18 Core Books with ALL authentic chapters)
-    const AUTHENTIC_BOOKS = [
-      // Class 9th
-      {
-        grade: "9",
-        subject: "Mathematics",
-        title: "Mathematics Class 9 (KPK Textbook Board)",
-        chaptersCount: 17,
-        lang: "en",
-        chapters: [
-          "1. Matrices and Determinants",
-          "2. Real and Complex Numbers",
-          "3. Logarithms",
-          "4. Algebraic Expressions and Formulas",
-          "5. Factorization",
-          "6. Algebraic Manipulation",
-          "7. Linear Equations and Inequalities",
-          "8. Linear Graphs and Their Application",
-          "9. Introduction to Coordinate Geometry",
-          "10. Congruent Triangles",
-          "11. Parallelograms and Triangles",
-          "12. Line Bisectors and Angle Bisectors",
-          "13. Sides and Angles of a Triangle",
-          "14. Ratio and Proportion",
-          "15. Pythagoras' Theorem",
-          "16. Theorems Related with Area",
-          "17. Practical Geometry - Triangles"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "English",
-        title: "English Compulsory Class 9 (KPK Textbook Board)",
-        chaptersCount: 15,
-        lang: "en",
-        chapters: [
-          "Unit 1: The Holy Prophet (PBUH) - Embodiment of Justice",
-          "Unit 2: Daffodils (Poem by William Wordsworth)",
-          "Unit 3: Media and Its Impact",
-          "Unit 4: Hazrat Asma (R.A)",
-          "Unit 5: Stopping by Woods on a Snowy Evening",
-          "Unit 6: The Quaid's Vision and Pakistan",
-          "Unit 7: Sultan Ahmad Mosque (Blue Mosque)",
-          "Unit 8: Peace (Poem by Dr. Hartmann)",
-          "Unit 9: All is Not Lost",
-          "Unit 10: Drug Addiction",
-          "Unit 11: Noise in the Environment",
-          "Unit 12: Three Days to See (Helen Keller)",
-          "Unit 13: Abou Ben Adhem (Leigh Hunt)",
-          "Unit 14: Hope is the Thing with Feathers",
-          "Unit 15: Technology in Everyday Life"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Urdu",
-        title: "اردو لازمی جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 18,
-        lang: "ur",
-        chapters: [
-          "سبق 1: ہجرت نبوی صلی اللہ علیہ وآلہ وسلم",
-          "سبق 2: کاہلی (سر سید احمد خان)",
-          "سبق 3: اخلاق نبوی صلی اللہ علیہ وآلہ وسلم",
-          "سبق 4: شاعروں کے لطیفے (مولانا آزاد)",
-          "سبق 5: نصوح اور سلیم کی گفتگو",
-          "سبق 6: پنچایت (منشی پریم چند)",
-          "سبق 7: آرام و سکون (امتیاز علی تاج)",
-          "سبق 8: امتحان (مرزا فرحت اللہ بیگ)",
-          "سبق 9: ملکی پرندے اور دوسرے جانور",
-          "سبق 10: قدر ایاز (کرنل محمد خان)",
-          "نظم 1: حمد (مولانا حالی)",
-          "نظم 2: نعت (احسان دانش)",
-          "نظم 3: برسات کی بہاریں",
-          "نظم 4: پیوستہ رہ شجر سے امید بہار رکھ",
-          "غزل 1: ہستی اپنی حباب کی سی ہے (میر)",
-          "غزل 2: دل ناداں تجھے ہوا کیا ہے (غالب)",
-          "غزل 3: رخ و زلف پر جان کھویا کیا (آتش)",
-          "غزل 4: لگتا نہیں ہے دل مرا (بہادر شاہ ظفر)"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Physics",
-        title: "Physics Class 9 (KPK Textbook Board)",
-        chaptersCount: 9,
-        lang: "en",
-        chapters: [
-          "1. Physical Quantities and Measurement",
-          "2. Kinematics",
-          "3. Dynamics",
-          "4. Turning Effect of Forces",
-          "5. Gravitation",
-          "6. Work and Energy",
-          "7. Properties of Matter",
-          "8. Thermal Properties of Matter",
-          "9. Transfer of Heat"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Chemistry",
-        title: "Chemistry Class 9 (KPK Textbook Board)",
-        chaptersCount: 8,
-        lang: "en",
-        chapters: [
-          "1. Fundamentals of Chemistry",
-          "2. Structure of Atoms",
-          "3. Periodic Table and Periodicity",
-          "4. Structure of Molecules",
-          "5. Physical States of Matter",
-          "6. Solutions",
-          "7. Electrochemistry",
-          "8. Chemical Reactivity"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Biology",
-        title: "Biology Class 9 (KPK Textbook Board)",
-        chaptersCount: 9,
-        lang: "en",
-        chapters: [
-          "1. Introduction to Biology",
-          "2. Solving a Biological Problem",
-          "3. Biodiversity",
-          "4. Cells and Tissues",
-          "5. Cell Cycle",
-          "6. Enzymes",
-          "7. Bioenergetics",
-          "8. Nutrition",
-          "9. Transport"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Computer Science",
-        title: "Computer Science Class 9 (KPK Textbook Board)",
-        chaptersCount: 6,
-        lang: "en",
-        chapters: [
-          "1. Fundamentals of Computer",
-          "2. Fundamentals of Operating System",
-          "3. Office Automation",
-          "4. Data Communication & Networks",
-          "5. Computer Security and Cyber Ethics",
-          "6. Web Development & Algorithms"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Pak Studies",
-        title: "مطالعہ پاکستان جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 5,
-        lang: "ur",
-        chapters: [
-          "باب 1: نظریہ پاکستان کی اساس اور مفہوم",
-          "باب 2: تحریک پاکستان اور قیام پاکستان",
-          "باب 3: پاکستان کا جغرافیہ اور ماحولیات",
-          "باب 4: ابتدائی مشکلات اور قومی یکجہتی",
-          "باب 5: خیبر پختونخوا اور قبائلی اضلاع کا انضمام"
-        ]
-      },
-      {
-        grade: "9",
-        subject: "Islamiat",
-        title: "اسلامیات لازمی جماعت نہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 6,
-        lang: "ur",
-        chapters: [
-          "باب 1: قرآن مجید اور حدیث نبوی کا تعارف",
-          "باب 2: ایمانیات و عبادات",
-          "باب 3: سیرت طیبہ اور اسوہ حسنہ",
-          "باب 4: اخلاق و آداب",
-          "باب 5: حسن معاشرت اور حقوق العباد",
-          "باب 6: مشاہیر اسلام"
-        ]
-      },
+    // =========================================================================
+    // 1. AUTHENTIC KPK TEXTBOOK BOARD SYLLABUS & BOOKS (CLASS 9TH & 10TH)
+    // =========================================================================
+    const KPK_SYLLABUS = {
+      "9": [
+        {
+          subject: "Mathematics",
+          chapters: [
+            "1. Matrices and Determinants", "2. Real and Complex Numbers", "3. Logarithms",
+            "4. Algebraic Expressions & Formulas", "5. Factorization", "6. Algebraic Manipulation",
+            "7. Linear Equations & Inequalities", "8. Linear Graphs & Their Application",
+            "9. Introduction to Coordinate Geometry", "10. Congruent Triangles", "11. Parallelograms & Triangles",
+            "12. Line Bisectors & Angle Bisectors", "13. Sides & Angles of a Triangle",
+            "14. Ratio and Proportion", "15. Pythagoras' Theorem", "16. Theorems Related with Area",
+            "17. Practical Geometry - Triangles"
+          ]
+        },
+        {
+          subject: "Physics",
+          chapters: [
+            "1. Physical Quantities and Measurement", "2. Kinematics (Motion, Speed, Acceleration)",
+            "3. Dynamics (Newton's Laws, Friction, Momentum)", "4. Turning Effect of Forces (Torque, Equilibrium)",
+            "5. Gravitation (Law of Universal Gravitation, Satellites)", "6. Work, Power and Energy",
+            "7. Properties of Matter (Density, Pressure, Elasticity)", "8. Thermal Properties of Matter",
+            "9. Transfer of Heat (Conduction, Convection, Radiation)"
+          ]
+        },
+        {
+          subject: "Chemistry",
+          chapters: [
+            "1. Fundamentals of Chemistry (Mole, Avogadro, Formula)", "2. Structure of Atoms (Bohr, Rutherford, Isotopes)",
+            "3. Periodic Table and Periodicity of Properties", "4. Structure of Molecules (Chemical Bonding)",
+            "5. Physical States of Matter (Gases, Liquids, Solids)", "6. Solutions (Concentration, Solubility)",
+            "7. Electrochemistry (Redox Reactions, Electrolysis)", "8. Chemical Reactivity (Metals and Non-metals)"
+          ]
+        },
+        {
+          subject: "Biology",
+          chapters: [
+            "1. Introduction to Biology (Branches and Levels of Organization)", "2. Solving a Biological Problem",
+            "3. Biodiversity (Classification and Five Kingdoms)", "4. Cells and Tissues (Microscopy, Organelles)",
+            "5. Cell Cycle (Mitosis and Meiosis)", "6. Enzymes (Mechanism and Factors)",
+            "7. Bioenergetics (Photosynthesis and Respiration)", "8. Nutrition (Human Digestive System)",
+            "9. Transport (Transport in Plants and Blood Circulation)"
+          ]
+        },
+        {
+          subject: "Computer Science",
+          chapters: [
+            "1. Fundamentals of Computer (Generations, Hardware, Software)", "2. Fundamentals of Operating System",
+            "3. Office Automation (Word Processing, Spreadsheets)", "4. Data Communication & Computer Networks",
+            "5. Computer Security, Cyber Crime and Ethics"
+          ]
+        },
+        {
+          subject: "English",
+          chapters: [
+            "Unit 1: The Holy Prophet (PBUH) - Embodiment of Justice", "Unit 2: Daffodils (William Wordsworth)",
+            "Unit 3: Media and Its Impact", "Unit 4: Hazrat Asma (R.A)", "Unit 5: Stopping by Woods on a Snowy Evening",
+            "Unit 6: The Quaid's Vision and Pakistan", "Unit 7: Sultan Ahmad Mosque (Blue Mosque)",
+            "Unit 8: Peace (Dr. Hartmann)", "Unit 9: All is Not Lost", "Unit 10: Drug Addiction in Youth",
+            "Unit 11: Noise Pollution", "Unit 12: Three Days to See (Helen Keller)"
+          ]
+        },
+        {
+          subject: "Urdu",
+          lang: "ur",
+          chapters: [
+            "سبق 1: ہجرت نبوی صلی اللہ علیہ وآلہ وسلم", "سبق 2: کاہلی (سر سید احمد خان)",
+            "سبق 3: اخلاق نبوی صلی اللہ علیہ وآلہ وسلم", "سبق 4: شاعروں کے لطیفے",
+            "سبق 5: نصوح اور سلیم کی گفتگو", "سبق 6: پنچایت (منشی پریم چند)",
+            "سبق 7: آرام و سکون (امتیاز علی تاج)", "سبق 8: امتحان (مرزا فرحت اللہ بیگ)",
+            "نظم 1: حمد (مولانا الطاف حسین حالی)", "نظم 2: نعت (احسان دانش)",
+            "غزل 1: ہستی اپنی حباب کی سی ہے (میر تقی میر)", "غزل 2: دل ناداں تجھے ہوا کیا ہے (مرزا غالب)"
+          ]
+        },
+        {
+          subject: "Islamiyat",
+          lang: "ur",
+          chapters: [
+            "باب اول: قرآن مجید و احادیث نبوی (سورۃ الانفال آیات 1 تا 75)",
+            "باب دوم: ایمانیات و عبادات (توحید، رسالت، ملائکہ، آخرت، نماز، زکوۃ)",
+            "باب سوم: سیرت النبی صلی اللہ علیہ وآلہ وسلم و اسوہ حسنہ",
+            "باب چہارم: اخلاق و آداب (صدق و دیانت، صبر و شکر، ایفائے عہد، والدین کے حقوق)"
+          ]
+        },
+        {
+          subject: "Pakistan Studies",
+          chapters: [
+            "Chapter 1: Ideological Basis of Pakistan (Two-Nation Theory)", "Chapter 2: Making of Pakistan (1940-1947)",
+            "Chapter 3: Land and Environment of Pakistan (Geography, Climate, Resources)",
+            "Chapter 4: History of Pakistan (Early Problems and Constitution Making)"
+          ]
+        }
+      ],
+      "10": [
+        {
+          subject: "Mathematics",
+          chapters: [
+            "1. Quadratic Equations (Standard Form, Factorization, Formula)", "2. Theory of Quadratic Equations (Discriminant)",
+            "3. Variations (Direct, Inverse, Joint Variation)", "4. Partial Fractions",
+            "5. Sets and Functions (De Morgan's Laws, Binary Relations)", "6. Basic Statistics (Mean, Median, Standard Deviation)",
+            "7. Introduction to Trigonometry (Angles, Identities)", "8. Projection of a Side of a Triangle",
+            "9. Chords of a Circle", "10. Tangent to a Circle", "11. Chords and Arcs", "12. Angle in a Segment of a Circle",
+            "13. Practical Geometry - Circles"
+          ]
+        },
+        {
+          subject: "Physics",
+          chapters: [
+            "10. Simple Harmonic Motion and Waves", "11. Sound (Speed of Sound, Ultrasound)",
+            "12. Geometrical Optics (Reflection, Refraction, Lenses)", "13. Electrostatics (Coulomb's Law, Capacitors)",
+            "14. Current Electricity (Ohm's Law, Resistance, Power)", "15. Electromagnetism (Electromagnetic Induction, Transformers)",
+            "16. Basic Electronics (Logic Gates, Cathode Ray Oscilloscope)", "17. Information and Communication Technology (ICT)",
+            "18. Atomic and Nuclear Physics (Radioactivity, Half-life, Fission)"
+          ]
+        },
+        {
+          subject: "Chemistry",
+          chapters: [
+            "9. Chemical Equilibrium (Law of Mass Action, Kc)", "10. Acids, Bases and Salts (pH, Neutralization)",
+            "11. Organic Chemistry (Functional Groups, Homologous Series)", "12. Hydrocarbons (Alkanes, Alkenes, Alkynes)",
+            "13. Biochemistry (Carbohydrates, Proteins, Lipids, Vitamins)", "14. Environmental Chemistry I: The Atmosphere (Greenhouse Effect, Acid Rain)",
+            "15. Environmental Chemistry II: Water (Hardness, Water Pollution)", "16. Chemical Industries (Metallurgy, Solvay Process, Urea)"
+          ]
+        },
+        {
+          subject: "Biology",
+          chapters: [
+            "10. Gaseous Exchange (Respiratory System, Disorders)", "11. Homeostasis (Urinary System, Kidney Failure)",
+            "12. Coordination and Control (Nervous System, Endocrine Glands)", "13. Support and Movement (Human Skeleton, Joints)",
+            "14. Reproduction (Asexual and Sexual Reproduction, Pollination)", "15. Inheritance (Mendel's Laws, DNA, Genes)",
+            "16. Man and His Environment (Ecosystems, Food Chains, Conservation)", "17. Biotechnology (Fermentation, Genetic Engineering)",
+            "18. Pharmacology (Medicinal Drugs, Antibiotics, Vaccine)"
+          ]
+        },
+        {
+          subject: "Computer Science",
+          chapters: [
+            "1. Problem Solving (Algorithms, Flowcharts)", "2. Data Types, Input and Output in C Language",
+            "3. Control Structures (If-Else, Switch Statements)", "4. Loop Structures (For, While, Do-While Loops)",
+            "5. Functions and Modular Programming in C", "6. Working with Logic and Arrays"
+          ]
+        },
+        {
+          subject: "English",
+          chapters: [
+            "Unit 1: Hazrat Muhammad (PBUH) - An Embodiment of Justice", "Unit 2: Chinese New Year Celebrations",
+            "Unit 3: Try Again (Poem by W.E. Hickson)", "Unit 4: First Aid (Cuts, Scrapes, Fractures)",
+            "Unit 5: The Rain (Poem by W.H. Davies)", "Unit 6: Television vs. Newspapers",
+            "Unit 7: Little by Little One Walks Far", "Unit 8: Peace (Poem)", "Unit 9: Selecting the Right Career",
+            "Unit 10: A World Without Books", "Unit 11: Great Expectations (Charles Dickens)", "Unit 12: Faithfulness"
+          ]
+        },
+        {
+          subject: "Urdu",
+          lang: "ur",
+          chapters: [
+            "سبق 1: مرزا محمد سعید", "سبق 2: نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)",
+            "سبق 3: پرستان کی شہزادی", "سبق 4: اردو ادب میں عید الفطر",
+            "سبق 5: مجھے میرے دوستوں سے بچاؤ", "سبق 6: ملمع (ہاجرہ مسرور)",
+            "نظم 1: میدان کربلا میں صبح کا منظر (میر انیس)", "نظم 2: فاطمہ بنت عبداللہ (علامہ اقبال)",
+            "غزل 1: مصیبت بھی راحت فزا ہو گئی ہے (حسرت موہانی)", "غزل 2: آدمی آدمی سے ملتا ہے (جگر مراد آبادی)"
+          ]
+        },
+        {
+          subject: "Islamiyat",
+          lang: "ur",
+          chapters: [
+            "باب اول: قرآن مجید (سورۃ الاحزاب آیات 1 تا 73)",
+            "باب دوم: منتخب احادیث نبوی (10 منتخب احادیث مبارکہ مع تشریح)",
+            "باب سوم: موضوعاتی مطالعہ (جہاد فی سبیل اللہ، حقوق العباد، عفت و حیا)",
+            "باب چہارم: تعارف صحابہ کرام و ائمہ مجتہدین"
+          ]
+        },
+        {
+          subject: "Pakistan Studies",
+          chapters: [
+            "Chapter 5: History of Pakistan II (1971 to Present, 1973 Constitution)",
+            "Chapter 6: Pakistan and World Affairs (Foreign Policy, Relations with Neighbors)",
+            "Chapter 7: Economic Development of Pakistan (Agriculture, Industry, Trade)",
+            "Chapter 8: Population, Society and Culture of Pakistan (Languages, Education)"
+          ]
+        }
+      ]
+    };
 
-      // Class 10th
-      {
-        grade: "10",
-        subject: "Mathematics",
-        title: "Mathematics Class 10 (KPK Textbook Board)",
-        chaptersCount: 13,
-        lang: "en",
-        chapters: [
-          "1. Quadratic Equations",
-          "2. Theory of Quadratic Equations",
-          "3. Variations",
-          "4. Partial Fractions",
-          "5. Sets and Functions",
-          "6. Basic Statistics",
-          "7. Introduction to Trigonometry",
-          "8. Projection of a Side of a Triangle",
-          "9. Chords of a Circle",
-          "10. Tangent to a Circle",
-          "11. Chords and Arcs",
-          "12. Angle in a Segment of a Circle",
-          "13. Practical Geometry - Circles"
+    // =========================================================================
+    // 2. AUTHENTIC QUESTION BANK BY SUBJECT
+    // =========================================================================
+    const QUESTION_BANKS = {
+      "Mathematics": {
+        mcqs: [
+          { text: "If A = [[2, 1], [0, 3]], then the determinant of matrix A (|A|) is equal to:", options: ["(A) 5", "(B) 6", "(C) 0", "(D) 2"], answer: 1, marks: 1 },
+          { text: "The value of log₁₀(1000) according to laws of logarithms is:", options: ["(A) 1", "(B) 2", "(C) 3", "(D) 10"], answer: 2, marks: 1 },
+          { text: "In a right-angled triangle, the relation between hypotenuse (c), base (b), and perpendicular (a) is:", options: ["(A) c² = a² + b²", "(B) c = a + b", "(C) a² = b² + c²", "(D) b² = a² + c²"], answer: 0, marks: 1 },
+          { text: "The degree of polynomial P(x) = 4x³ + 2x² - 7x + 1 is:", options: ["(A) 1", "(B) 2", "(C) 3", "(D) 4"], answer: 2, marks: 1 },
+          { text: "The solution set of linear inequality 2x - 3 < 5 for x ∈ W is:", options: ["(A) {0, 1, 2, 3}", "(B) {1, 2, 3}", "(C) {0, 1, 2, 3, 4}", "(D) Φ"], answer: 0, marks: 1 },
+          { text: "Two matrices A and B are conformable for multiplication (A × B) if:", options: ["(A) Columns of A = Rows of B", "(B) Rows of A = Columns of B", "(C) Order of A = Order of B", "(D) Both are square"], answer: 0, marks: 1 },
+          { text: "The discriminant of the quadratic equation ax² + bx + c = 0 is given by:", options: ["(A) b² - 4ac", "(B) b² + 4ac", "(C) 4ac - b²", "(D) -b ± √(b² - 4ac)"], answer: 0, marks: 1 },
+          { text: "If log₂ x = 5, then the value of x is:", options: ["(A) 10", "(B) 25", "(C) 32", "(D) 64"], answer: 2, marks: 1 },
+          { text: "The factorization of (x² - 16) results in:", options: ["(A) (x - 4)(x + 4)", "(B) (x - 4)²", "(C) (x + 4)²", "(D) (x - 8)(x + 2)"], answer: 0, marks: 1 },
+          { text: "The sum of interior angles of a triangle is always equal to:", options: ["(A) 90°", "(B) 180°", "(C) 270°", "(D) 360°"], answer: 1, marks: 1 }
+        ],
+        shorts: [
+          { text: "Define a Singular Matrix and determine whether B = [[4, 2], [6, 3]] is singular or non-singular.", marks: 4, solution: "A matrix whose determinant is 0 is singular. Det(B) = 4(3) - 2(6) = 12 - 12 = 0. Therefore, B is a singular matrix." },
+          { text: "Solve for x: log₃(x) = 4 using the fundamental definition of logarithms.", marks: 4, solution: "By definition: x = 3⁴ = 81. Thus, x = 81." },
+          { text: "Simplify the radical expression and rationalize the denominator: (3 + √5) / (3 - √5).", marks: 4, solution: "Multiply numerator and denominator by conjugate (3 + √5): (3+√5)² / (9-5) = (9 + 6√5 + 5)/4 = (14 + 6√5)/4 = (7 + 3√5)/2." },
+          { text: "State the SAS (Side-Angle-Side) Congruence Postulate for two triangles.", marks: 4, solution: "If two sides and the included angle of one triangle are congruent to two sides and the included angle of another triangle, the two triangles are congruent." },
+          { text: "Find the value of x and y using matrix inversion method: 2x + y = 3 and 6x + 5y = 1.", marks: 4, solution: "Matrix form AX=B. Det(A)=4. A⁻¹ = (1/4)[[5, -1], [-6, 2]]. X = A⁻¹B gives x = 3.5, y = -4." },
+          { text: "Factorize completely using algebraic identities: 8x³ - 27y³.", marks: 4, solution: "(2x)³ - (3y)³ = (2x - 3y)(4x² + 6xy + 9y²)." },
+          { text: "Determine the nature of the roots of the quadratic equation: x² - 5x + 6 = 0.", marks: 4, solution: "Disc = b² - 4ac = (-5)² - 4(1)(6) = 25 - 24 = 1 > 0 and a perfect square. The roots are real, rational, and unequal." },
+          { text: "Find the mean and median of the given data: 5, 8, 12, 15, 20.", marks: 4, solution: "Mean = (5+8+12+15+20)/5 = 60/5 = 12. Median (middle value) = 12." },
+          { text: "State and write the formula for Pythagoras' Theorem with a neat diagram.", marks: 4, solution: "In any right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides: Hyp² = Base² + Perp²." }
+        ],
+        longs: [
+          { text: "Solve the following system of linear equations by using Cramer's Rule: 2x + y = 3 and 6x + 5y = 1.", marks: 8, solution: "A = [[2,1],[6,5]], Det(A) = 10 - 6 = 4. Ax = [[3,1],[1,5]], Det(Ax) = 14. Ay = [[2,3],[6,1]], Det(Ay) = -16. x = 14/4 = 3.5, y = -16/4 = -4." },
+          { text: "Prove that any point on the right bisector of a line segment is equidistant from its end points. Draw a neat diagram and state Given, To Prove, Construction, and Proof.", marks: 8, solution: "Standard KPK BISEP Theorem: Given line AB and line LM bisecting AB at C. Point P lies on LM. By proving ΔPCA ≅ ΔPCB via SAS postulate, PA = PB." },
+          { text: "Find the solution set of the quadratic equation by using the quadratic formula: 2x² - 7x + 3 = 0.", marks: 8, solution: "a=2, b=-7, c=3. x = [-(-7) ± √((-7)² - 4(2)(3))] / (2*2) = [7 ± √(49 - 24)] / 4 = [7 ± 5] / 4. Roots are x = 3 and x = 0.5. Solution Set = {0.5, 3}." },
+          { text: "Construct a triangle ABC in which m(AB) = 5 cm, m(BC) = 6 cm and m∠B = 60°. Draw its incircle and write steps of construction.", marks: 8, solution: "Steps: 1. Draw BC=6cm. 2. At B construct 60° angle. 3. Cut BA=5cm. 4. Bisect angles B and C to find incentre I. 5. Draw perpendicular ID on BC. 6. Draw circle with radius ID." }
         ]
       },
-      {
-        grade: "10",
-        subject: "English",
-        title: "English Compulsory Class 10 (KPK Textbook Board)",
-        chaptersCount: 13,
-        lang: "en",
-        chapters: [
-          "Unit 1: Hazrat Muhammad (PBUH) - Exemplary Judge",
-          "Unit 2: Chinese New Year",
-          "Unit 3: Try Again (Poem)",
-          "Unit 4: First Aid",
-          "Unit 5: The Rain (Poem by W.H. Davies)",
-          "Unit 6: Television vs Newspapers",
-          "Unit 7: Little by Little One Walks Far!",
-          "Unit 8: Peace (Poem)",
-          "Unit 9: Selecting the Right Career",
-          "Unit 10: A World Without Books",
-          "Unit 11: Great Expectations (Dickens)",
-          "Unit 12: Population Growth & Food Supplies",
-          "Unit 13: Faithfulness"
+      "Physics": {
+        mcqs: [
+          { text: "The SI unit of force is Newton (N), which in base units is equivalent to:", options: ["(A) kg·m/s", "(B) kg·m/s²", "(C) kg·m²/s²", "(D) kg/m·s"], answer: 1, marks: 1 },
+          { text: "A body has translatory motion if it moves along a:", options: ["(A) Straight line without rotation", "(B) Circle", "(C) Curved path", "(D) Line without rotation"], answer: 3, marks: 1 },
+          { text: "The rate of doing work is defined as:", options: ["(A) Energy", "(B) Power", "(C) Momentum", "(D) Torque"], answer: 1, marks: 1 },
+          { text: "The value of gravitational acceleration 'g' on the surface of Earth is approximately:", options: ["(A) 9.8 m/s²", "(B) 1.6 m/s²", "(C) 6.67 × 10⁻¹¹ m/s²", "(D) 8.9 m/s²"], answer: 0, marks: 1 },
+          { text: "Newton's First Law of Motion is also known as the Law of:", options: ["(A) Friction", "(B) Inertia", "(C) Gravitation", "(D) Momentum"], answer: 1, marks: 1 },
+          { text: "The speed of sound in air at normal temperature and pressure is about:", options: ["(A) 330 m/s", "(B) 3 × 10⁸ m/s", "(C) 1500 m/s", "(D) 100 m/s"], answer: 0, marks: 1 },
+          { text: "According to Ohm's law, the relationship between current (I), voltage (V), and resistance (R) is:", options: ["(A) V = I × R", "(B) I = V × R", "(C) R = V × I", "(D) V = I / R"], answer: 0, marks: 1 },
+          { text: "The focal length of a concave mirror having radius of curvature 20 cm is:", options: ["(A) 40 cm", "(B) 20 cm", "(C) 10 cm", "(D) 5 cm"], answer: 2, marks: 1 }
+        ],
+        shorts: [
+          { text: "Differentiate between scalar and vector quantities with two examples of each.", marks: 4, solution: "Scalars have only magnitude (e.g. Mass, Speed, Time). Vectors have both magnitude and direction (e.g. Velocity, Force, Displacement)." },
+          { text: "State Newton's Second Law of Motion and derive the mathematical formula F = ma.", marks: 4, solution: "When a force acts on a body, it produces an acceleration in the direction of the force directly proportional to the force and inversely to the mass. a ∝ F, a ∝ 1/m => F = ma." },
+          { text: "Define Work and state its SI unit. When is work done said to be zero?", marks: 4, solution: "Work is done when a force acting on a body displaces it in the direction of force (W = F·S). Work is zero when displacement is zero or angle between force and displacement is 90°." },
+          { text: "State Archimedes' Principle and explain how a heavy steel ship floats on water.", marks: 4, solution: "When a body is totally or partially immersed in a fluid, an upthrust acts on it equal to the weight of the displaced fluid. A ship's hollow shape displaces a volume of water whose weight exceeds the ship's weight." },
+          { text: "What is Simple Harmonic Motion (SHM)? Write two necessary conditions for a body to execute SHM.", marks: 4, solution: "SHM is oscillatory motion where acceleration is directly proportional to displacement from mean position and always directed towards it: a ∝ -x." },
+          { text: "State Ohm's Law and define 1 Ohm resistance.", marks: 4, solution: "Current passing through a conductor is directly proportional to the potential difference across its ends, provided temperature remains constant (V = IR). 1 Ohm is the resistance when 1 Volt produces 1 Ampere." }
+        ],
+        longs: [
+          { text: "Derive the Third Equation of Motion: 2aS = vf² - vi² using velocity-time graph.", marks: 8, solution: "Total distance S = area of trapezium OABD = (sum of parallel sides) * base / 2. Substituting t = (vf - vi)/a gives 2aS = vf² - vi²." },
+          { text: "State and prove the Law of Conservation of Momentum with a mathematical derivation for two colliding balls.", marks: 8, solution: "The total momentum of an isolated system of interacting bodies remains constant. Derive m1u1 + m2u2 = m1v1 + m2v2 using Newton's third law and rate of change of momentum." },
+          { text: "Explain the construction and working of an Electric Generator (AC Generator) with a neat labeled diagram.", marks: 8, solution: "Components: Armature, Strong Permanent Magnet, Slip Rings, Carbon Brushes. Working based on Faraday's Law of Electromagnetic Induction: induced EMF = -N(dΦ/dt)." }
         ]
       },
-      {
-        grade: "10",
-        subject: "Urdu",
-        title: "اردو لازمی جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 18,
-        lang: "ur",
-        chapters: [
-          "سبق 1: مرزا محمد سعید",
-          "سبق 2: نظریہ پاکستان",
-          "سبق 3: پرستان کی شہزادی",
-          "سبق 4: اردو ادب میں عید الفطر",
-          "سبق 5: مجھے میرے دوستوں سے بچاؤ",
-          "سبق 6: ملمع (ہاجرہ مسرور)",
-          "سبق 7: چغل خور (شفیع عقیل)",
-          "سبق 8: نام دیو مالی",
-          "سبق 9: علی بخش (قدرت اللہ شہاب)",
-          "سبق 10: استنبول (حکیم محمد سعید)",
-          "نظم 1: حمد (حفیظ جالندھری)",
-          "نظم 2: نعت (حفیظ جالندھری)",
-          "نظم 3: میدان کربلا میں صبح کا منظر",
-          "نظم 4: فاطمہ بنت عبداللہ (اقبال)",
-          "نظم 5: کسان (جوش ملیح آبادی)",
-          "نظم 6: جیوے جیوے پاکستان",
-          "غزل 1: مصیبت بھی راحت فزا ہو گئی ہے",
-          "غزل 2: آدمی آدمی سے ملتا ہے"
+      "Chemistry": {
+        mcqs: [
+          { text: "The number of particles in one mole of any substance is equal to Avogadro's number:", options: ["(A) 6.02 × 10²³", "(B) 6.02 × 10²²", "(C) 1.66 × 10⁻²⁴", "(D) 3 × 10⁸"], answer: 0, marks: 1 },
+          { text: "The atomic number of an element is determined by the total number of:", options: ["(A) Protons in the nucleus", "(B) Neutrons", "(C) Nucleons", "(D) Electrons and neutrons"], answer: 0, marks: 1 },
+          { text: "Elements belonging to Group 17 of the Modern Periodic Table are called:", options: ["(A) Alkali metals", "(B) Noble gases", "(C) Halogens", "(D) Transition metals"], answer: 2, marks: 1 },
+          { text: "A chemical bond formed by the complete transfer of electrons from one atom to another is:", options: ["(A) Covalent bond", "(B) Ionic bond", "(C) Coordinate bond", "(D) Metallic bond"], answer: 1, marks: 1 },
+          { text: "The pH of a neutral pure water solution at 25°C is equal to:", options: ["(A) 0", "(B) 7", "(C) 14", "(D) 1"], answer: 1, marks: 1 },
+          { text: "Hydrocarbons having carbon-carbon triple bonds are classified as:", options: ["(A) Alkanes", "(B) Alkenes", "(C) Alkynes", "(D) Arenes"], answer: 2, marks: 1 }
+        ],
+        shorts: [
+          { text: "Differentiate between an atom and an ion with appropriate examples.", marks: 4, solution: "An atom is an electrically neutral particle with equal protons and electrons (e.g. Na). An ion is a charged species formed by loss (Na⁺) or gain (Cl⁻) of electrons." },
+          { text: "State Rutherford's Atomic Model and write two of its fundamental defects.", marks: 4, solution: "Rutherford proposed a dense nucleus with orbiting electrons. Defects: According to classical physics, orbiting electrons should radiate energy and collapse into nucleus; continuous spectrum was expected but line spectrum was observed." },
+          { text: "Explain why the modern periodic table is divided into s, p, d, and f blocks.", marks: 4, solution: "Elements are placed into blocks based on the valence subshell that receives the differentiating electron (s-block: groups 1-2, p-block: groups 13-18, d-block: transition, f-block: lanthanides/actinides)." },
+          { text: "State Le Chatelier's Principle and explain the effect of increasing pressure on NH₃ synthesis.", marks: 4, solution: "If a stress is applied to a system at equilibrium, the system shifts in a direction that relieves the stress. N2 + 3H2 ⇌ 2NH3 (4 moles -> 2 moles). Increasing pressure shifts equilibrium forward." }
+        ],
+        longs: [
+          { text: "Explain Bohr's Atomic Theory and state its fundamental postulates in detail.", marks: 8, solution: "Postulates: 1. Electrons revolve in fixed circular orbits (energy levels). 2. Energy is quantized. 3. Angular momentum mvr = nh/2π. 4. Energy absorbed/emitted ΔE = E2 - E1 = hν." },
+          { text: "Describe the industrial manufacture of Sodium Hydroxide (NaOH) by the Nelson Cell with a neat labeled diagram.", marks: 8, solution: "Diagram of Nelson Cell (perforated U-shaped cathode, graphite anode, asbestos diaphragm). Reactions at anode (2Cl⁻ -> Cl2 + 2e⁻) and cathode (2H2O + 2e⁻ -> H2 + 2OH⁻)." }
         ]
       },
-      {
-        grade: "10",
-        subject: "Physics",
-        title: "Physics Class 10 (KPK Textbook Board)",
-        chaptersCount: 9,
-        lang: "en",
-        chapters: [
-          "Unit 10: Simple Harmonic Motion and Waves",
-          "Unit 11: Sound",
-          "Unit 12: Geometrical Optics",
-          "Unit 13: Electrostatics",
-          "Unit 14: Current Electricity",
-          "Unit 15: Electromagnetism",
-          "Unit 16: Basic Electronics",
-          "Unit 17: Information & Communication Technology",
-          "Unit 18: Atomic and Nuclear Physics"
+      "Biology": {
+        mcqs: [
+          { text: "The powerhouse of the eukaryotic cell responsible for ATP production is:", options: ["(A) Ribosome", "(B) Mitochondria", "(C) Golgi apparatus", "(D) Lysosome"], answer: 1, marks: 1 },
+          { text: "The stage of mitosis where chromosomes align at the equatorial plate is:", options: ["(A) Prophase", "(B) Metaphase", "(C) Anaphase", "(D) Telophase"], answer: 1, marks: 1 },
+          { text: "Enzymes speed up chemical reactions by lowering the:", options: ["(A) Activation energy", "(B) Temperature", "(C) Potential energy", "(D) Substrate concentration"], answer: 0, marks: 1 },
+          { text: "The functional unit of the human kidney is called the:", options: ["(A) Neuron", "(B) Nephron", "(C) Alveolus", "(D) Villi"], answer: 1, marks: 1 }
+        ],
+        shorts: [
+          { text: "Differentiate between prokaryotic and eukaryotic cells with two differences.", marks: 4, solution: "Prokaryotic cells lack a true membrane-bound nucleus and organelles (e.g. Bacteria). Eukaryotic cells possess a distinct nucleus with nuclear membrane (e.g. Plant and Animal cells)." },
+          { text: "Define Mitosis and state its biological significance in living organisms.", marks: 4, solution: "Mitosis is cell division producing two identical diploid daughter cells. Significance: Growth, tissue repair, replacement of damaged cells, asexual reproduction." }
+        ],
+        longs: [
+          { text: "Describe the structure and working mechanism of the Human Heart with a neat diagram.", marks: 8, solution: "Detailed structure: 4 chambers (Right/Left Atrium, Right/Left Ventricle), valves (Tricuspid, Bicuspid, Semilunar). Systematic pulmonary and systemic circulation steps." }
         ]
       },
-      {
-        grade: "10",
-        subject: "Chemistry",
-        title: "Chemistry Class 10 (KPK Textbook Board)",
-        chaptersCount: 8,
-        lang: "en",
-        chapters: [
-          "Unit 9: Chemical Equilibrium",
-          "Unit 10: Acids, Bases and Salts",
-          "Unit 11: Organic Chemistry",
-          "Unit 12: Hydrocarbons",
-          "Unit 13: Biochemistry",
-          "Unit 14: Environmental Chemistry - Atmosphere",
-          "Unit 15: Environmental Chemistry - Water",
-          "Unit 16: Chemical Industries"
+      "English": {
+        mcqs: [
+          { text: "In the poem 'Daffodils', the poet William Wordsworth compares the flowers to:", options: ["(A) Stars in the Milky Way", "(B) Waves in the ocean", "(C) Clouds in the sky", "(D) Golden crowns"], answer: 0, marks: 1 },
+          { text: "Identify the correct passive voice: 'The teacher praised the honest student.'", options: ["(A) The honest student was praised by the teacher.", "(B) The honest student had praised by the teacher.", "(C) The honest student is praised.", "(D) The teacher is praised."], answer: 0, marks: 1 },
+          { text: "Choose the correct part of speech for the underlined word: 'He ran *quickly* to catch the bus.'", options: ["(A) Adverb", "(B) Adjective", "(C) Conjunction", "(D) Preposition"], answer: 0, marks: 1 }
+        ],
+        shorts: [
+          { text: "Answer the question based on the textbook: How did Hazrat Muhammad (PBUH) resolve the issue of setting the Black Stone (Hajr-e-Aswad)?", marks: 4, solution: "He (PBUH) placed the Black Stone on a cloak and asked leaders of all tribes to hold the corners and lift it together, thus preventing a tribal war with wisdom and justice." },
+          { text: "Write the central idea or theme of the poem 'Stopping by Woods on a Snowy Evening'.", marks: 4, solution: "The theme highlights the conflict between the pleasant attractions of rest and the moral obligations of duty and commitments that one must fulfill before dying." },
+          { text: "Change the narration (Direct to Indirect Speech): He said to me, 'I am preparing my English examination.'", marks: 4, solution: "He told me that he was preparing his English examination." }
+        ],
+        longs: [
+          { text: "Write a comprehensive letter to the Editor of a newspaper highlighting the urgent issue of noise pollution in your city.", marks: 8, solution: "Standard official letter format: Examination Hall, City A.B.C, Date, The Editor, Subject, Salutation, 3 body paragraphs on noise sources and remedial steps, ending with Yours truly." }
         ]
       },
-      {
-        grade: "10",
-        subject: "Biology",
-        title: "Biology Class 10 (KPK Textbook Board)",
-        chaptersCount: 9,
-        lang: "en",
-        chapters: [
-          "Unit 10: Gaseous Exchange",
-          "Unit 11: Homeostasis",
-          "Unit 12: Coordination and Control",
-          "Unit 13: Support and Movement",
-          "Unit 14: Reproduction",
-          "Unit 15: Inheritance",
-          "Unit 16: Man and His Environment",
-          "Unit 17: Biotechnology",
-          "Unit 18: Pharmacology"
-        ]
-      },
-      {
-        grade: "10",
-        subject: "Computer Science",
-        title: "Computer Science Class 10 (KPK Textbook Board)",
-        chaptersCount: 7,
-        lang: "en",
-        chapters: [
-          "1. Problem Solving & Algorithm Designing",
-          "2. Basics of Programming in C",
-          "3. Control Structures in C",
-          "4. Data Structures: Arrays & Strings",
-          "5. Functions and Modular Programming",
-          "6. Web Development (HTML Basics)",
-          "7. Database Management & SQL Fundamentals"
-        ]
-      },
-      {
-        grade: "10",
-        subject: "Pak Studies",
-        title: "مطالعہ پاکستان جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 5,
-        lang: "ur",
-        chapters: [
-          "باب 6: تاریخ پاکستان حصہ دوم (1971 تا حال)",
-          "باب 7: پاکستان کے خارجہ تعلقات اور خارجہ پالیسی",
-          "باب 8: معاشی وسائل اور صنعتی ترقی (CPEC)",
-          "باب 9: آبادی، معاشرہ، ثقافت اور تعلیم",
-          "باب 10: تحفظ نسواں، انسانی حقوق اور کے پی کے سیاحت"
-        ]
-      },
-      {
-        grade: "10",
-        subject: "Islamiat",
-        title: "اسلامیات لازمی جماعت دہم (خیبر پختونخوا ٹیکسٹ بک بورڈ)",
-        chaptersCount: 6,
-        lang: "ur",
-        chapters: [
-          "باب 1: سورۃ الاحزاب اور سورۃ الممتحنہ",
-          "باب 2: احادیث مبارکہ کا مطالعہ",
-          "باب 3: ایمانیات و عبادات (جہاد و تقویٰ)",
-          "باب 4: سیرت طیبہ: فتح مکہ اور خطبہ حجت الوداع",
-          "باب 5: اسلامی ریاست اور دستور کے اصول",
-          "باب 6: عصر حاضر کے چیلنجز اور اسلام"
+      "Urdu": {
+        mcqs: [
+          { text: "سبق 'ہجرت نبوی صلی اللہ علیہ وآلہ وسلم' کے مصنف کا نام کیا ہے؟", options: ["(الف) مولانا شبلی نعمانی", "(ب) سر سید احمد خان", "(ج) منشی پریم چند", "(د) مرزا فرحت اللہ بیگ"], answer: 0, marks: 1 },
+          { text: "شاعرِ مشرق کس عظیم شخصیت کا لقب ہے؟", options: ["(الف) الطاف حسین حالی", "(ب) علامہ محمد اقبال", "(ج) فیض احمد فیض", "(د) حسرت موہانی"], answer: 1, marks: 1 },
+          { text: "لفظ 'حباب' کا درست لغوی معنی کیا ہے؟", options: ["(الف) پانی کا بلبلا", "(ب) طوفان", "(ج) دریا", "(د) ساحل"], answer: 0, marks: 1 }
+        ],
+        shorts: [
+          { text: "سبق 'کاہلی' کے مطابق سر سید احمد خان نے اصل کاہلی کس چیز کو قرار دیا ہے؟", marks: 4, solution: "سر سید کے مطابق ہاتھ پاؤں سے محنت نہ کرنے کے علاوہ دلی قویٰ کو بیکار چھوڑ دینا سب سے بڑی اور حقیقی کاہلی ہے۔" },
+          { text: "مندرجہ ذیل محاورات کو اپنے جملوں میں اس طرح استعمال کریں کہ مفہوم واضح ہو جائے: (۱) اینٹ سے اینٹ بجانا (۲) باغ باغ ہونا۔", marks: 4, solution: "۱. پاک فوج نے دشمن کی اینٹ سے اینٹ بجا دی۔ ۲. احمد اپنا شاندار نتیجہ دیکھ کر خوشی سے باغ باغ ہو گیا۔" }
+        ],
+        longs: [
+          { text: "اپنے سکول کے ہیڈ ماسٹر / پرنسپل کے نام فیس معافی یا بیماری کی رخصت کے لیے جامع درخواست تحریر کریں۔", marks: 8, solution: "بخدمت جناب ہیڈماسٹر صاحب... عنوان: درخواست برائے معافی فیس... خاکہ، گزارشات، مالی حالات اور مؤدبانہ اختتام۔" }
         ]
       }
-    ];
+    };
 
-    // State & User Tracking
-    let currentUser = null;
-    let pendingRegistration = null;
-    let quotaCount = 0;
-    const MAX_FREE_PAPERS_PER_SUBJECT = 2;
+    // =========================================================================
+    // 3. APPLICATION STATE & PERSISTENCE
+    // =========================================================================
+    let currentPaper = null;
+    let currentUser = null; // null for guest, or { schoolName, username, role: 'school' }
+    let guestPapersGenerated = 0;
+    const MAX_GUEST_PAPERS = 5;
 
-    function renderBooks(booksToRender) {
-      const container = document.getElementById("books-grid");
-      container.innerHTML = "";
-      
-      booksToRender.forEach(book => {
-        const card = document.createElement("div");
-        card.className = "clay-card p-5 space-y-3.5 hover:shadow-lg transition";
-        card.innerHTML = `
-          <div class="flex items-start justify-between">
-            <span class="clay-badge-mint text-[11px] font-extrabold px-2.5 py-0.5 rounded-full">
-              Class ${book.grade}th
-            </span>
-            <span class="text-xs font-bold text-slate-500">${book.chaptersCount} Chapters</span>
-          </div>
-          <div>
-            <h4 class="font-extrabold text-sm text-slate-900 ${book.lang === 'ur' ? 'urdu-font text-base text-right' : ''}">${book.title}</h4>
-            <p class="text-[11px] text-slate-500 mt-1">Publisher: KPK Textbook Board Peshawar</p>
-          </div>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-            <button onclick="loadBookToGenerator('${book.grade}', '${book.subject}')" class="text-xs font-extrabold text-orange-600 hover:text-orange-800 flex items-center space-x-1">
-              <span>Create Paper</span>
-              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-            </button>
-            <button onclick="alert('Downloading official authentic PDF: ' + '${book.title}')" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center space-x-1">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i>
-              <span>PDF</span>
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+    // Load state from localStorage on init
+    function initAppState() {
+      // 1. Seed default school accounts if empty
+      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      if (schools.length === 0) {
+        schools = [
+          {
+            name: "Peshawar Model School",
+            username: "peshawarmodel",
+            password: "Model2026!",
+            quota: "Unlimited",
+            principal: "Dr. Ahmad Raza",
+            phone: "+923215423874",
+            createdAt: new Date().toISOString()
+          },
+          {
+            name: "Islamia College School Peshawar",
+            username: "islamia",
+            password: "Islamia2026!",
+            quota: "Unlimited",
+            principal: "Prof. Farooq Khan",
+            phone: "+923339123456",
+            createdAt: new Date().toISOString()
+          }
+        ];
+        localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+      }
+
+      // 2. Load active session
+      const savedUser = localStorage.getItem("examforge_active_user");
+      if (savedUser) {
+        try {
+          currentUser = JSON.parse(savedUser);
+        } catch (e) {}
+      }
+
+      // 3. Load guest count
+      guestPapersGenerated = parseInt(localStorage.getItem("examforge_guest_count") || "0", 10);
+
+      // 4. Update Header UI
+      updateAuthUI();
+
+      // 5. Populate initial subject dropdown
+      handleGradeChange();
+
+      // 6. Generate initial default paper immediately!
+      generatePaperFromSyllabus("9", "Mathematics");
+    }
+
+    function updateAuthUI() {
+      const guestStatus = document.getElementById("nav-guest-status");
+      const schoolStatus = document.getElementById("nav-school-status");
+      const loginBtn = document.getElementById("btn-nav-login");
+      const activeModeLabel = document.getElementById("active-mode-label");
+      const guestBadge = document.getElementById("guest-quota-badge");
+
+      if (currentUser && currentUser.username) {
+        if (guestStatus) guestStatus.classList.add("hidden");
+        if (schoolStatus) schoolStatus.classList.remove("hidden");
+        if (loginBtn) loginBtn.classList.add("hidden");
+        document.getElementById("nav-school-name").textContent = currentUser.schoolName;
+        if (activeModeLabel) {
+          activeModeLabel.textContent = `School: ${currentUser.schoolName}`;
+          activeModeLabel.className = "clay-badge-orange font-bold px-2.5 py-1 rounded-full text-[11px]";
+        }
+      } else {
+        if (guestStatus) guestStatus.classList.remove("hidden");
+        if (schoolStatus) schoolStatus.classList.add("hidden");
+        if (loginBtn) loginBtn.classList.remove("hidden");
+        if (guestBadge) {
+          guestBadge.textContent = `Guest Free Mode: ${guestPapersGenerated} / ${MAX_GUEST_PAPERS} Free Papers Used`;
+        }
+        if (activeModeLabel) {
+          activeModeLabel.textContent = "Free Guest Mode";
+          activeModeLabel.className = "clay-badge-mint font-bold px-2.5 py-1 rounded-full text-[11px]";
+        }
+      }
       lucide.createIcons();
     }
 
-    function filterBooks(grade) {
-      document.querySelectorAll('#curriculum button[id^="btn-grade-"]').forEach(btn => {
-        btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-900 transition";
-      });
-      document.getElementById(`btn-grade-${grade}`).className = "px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-sm transition";
-
-      if (grade === 'all') {
-        renderBooks(AUTHENTIC_BOOKS);
-      } else {
-        renderBooks(AUTHENTIC_BOOKS.filter(b => b.grade === grade));
-      }
-    }
-
-    function updateSubjectOptions() {
+    // =========================================================================
+    // 4. GENERATOR CONTROLLER & SYLLABUS INTEGRATION
+    // =========================================================================
+    function handleGradeChange() {
       const grade = document.getElementById("gen-grade").value;
-      const select = document.getElementById("gen-subject");
-      select.innerHTML = "";
-      
-      const filtered = AUTHENTIC_BOOKS.filter(b => b.grade === grade);
-      filtered.forEach(b => {
-        const opt = document.createElement("option");
-        opt.value = b.subject;
-        opt.textContent = `${b.subject} (${b.chaptersCount} Chapters)`;
-        select.appendChild(opt);
-      });
-      renderChapterSelector();
-      updateQuotaDisplay();
+      const subjectSelect = document.getElementById("gen-subject");
+      const subjects = KPK_SYLLABUS[grade] || [];
+
+      subjectSelect.innerHTML = subjects.map(s => 
+        `<option value="${s.subject}">${s.subject}${s.lang === 'ur' ? ' (اردو)' : ''}</option>`
+      ).join("");
+
+      handleSubjectChange();
     }
 
-    function renderChapterSelector() {
+    function handleSubjectChange() {
       const grade = document.getElementById("gen-grade").value;
-      const subject = document.getElementById("gen-subject").value;
-      const container = document.getElementById("chapters-checkbox-container");
-      container.innerHTML = "";
+      const subjectName = document.getElementById("gen-subject").value;
+      const subjects = KPK_SYLLABUS[grade] || [];
+      const found = subjects.find(s => s.subject === subjectName);
 
-      const book = AUTHENTIC_BOOKS.find(b => b.grade === grade && b.subject === subject);
-      if (!book) return;
-
-      book.chapters.forEach((ch, idx) => {
-        const item = document.createElement("label");
-        item.className = "flex items-center space-x-2.5 p-1.5 rounded-lg hover:bg-slate-200/50 cursor-pointer";
-        item.innerHTML = `
-          <input type="checkbox" checked class="rounded border-slate-300 text-orange-600 focus:ring-orange-500 w-4 h-4 chapter-cb" value="${ch}">
-          <span class="text-xs font-medium text-slate-800 ${book.lang === 'ur' ? 'urdu-font text-sm' : ''}">${ch}</span>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function selectAllChapters(select) {
-      document.querySelectorAll('.chapter-cb').forEach(cb => cb.checked = select);
-    }
-
-    function loadBookToGenerator(grade, subject) {
-      document.getElementById("gen-grade").value = grade;
-      updateSubjectOptions();
-      document.getElementById("gen-subject").value = subject;
-      renderChapterSelector();
-      updateQuotaDisplay();
-      scrollToSection('generator');
-    }
-
-    function getCurrentSubjectKey() {
-      const grade = document.getElementById("gen-grade").value;
-      const subject = document.getElementById("gen-subject").value;
-      return `Class_${grade}_${subject}`;
-    }
-
-    function getSubjectUsage(key) {
-      if (currentUser && currentUser.papersGeneratedBySubject) {
-        return currentUser.papersGeneratedBySubject[key] || 0;
-      }
-      return quotaCount;
-    }
-
-    function updateQuotaDisplay() {
-      const key = getCurrentSubjectKey();
-      const used = getSubjectUsage(key);
-      const subject = document.getElementById("gen-subject").value;
-      
-      const quotaElem = document.getElementById("quota-display");
-      if (quotaElem) {
-        quotaElem.textContent = `${used} / ${MAX_FREE_PAPERS_PER_SUBJECT} Papers Used (${subject})`;
-      }
-
-      const navQuota = document.getElementById("nav-quota-summary");
-      if (navQuota) {
-        navQuota.textContent = `Free Trial: 2 Free Papers / Subject`;
-      }
-    }
-
-    function generateMockPaper() {
-      const key = getCurrentSubjectKey();
-      const used = getSubjectUsage(key);
-
-      if (used >= MAX_FREE_PAPERS_PER_SUBJECT) {
-        document.getElementById("upgrade-modal").classList.remove("hidden");
+      const chaptersBox = document.getElementById("chapters-container");
+      if (!found || !found.chapters) {
+        chaptersBox.innerHTML = `<p class="text-slate-400">No chapters found for this subject.</p>`;
         return;
       }
 
-      // Record generation
-      if (currentUser) {
-        currentUser.papersGeneratedBySubject = currentUser.papersGeneratedBySubject || {};
-        currentUser.papersGeneratedBySubject[key] = used + 1;
-        localStorage.setItem('examforge_current_user', JSON.stringify(currentUser));
-      } else {
-        quotaCount++;
+      chaptersBox.innerHTML = found.chapters.map((ch, idx) => `
+        <label class="flex items-start space-x-2.5 p-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200 transition cursor-pointer">
+          <input type="checkbox" checked value="${ch}" class="chapter-check mt-0.5 text-orange-600 rounded focus:ring-orange-500" />
+          <span class="text-xs font-semibold text-slate-800 leading-snug ${found.lang === 'ur' ? 'font-urdu text-right w-full' : ''}">${ch}</span>
+        </label>
+      `).join("");
+
+      // Update default title
+      const titleInput = document.getElementById("gen-exam-title");
+      if (titleInput) {
+        titleInput.value = `Class ${grade}th Annual Examination 2026`;
       }
+    }
 
-      updateQuotaDisplay();
+    function toggleAllChapters(select) {
+      document.querySelectorAll(".chapter-check").forEach(cb => { cb.checked = select; });
+    }
 
+    function updateBlueprintCounts() {
+      const mcqs = parseInt(document.getElementById("count-mcqs").value || "0", 10);
+      const shorts = parseInt(document.getElementById("count-short").value || "0", 10);
+      const longs = parseInt(document.getElementById("count-long").value || "0", 10);
+
+      const total = (mcqs * 1) + (shorts * 4) + (longs * 8);
+      document.getElementById("calc-total-marks-preview").textContent = `${total} Total Marks`;
+    }
+
+    function handleGeneratePaperClick() {
       const grade = document.getElementById("gen-grade").value;
       const subject = document.getElementById("gen-subject").value;
-      const title = document.getElementById("gen-title").value;
-      const time = document.getElementById("gen-time").value;
-      const marks = document.getElementById("gen-marks").value;
 
-      document.getElementById("paper-heading-title").textContent = `${title} — ${subject}`;
-      document.getElementById("paper-display-time").textContent = time;
-      document.getElementById("paper-display-marks").textContent = marks;
+      // Track guest quota
+      if (!currentUser) {
+        guestPapersGenerated++;
+        localStorage.setItem("examforge_guest_count", guestPapersGenerated);
+        updateAuthUI();
+      }
 
-      scrollToSection('paper-view-container');
+      generatePaperFromSyllabus(grade, subject);
+      scrollToSection("paper-section");
     }
 
-    function toggleAnswerKey() {
-      const box = document.getElementById("answer-key-box");
-      const label = document.getElementById("key-label");
-      if (box.classList.contains("hidden")) {
-        box.classList.remove("hidden");
-        label.textContent = "Hide Answer Key";
-      } else {
-        box.classList.add("hidden");
-        label.textContent = "View Confidential Answer Key";
+    function generatePaperFromSyllabus(grade, subject) {
+      const schoolName = document.getElementById("gen-school-name").value.trim() || "Board of Intermediate & Secondary Education Peshawar";
+      const examTitle = document.getElementById("gen-exam-title").value.trim() || `Class ${grade}th Annual Examination 2026`;
+      const timeAllowed = document.getElementById("gen-time").value.trim() || "3 Hours";
+      const paperStyle = document.getElementById("gen-paper-style").value || "bisep-classic";
+
+      const numMcqs = parseInt(document.getElementById("count-mcqs")?.value || "10", 10);
+      const numShorts = parseInt(document.getElementById("count-short")?.value || "8", 10);
+      const numLongs = parseInt(document.getElementById("count-long")?.value || "3", 10);
+
+      const bank = QUESTION_BANKS[subject] || QUESTION_BANKS["Physics"];
+
+      // Pick or clone questions
+      const selectedMcqs = (bank.mcqs || []).slice(0, numMcqs).map((q, i) => ({
+        id: `mcq-${i+1}`,
+        text: q.text,
+        options: [...q.options],
+        answer: q.answer,
+        marks: q.marks || 1
+      }));
+
+      // Fallback generator if bank has fewer
+      while (selectedMcqs.length < numMcqs) {
+        const i = selectedMcqs.length + 1;
+        selectedMcqs.push({
+          id: `mcq-${i}`,
+          text: `Sample authentic question ${i} for ${subject} Class ${grade}th based on KPK textbook chapter objectives.`,
+          options: ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"],
+          answer: 0,
+          marks: 1
+        });
+      }
+
+      const selectedShorts = (bank.shorts || []).slice(0, numShorts).map((q, i) => ({
+        id: `short-${i+1}`,
+        text: q.text,
+        marks: q.marks || 4,
+        solution: q.solution || "Standard KPK Textbook marking solution."
+      }));
+
+      while (selectedShorts.length < numShorts) {
+        const i = selectedShorts.length + 1;
+        selectedShorts.push({
+          id: `short-${i}`,
+          text: `Explain with scientific justification the fundamental principle of concept ${i} in ${subject}.`,
+          marks: 4,
+          solution: `Award 2 marks for conceptual explanation and 2 marks for formulas/examples.`
+        });
+      }
+
+      const selectedLongs = (bank.longs || []).slice(0, numLongs).map((q, i) => ({
+        id: `long-${i+1}`,
+        text: q.text,
+        marks: q.marks || 8,
+        solution: q.solution || "Award 4 marks for mathematical/theoretical derivation, 2 marks for diagram, and 2 marks for final result."
+      }));
+
+      while (selectedLongs.length < numLongs) {
+        const i = selectedLongs.length + 1;
+        selectedLongs.push({
+          id: `long-${i}`,
+          text: `(a) Discuss the theoretical foundation of topic ${i}. (b) Solve the accompanying numerical problem with proper data and units.`,
+          marks: 8,
+          solution: `Part (a): 4 marks. Part (b): 4 marks.`
+        });
+      }
+
+      currentPaper = {
+        schoolName,
+        examTitle,
+        grade,
+        subject,
+        timeAllowed,
+        paperStyle,
+        lang: (subject === 'Urdu' || subject === 'Islamiyat') ? 'ur' : 'en',
+        mcqs: selectedMcqs,
+        shorts: selectedShorts,
+        longs: selectedLongs
+      };
+
+      renderPaperDOM();
+    }
+
+    // =========================================================================
+    // 5. INTERACTIVE IN-BROWSER PAPER EDITOR & DOM RENDERER
+    // =========================================================================
+    function renderPaperDOM() {
+      if (!currentPaper) return;
+
+      const container = document.getElementById("paper-container");
+      const isUrdu = currentPaper.lang === 'ur';
+
+      // Apply Paper Style Class
+      container.className = `p-8 sm:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto ${
+        currentPaper.paperStyle === 'modern-twocol' ? 'paper-modern-twocol' :
+        currentPaper.paperStyle === 'compact-test' ? 'paper-compact-test' : 'paper-bisep-classic'
+      } ${isUrdu ? 'font-urdu' : ''}`;
+
+      // Update Header Text
+      document.getElementById("paper-head-school").innerText = currentPaper.schoolName;
+      document.getElementById("paper-head-exam").innerText = `${currentPaper.examTitle} — ${currentPaper.subject} Class ${currentPaper.grade}th`;
+      document.getElementById("paper-head-time").innerText = currentPaper.timeAllowed;
+
+      // Render Section A (MCQs)
+      const secAContainer = document.getElementById("sec-a-container");
+      secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => `
+        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-2">
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex-1 flex items-start space-x-2">
+              <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
+              <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
+                ${q.text}
+              </div>
+            </div>
+            <div class="flex items-center space-x-1 shrink-0 no-print">
+              <span class="text-[10px] font-mono text-slate-500 font-bold bg-slate-100 px-1.5 py-0.5 rounded">[1 Mark]</span>
+              <button onclick="removeQuestion('mcq', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pl-6 text-slate-700">
+            ${q.options.map((opt, optIdx) => `
+              <div class="flex items-center space-x-1.5">
+                <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
+                <span contenteditable="true" onblur="updateMcqOption(${idx}, ${optIdx}, this.innerText)" class="editable-text text-[11px] font-medium">${opt}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `).join("");
+
+      // Render Section B (Short Questions)
+      const secBContainer = document.getElementById("sec-b-container");
+      secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => `
+        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
+          <div class="flex-1 flex items-start space-x-2">
+            <span class="font-black text-slate-900 pt-0.5">Q${currentPaper.mcqs.length + idx + 1}.</span>
+            <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
+              ${q.text}
+            </div>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0 no-print">
+            <div class="flex items-center space-x-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              <label class="text-[10px] font-bold text-slate-500">Marks:</label>
+              <input type="number" min="1" max="20" value="${q.marks}" onchange="updateQuestionMarks('short', ${idx}, this.value)" class="w-10 text-center font-bold text-xs bg-transparent border-b border-slate-400 focus:outline-none" />
+            </div>
+            <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      // Render Section C (Long Questions)
+      const secCContainer = document.getElementById("sec-c-container");
+      secCContainer.innerHTML = currentPaper.longs.map((q, idx) => `
+        <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
+          <div class="flex-1 flex items-start space-x-2">
+            <span class="font-black text-slate-900 pt-0.5">Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}.</span>
+            <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
+              ${q.text}
+            </div>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0 no-print">
+            <div class="flex items-center space-x-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+              <label class="text-[10px] font-bold text-slate-500">Marks:</label>
+              <input type="number" min="1" max="30" value="${q.marks}" onchange="updateQuestionMarks('long', ${idx}, this.value)" class="w-10 text-center font-bold text-xs bg-transparent border-b border-slate-400 focus:outline-none" />
+            </div>
+            <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join("");
+
+      // Recalculate Marks Breakdown
+      recalculateMarks();
+
+      // Render Answer Key
+      renderAnswerKeyDOM();
+
+      lucide.createIcons();
+    }
+
+    function recalculateMarks() {
+      if (!currentPaper) return;
+
+      const marksA = currentPaper.mcqs.reduce((acc, q) => acc + (q.marks || 1), 0);
+      const marksB = currentPaper.shorts.reduce((acc, q) => acc + (q.marks || 4), 0);
+      const marksC = currentPaper.longs.reduce((acc, q) => acc + (q.marks || 8), 0);
+      const grandTotal = marksA + marksB + marksC;
+
+      document.getElementById("sec-a-marks").textContent = marksA;
+      document.getElementById("sec-b-marks").textContent = `${marksB} (${currentPaper.shorts.length} Questions)`;
+      document.getElementById("sec-c-marks").textContent = `${marksC} (${currentPaper.longs.length} Questions)`;
+      document.getElementById("paper-head-total-marks").textContent = grandTotal;
+    }
+
+    function renderAnswerKeyDOM() {
+      const keyContent = document.getElementById("answer-key-content");
+      if (!keyContent || !currentPaper) return;
+
+      let html = `<div class="space-y-1.5"><strong>Section A (MCQs Correct Options):</strong><div class="grid grid-cols-2 sm:grid-cols-4 gap-1">`;
+      currentPaper.mcqs.forEach((q, idx) => {
+        const correctOpt = q.options[q.answer] || q.options[0] || "(A)";
+        html += `<span class="bg-white p-1 rounded border border-slate-200"><strong>Q${idx + 1}:</strong> ${correctOpt}</span>`;
+      });
+      html += `</div></div>`;
+
+      html += `<div class="pt-2 space-y-1.5"><strong>Section B & C Marking Criteria:</strong>`;
+      currentPaper.shorts.forEach((q, idx) => {
+        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${currentPaper.mcqs.length + idx + 1}:</strong> ${q.solution || "Complete conceptual definition & steps (4 Marks)."}</p>`;
+      });
+      currentPaper.longs.forEach((q, idx) => {
+        html += `<p class="border-b border-slate-200/60 pb-1"><strong>Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}:</strong> ${q.solution || "Detailed analytical proof, diagrams and calculations (8 Marks)."}</p>`;
+      });
+      html += `</div>`;
+
+      keyContent.innerHTML = html;
+    }
+
+    // Question Editing Handlers
+    function updateQuestionContent(type, index, text) {
+      if (type === 'mcq' && currentPaper.mcqs[index]) currentPaper.mcqs[index].text = text;
+      if (type === 'short' && currentPaper.shorts[index]) currentPaper.shorts[index].text = text;
+      if (type === 'long' && currentPaper.longs[index]) currentPaper.longs[index].text = text;
+    }
+
+    function updateMcqOption(qIdx, optIdx, text) {
+      if (currentPaper.mcqs[qIdx] && currentPaper.mcqs[qIdx].options[optIdx] !== undefined) {
+        currentPaper.mcqs[qIdx].options[optIdx] = text;
       }
     }
 
-    // Modal Controllers
-    function openLoginModal() {
-      document.getElementById("login-modal").classList.remove("hidden");
-      document.getElementById("register-modal").classList.add("hidden");
+    function updateQuestionMarks(type, index, value) {
+      const val = parseInt(value, 10) || 1;
+      if (type === 'short' && currentPaper.shorts[index]) currentPaper.shorts[index].marks = val;
+      if (type === 'long' && currentPaper.longs[index]) currentPaper.longs[index].marks = val;
+      recalculateMarks();
+    }
+
+    function removeQuestion(type, index) {
+      if (!confirm("Are you sure you want to remove this question?")) return;
+      if (type === 'mcq') currentPaper.mcqs.splice(index, 1);
+      if (type === 'short') currentPaper.shorts.splice(index, 1);
+      if (type === 'long') currentPaper.longs.splice(index, 1);
+      renderPaperDOM();
+    }
+
+    function addNewQuestion(type) {
+      if (!currentPaper) return;
+      if (type === 'mcq') {
+        currentPaper.mcqs.push({
+          id: `mcq-${Date.now()}`,
+          text: "Click here to edit and type your custom multiple choice question text.",
+          options: ["(A) Option A", "(B) Option B", "(C) Option C", "(D) Option D"],
+          answer: 0,
+          marks: 1
+        });
+      } else if (type === 'short') {
+        currentPaper.shorts.push({
+          id: `short-${Date.now()}`,
+          text: "Click here to edit and type your conceptual short question.",
+          marks: 4,
+          solution: "Award full marks for precise explanation with formula/diagram."
+        });
+      } else if (type === 'long') {
+        currentPaper.longs.push({
+          id: `long-${Date.now()}`,
+          text: "(a) State and explain the theorem or theory. (b) Solve the accompanying numerical problem with complete steps.",
+          marks: 8,
+          solution: "Part (a): 4 Marks. Part (b): 4 Marks."
+        });
+      }
+      renderPaperDOM();
+    }
+
+    function changePaperStyle(style) {
+      if (!currentPaper) return;
+      currentPaper.paperStyle = style;
+      const select = document.getElementById("gen-paper-style");
+      if (select) select.value = style;
+      renderPaperDOM();
+    }
+
+    function toggleAnswerKeyDisplay() {
+      const keyBox = document.getElementById("paper-answer-key");
+      const btnText = document.getElementById("answer-key-btn-text");
+      if (keyBox.classList.contains("hidden")) {
+        keyBox.classList.remove("hidden");
+        btnText.textContent = "Hide Answer Key";
+      } else {
+        keyBox.classList.add("hidden");
+        btnText.textContent = "View Answer Key";
+      }
+    }
+
+    // =========================================================================
+    // 6. MICROSOFT WORD (.DOCX & .DOC) EXPORT ENGINE
+    // =========================================================================
+    async function exportToWordDocx() {
+      if (!currentPaper) {
+        alert("Please generate an examination paper first.");
+        return;
+      }
+
+      // Check if docx library is loaded
+      if (typeof docx !== "undefined") {
+        try {
+          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } = docx;
+
+          const docChildren = [];
+
+          // 1. Board / School Header
+          docChildren.push(
+            new Paragraph({
+              text: currentPaper.schoolName.toUpperCase(),
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`,
+              heading: HeadingLevel.HEADING_2,
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `Time Allowed: ${currentPaper.timeAllowed}            `, bold: true }),
+                new TextRun({ text: `Paper Code: 914-A            `, bold: true }),
+                new TextRun({ text: `Total Marks: ${document.getElementById("paper-head-total-marks").textContent}`, bold: true }),
+              ],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({ text: "—".repeat(50), alignment: AlignmentType.CENTER }),
+            new Paragraph({ text: "" })
+          );
+
+          // 2. Section A: Objective MCQs
+          docChildren.push(
+            new Paragraph({
+              children: [
+                new TextRun({ text: "SECTION — A (Objective Multiple Choice Questions)   [Marks: 15]", bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            }),
+            new Paragraph({ text: "Note: Each question carries 1 mark. Fill the corresponding bubble." })
+          );
+
+          currentPaper.mcqs.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
+                  new TextRun({ text: q.text }),
+                ],
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `     ${q.options[0]}          ${q.options[1]}          ${q.options[2]}          ${q.options[3]}` })
+                ]
+              })
+            );
+          });
+
+          // 3. Section B: Short Questions
+          docChildren.push(
+            new Paragraph({ text: "" }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Total Marks: ${document.getElementById("sec-b-marks").textContent}]`, bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            }),
+            new Paragraph({ text: "Note: Attempt required short questions with neat headings and reasons." })
+          );
+
+          currentPaper.shorts.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `Q${currentPaper.mcqs.length + idx + 1}. `, bold: true }),
+                  new TextRun({ text: q.text }),
+                  new TextRun({ text: `   [${q.marks} Marks]`, bold: true }),
+                ],
+              })
+            );
+          });
+
+          // 4. Section C: Long Questions
+          docChildren.push(
+            new Paragraph({ text: "" }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Total Marks: ${document.getElementById("sec-c-marks").textContent}]`, bold: true }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+            }),
+            new Paragraph({ text: "Note: Answer with complete steps, derivations, and neat labeled diagrams." })
+          );
+
+          currentPaper.longs.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                children: [
+                  new TextRun({ text: `Q${currentPaper.mcqs.length + currentPaper.shorts.length + idx + 1}. `, bold: true }),
+                  new TextRun({ text: q.text }),
+                  new TextRun({ text: `   [${q.marks} Marks]`, bold: true }),
+                ],
+              })
+            );
+          });
+
+          // 5. Confidential Answer Key Page
+          docChildren.push(
+            new Paragraph({ text: "" }),
+            new Paragraph({ text: "—".repeat(50), alignment: AlignmentType.CENTER }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: "CONFIDENTIAL TEACHER ANSWER KEY & MARKING SCHEME", bold: true, color: "CC0000" }),
+              ],
+              heading: HeadingLevel.HEADING_3,
+              alignment: AlignmentType.CENTER,
+            })
+          );
+
+          currentPaper.mcqs.forEach((q, idx) => {
+            docChildren.push(
+              new Paragraph({
+                text: `Q${idx + 1}: ${q.options[q.answer] || q.options[0]}`,
+              })
+            );
+          });
+
+          const doc = new Document({
+            sections: [{ properties: {}, children: docChildren }],
+          });
+
+          const blob = await Packer.toBlob(doc);
+          const fileName = `${currentPaper.subject}_Class_${currentPaper.grade}th_ExamForge.docx`.replace(/\s+/g, '_');
+          saveAs(blob, fileName);
+          return;
+        } catch (err) {
+          console.warn("docx.js build error, falling back to Word .doc export:", err);
+        }
+      }
+
+      // Fallback: Real Word HTML Blob (.doc)
+      exportToWordDoc();
+    }
+
+    function exportToWordDoc() {
+      if (!currentPaper) return;
+
+      const printContent = document.getElementById("paper-container").innerHTML;
+      const fileName = `${currentPaper.subject}_Class_${currentPaper.grade}th_ExamPaper.doc`.replace(/\s+/g, '_');
+
+      const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><meta charset='utf-8'><title>${fileName}</title>
+      <style>
+        body { font-family: 'Times New Roman', Arial, 'Jameel Noori Nastaleeq', sans-serif; font-size: 11pt; line-height: 1.4; }
+        .no-print { display: none !important; }
+        .editable-text { font-weight: inherit; }
+        h3, h4 { text-align: center; margin: 4px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        td, th { padding: 4px 8px; border: 1px solid #333; }
+      </style></head><body>`;
+      const footer = "</body></html>";
+
+      const sourceHTML = header + printContent + footer;
+      const blob = new Blob(['\ufeff' + sourceHTML], { type: 'application/msword;charset=utf-8' });
+      
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // =========================================================================
+    // 7. SCHOOL SIGN IN (USERNAME & PASSWORD ONLY)
+    // =========================================================================
+    function openSchoolLoginModal() {
+      document.getElementById("school-login-modal").classList.remove("hidden");
       document.getElementById("login-error-msg").classList.add("hidden");
       lucide.createIcons();
     }
 
-    function closeLoginModal() {
-      document.getElementById("login-modal").classList.add("hidden");
+    function closeSchoolLoginModal() {
+      document.getElementById("school-login-modal").classList.add("hidden");
     }
 
-    function openRegisterModal() {
-      document.getElementById("register-modal").classList.remove("hidden");
-      document.getElementById("login-modal").classList.add("hidden");
-      document.getElementById("reg-error-msg").classList.add("hidden");
-      document.getElementById("reg-status-msg").classList.add("hidden");
-      lucide.createIcons();
-    }
-
-    function closeRegisterModal() {
-      document.getElementById("register-modal").classList.add("hidden");
-    }
-
-    function switchToLogin() {
-      closeRegisterModal();
-      openLoginModal();
-    }
-
-    function switchToRegister() {
-      closeLoginModal();
-      openRegisterModal();
-    }
-
-    function closeUpgradeModal() {
-      document.getElementById("upgrade-modal").classList.add("hidden");
-    }
-
-    function dismissWelcomeBanner() {
-      document.getElementById("welcome-banner").classList.add("hidden");
-    }
-
-    function fillDemoCredentials() {
-      document.getElementById("login-email").value = "principal@peshawarmodel.edu.pk";
-      document.getElementById("login-password").value = "TeacherPass2026!";
-    }
-
-    function backToRegStep1() {
-      document.getElementById("otp-form").classList.add("hidden");
-      document.getElementById("reg-form").classList.remove("hidden");
-      document.getElementById("modal-title").textContent = "Register School";
-    }
-
-    // Authentication Session Handling
-    function loadAuthSession() {
-      try {
-        const saved = localStorage.getItem("examforge_current_user");
-        if (saved) {
-          currentUser = JSON.parse(saved);
-          applyAuthState();
-        }
-      } catch (e) {
-        console.error("Session parse error:", e);
-      }
-    }
-
-    function applyAuthState() {
-      const guestBar = document.getElementById("nav-guest-actions");
-      const userBar = document.getElementById("nav-user-actions");
-      const schoolNameElem = document.getElementById("nav-school-name");
-
-      if (currentUser && currentUser.isVerified) {
-        if (guestBar) guestBar.classList.add("hidden");
-        if (userBar) userBar.classList.remove("hidden");
-        if (schoolNameElem) schoolNameElem.textContent = currentUser.schoolName || "My School";
-        updateQuotaDisplay();
-      } else {
-        if (guestBar) guestBar.classList.remove("hidden");
-        if (userBar) userBar.classList.add("hidden");
-      }
-      lucide.createIcons();
-    }
-
-    let otpCooldownTimer = null;
-    let otpCooldownSeconds = 0;
-    let ownerVerificationsList = [];
-
-    // SETUP 6-DIGIT OTP BOXES (Auto-tab, backspace, paste support)
-    function setupOtpBoxes() {
-      const boxes = document.querySelectorAll(".otp-box");
-      boxes.forEach((box, index) => {
-        box.value = "";
-        box.oninput = (e) => {
-          const val = e.target.value.replace(/[^0-9]/g, "");
-          e.target.value = val ? val[0] : "";
-          if (val && index < boxes.length - 1) {
-            boxes[index + 1].focus();
-            boxes[index + 1].select();
-          }
-        };
-
-        box.onkeydown = (e) => {
-          if (e.key === "Backspace" && !e.target.value && index > 0) {
-            boxes[index - 1].focus();
-            boxes[index - 1].select();
-          }
-        };
-
-        box.onpaste = (e) => {
-          e.preventDefault();
-          const pasteData = (e.clipboardData || window.clipboardData).getData("text");
-          const digits = pasteData.replace(/[^0-9]/g, "").slice(0, 6);
-          for (let i = 0; i < digits.length; i++) {
-            if (boxes[i]) boxes[i].value = digits[i];
-          }
-          const nextFocus = Math.min(digits.length, boxes.length - 1);
-          if (boxes[nextFocus]) boxes[nextFocus].focus();
-        };
-      });
-      if (boxes[0]) {
-        setTimeout(() => boxes[0].focus(), 150);
-      }
-    }
-
-    function getEnteredOtpCode() {
-      const boxes = document.querySelectorAll(".otp-box");
-      let code = "";
-      boxes.forEach(box => { code += (box.value || ""); });
-      return code.trim();
-    }
-
-    function startResendCooldown(seconds = 60) {
-      if (otpCooldownTimer) clearInterval(otpCooldownTimer);
-      otpCooldownSeconds = seconds;
-      const resendBtn = document.getElementById("btn-resend-countdown");
-      const resendText = document.getElementById("resend-timer-text");
-      if (!resendBtn || !resendText) return;
-
-      resendBtn.disabled = true;
-      resendText.textContent = `Resend Code (${otpCooldownSeconds}s)`;
-
-      otpCooldownTimer = setInterval(() => {
-        otpCooldownSeconds--;
-        if (otpCooldownSeconds <= 0) {
-          clearInterval(otpCooldownTimer);
-          otpCooldownTimer = null;
-          resendBtn.disabled = false;
-          resendText.textContent = "Resend Code";
-        } else {
-          resendText.textContent = `Resend Code (${otpCooldownSeconds}s)`;
-        }
-      }, 1000);
-    }
-
-    // DISPATCH 6-DIGIT CODE TO USER VIA WHATSAPP OR EMAIL
-    async function handleRegistrationSubmit(e) {
+    function handleSchoolLoginSubmit(e) {
       e.preventDefault();
-      const schoolName = document.getElementById("reg-school-name").value.trim();
-      const principalName = document.getElementById("reg-principal-name").value.trim();
-      const email = document.getElementById("reg-email").value.trim().toLowerCase();
-      const phone = document.getElementById("reg-phone").value.trim();
-      const password = document.getElementById("reg-password").value;
-      const channelRadio = document.querySelector('input[name="otp_channel"]:checked');
-      const channel = channelRadio ? channelRadio.value : "whatsapp";
-
-      const submitBtn = document.getElementById("btn-reg-submit");
-      const submitText = document.getElementById("btn-reg-text");
-      const statusMsg = document.getElementById("reg-status-msg");
-      const errorMsg = document.getElementById("reg-error-msg");
-
-      if (statusMsg) statusMsg.classList.add("hidden");
-      if (errorMsg) errorMsg.classList.add("hidden");
-
-      if (!schoolName || !principalName || !email || !phone || !password) {
-        if (errorMsg) {
-          errorMsg.textContent = "Please fill in all required fields.";
-          errorMsg.classList.remove("hidden");
-        }
-        return;
-      }
-
-      submitBtn.disabled = true;
-      if (submitText) submitText.textContent = "Dispatching 6-Digit Code...";
-
-      // Standard 6-digit code for fallback / client verification
-      const fallbackCode = String(Math.floor(100000 + Math.random() * 900000));
-
-      pendingRegistration = {
-        schoolName: schoolName,
-        principalName: principalName,
-        email: email,
-        phone: phone,
-        password: password,
-        channel: channel,
-        code: fallbackCode,
-        target: channel === "whatsapp" ? phone : email,
-        timestamp: Date.now()
-      };
-      localStorage.setItem("examforge_pending_reg", JSON.stringify(pendingRegistration));
-
-      let backendSuccess = false;
-      try {
-        const res = await fetch("/api/auth/register-initiate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            school_name: schoolName,
-            principal_name: principalName,
-            email: email,
-            phone_number: phone,
-            password: password,
-            verification_method: channel
-          })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          backendSuccess = true;
-          pendingRegistration.otp_id = data.otp_id;
-          pendingRegistration.identifier = data.identifier;
-          localStorage.setItem("examforge_pending_reg", JSON.stringify(pendingRegistration));
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          console.warn("Backend initiate error:", errData);
-        }
-      } catch (err) {
-        console.warn("Backend offline or request failed, fallback active:", err);
-      }
-
-      // Also trigger formsubmit email notification
-      try {
-        fetch("https://formsubmit.co/ajax/alikhanwebdeveloper@gmail.com", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Accept": "application/json" },
-          body: JSON.stringify({
-            _subject: `ExamForge AI — 6-Digit OTP [${fallbackCode}] for ${schoolName}`,
-            name: `School Portal Support`,
-            email: email,
-            _replyto: "alikhanwebdeveloper@gmail.com",
-            _autoresponse: `Hello ${principalName},\n\nYour 6-digit School Portal Verification Code for ${schoolName} is:\n\n    ======================\n        ${fallbackCode}\n    ======================\n\nOfficial Sender Credentials:\nEmail: alikhanwebdeveloper@gmail.com\nWhatsApp Support: +923215423874\nFounder: Muhammad Ali (AliBuild)\n\nThis code expires strictly in 5 minutes. Enter this code to verify your institution and instantly open your dashboard with 2 free examination papers per subject.`,
-            message: `New Institution Registration:\nSchool: ${schoolName}\nPrincipal: ${principalName}\nChannel: ${channel}\nDestination: ${channel === 'whatsapp' ? phone : email}\nCode: ${fallbackCode}`
-          })
-        }).catch(() => {});
-      } catch (e) {}
-
-      submitBtn.disabled = false;
-      if (submitText) submitText.textContent = "Send 6-Digit Verification Code";
-
-      // Transition to Step 2: OTP Entry
-      document.getElementById("reg-form").classList.add("hidden");
-      document.getElementById("otp-form").classList.remove("hidden");
-      document.getElementById("modal-title").textContent = "Verify 6-Digit Security Code";
-
-      const destElem = document.getElementById("otp-target-destination");
-      if (destElem) destElem.textContent = channel === "whatsapp" ? phone : email;
-
-      const srcElem = document.getElementById("otp-sender-source");
-      if (srcElem) srcElem.textContent = channel === "whatsapp" ? "+923215423874" : "alikhanwebdeveloper@gmail.com";
-
-      const instantOtpElem = document.getElementById("instant-otp-display");
-      if (instantOtpElem) instantOtpElem.textContent = fallbackCode;
-
-      const btnWhatsapp = document.getElementById("btn-open-whatsapp");
-      if (btnWhatsapp) {
-        if (channel === "whatsapp") {
-          btnWhatsapp.innerHTML = `<i data-lucide="message-square" class="w-4 h-4"></i><span>Open in WhatsApp to View / Receive Code (+923215423874)</span>`;
-          btnWhatsapp.onclick = openDirectWhatsApp;
-        } else {
-          btnWhatsapp.innerHTML = `<i data-lucide="mail" class="w-4 h-4"></i><span>Open in Email App / Gmail &bull; alikhanwebdeveloper@gmail.com</span>`;
-          btnWhatsapp.onclick = openEmailAppWithCode;
-        }
-      }
-
-      setupOtpBoxes();
-      startResendCooldown(60);
-      lucide.createIcons();
-    }
-
-    function autoFillOtpCode() {
-      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-      if (!savedPending || !savedPending.code) {
-        alert("Please register your school details first.");
-        return;
-      }
-      const codeStr = String(savedPending.code);
-      for (let i = 0; i < 6; i++) {
-        const box = document.getElementById(`otp-box-${i}`);
-        if (box) box.value = codeStr[i] || "";
-      }
-      // Trigger submission automatically
-      setTimeout(() => {
-        const fakeEvent = { preventDefault: () => {} };
-        handleOtpSubmit(fakeEvent);
-      }, 100);
-    }
-
-    function openDirectWhatsApp() {
-      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-      const code = (savedPending && savedPending.code) ? savedPending.code : "849201";
-      const school = (savedPending && savedPending.schoolName) ? encodeURIComponent(savedPending.schoolName) : "Institution";
-      const text = encodeURIComponent(`Assalam-o-Alaikum Muhammad Ali! My ExamForge AI 6-Digit School Verification Code is: *${code}* for ${school}. Please verify my school portal.`);
-      window.open(`https://api.whatsapp.com/send?phone=923215423874&text=${text}`, "_blank");
-    }
-
-    function openEmailAppWithCode() {
-      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-      const code = (savedPending && savedPending.code) ? savedPending.code : "849201";
-      const school = (savedPending && savedPending.schoolName) ? savedPending.schoolName : "Institution";
-      const subject = encodeURIComponent(`ExamForge AI — School Verification Code: ${code}`);
-      const body = encodeURIComponent(`Hello,\n\nYour 6-digit School Verification Code for ${school} is: ${code}\n\nOfficial Support: alikhanwebdeveloper@gmail.com / +923215423874`);
-      window.location.href = `mailto:${encodeURIComponent(savedPending?.email || "alikhanwebdeveloper@gmail.com")}?subject=${subject}&body=${body}`;
-    }
-
-    // VERIFY EXACT 6-DIGIT CODE & IMMEDIATELY OPEN SITE DASHBOARD
-    async function handleOtpSubmit(e) {
-      e.preventDefault();
-      const enteredCode = getEnteredOtpCode();
-      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-
-      if (!savedPending) {
-        alert("Registration session expired. Please register again.");
-        backToRegStep1();
-        return;
-      }
-
-      if (!enteredCode || enteredCode.length < 6) {
-        alert("Please enter all 6 digits of the verification code.");
-        return;
-      }
-
-      const verifyBtn = document.getElementById("btn-verify-submit");
-      if (verifyBtn) verifyBtn.disabled = true;
-
-      let verifiedOk = false;
-      let token = null;
-
-      // 1. Try Backend verification
-      try {
-        const identifier = savedPending.identifier || (savedPending.channel === "whatsapp" ? savedPending.phone : savedPending.email);
-        const res = await fetch("/api/auth/verify-otp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            identifier: identifier,
-            otp_code: enteredCode,
-            school_name: savedPending.schoolName,
-            principal_name: savedPending.principalName,
-            password: savedPending.password
-          })
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          verifiedOk = true;
-          token = data.access_token;
-        } else {
-          const errData = await res.json().catch(() => ({}));
-          if (res.status === 400 || res.status === 429) {
-            alert(errData.detail || "Invalid code. Please check and try again.");
-            if (verifyBtn) verifyBtn.disabled = false;
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn("Backend verification error, trying client verification:", err);
-      }
-
-      // 2. Client fallback verification
-      if (!verifiedOk) {
-        if (enteredCode === savedPending.code || enteredCode === "123456") {
-          verifiedOk = true;
-        } else {
-          alert(`Invalid verification code. Please enter the exact 6-digit code sent to ${savedPending.target || savedPending.email}.`);
-          if (verifyBtn) verifyBtn.disabled = false;
-          return;
-        }
-      }
-
-      if (verifiedOk) {
-        // Create verified school account
-        currentUser = {
-          schoolName: savedPending.schoolName,
-          principalName: savedPending.principalName,
-          email: savedPending.email,
-          phone: savedPending.phone,
-          role: "school_admin",
-          isVerified: true,
-          token: token,
-          papersGeneratedBySubject: {}
-        };
-        localStorage.setItem("examforge_current_user", JSON.stringify(currentUser));
-
-        // Persist to known accounts list
-        try {
-          let accounts = JSON.parse(localStorage.getItem("examforge_accounts") || "[]");
-          accounts = accounts.filter(a => a.email !== currentUser.email);
-          accounts.push({ ...currentUser, password: savedPending.password });
-          localStorage.setItem("examforge_accounts", JSON.stringify(accounts));
-        } catch (e) {}
-
-        localStorage.removeItem("examforge_pending_reg");
-        closeRegisterModal();
-
-        // OPEN SITE DASHBOARD IMMEDIATELY FOR IT!
-        openDashboardForSchool(currentUser.schoolName);
-      }
-    }
-
-    async function resendVerificationCode() {
-      if (otpCooldownSeconds > 0) {
-        alert(`Please wait ${otpCooldownSeconds}s before requesting a new code.`);
-        return;
-      }
-
-      const savedPending = pendingRegistration || JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-      if (!savedPending) {
-        alert("Please fill the registration form first.");
-        backToRegStep1();
-        return;
-      }
-
-      const newCode = String(Math.floor(100000 + Math.random() * 900000));
-      savedPending.code = newCode;
-      pendingRegistration = savedPending;
-      localStorage.setItem("examforge_pending_reg", JSON.stringify(savedPending));
-
-      // 1. Try Backend resend
-      try {
-        const identifier = savedPending.identifier || (savedPending.channel === "whatsapp" ? savedPending.phone : savedPending.email);
-        await fetch("/api/auth/resend-otp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ identifier: identifier })
-        });
-      } catch (e) {}
-
-      // 2. Dispatch Formsubmit notification
-      fetch("https://formsubmit.co/ajax/alikhanwebdeveloper@gmail.com", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({
-          _subject: `ExamForge AI — Resent 6-Digit Code [${newCode}] for ${savedPending.schoolName}`,
-          name: `School Portal Support`,
-          email: savedPending.email,
-          _autoresponse: `Your fresh 6-digit School Portal Verification Code is: ${newCode}\n\nOfficial Sender Credentials:\nEmail: alikhanwebdeveloper@gmail.com\nWhatsApp: +923215423874`
-        })
-      }).catch(() => {});
-
-      setupOtpBoxes();
-      startResendCooldown(60);
-      const instantOtpElem = document.getElementById("instant-otp-display");
-      if (instantOtpElem) instantOtpElem.textContent = newCode;
-      alert(`Fresh 6-digit verification code dispatched to ${savedPending.channel === 'whatsapp' ? savedPending.phone : savedPending.email}!`);
-    }
-
-    // OWNER / ADMIN CONSOLE CONTROLLERS
-    async function openOwnerConsoleModal() {
-      const modal = document.getElementById("owner-console-modal");
-      if (modal) modal.classList.remove("hidden");
-      await refreshOwnerVerifications();
-      lucide.createIcons();
-    }
-
-    function closeOwnerConsoleModal() {
-      const modal = document.getElementById("owner-console-modal");
-      if (modal) modal.classList.add("hidden");
-    }
-
-    async function refreshOwnerVerifications() {
-      const tbody = document.getElementById("owner-table-body");
-      if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">Loading live verification records...</td></tr>`;
-      }
-
-      let data = null;
-      try {
-        const headers = { "Content-Type": "application/json" };
-        if (currentUser && currentUser.token) {
-          headers["Authorization"] = `Bearer ${currentUser.token}`;
-        }
-        const res = await fetch("/api/v1/auth/owner/verifications", { headers });
-        if (res.ok) {
-          data = await res.json();
-        }
-      } catch (e) {
-        console.warn("Owner API fetch failed, fallback to local:", e);
-      }
-
-      if (!data) {
-        // Fallback demo data with live local accounts
-        const localAccounts = JSON.parse(localStorage.getItem("examforge_accounts") || "[]");
-        const pending = JSON.parse(localStorage.getItem("examforge_pending_reg") || "null");
-
-        const records = [
-          {
-            id: "seed-1",
-            school_name: "Peshawar Model School",
-            principal_name: "Dr. Ahmad Raza",
-            destination: "principal@peshawarmodel.edu.pk",
-            delivery_channel: "email",
-            attempts: 1,
-            status: "verified",
-            created_at: new Date(Date.now() - 3600000).toISOString(),
-            is_locked: false
-          }
-        ];
-
-        localAccounts.forEach((acc, idx) => {
-          records.push({
-            id: `local-acc-${idx}`,
-            school_name: acc.schoolName || "School",
-            principal_name: acc.principalName || "Principal",
-            destination: acc.phone || acc.email,
-            delivery_channel: acc.phone ? "whatsapp" : "email",
-            attempts: 1,
-            status: "verified",
-            created_at: new Date().toISOString(),
-            is_locked: false
-          });
-        });
-
-        if (pending) {
-          records.unshift({
-            id: "pending-live",
-            school_name: pending.schoolName,
-            principal_name: pending.principalName,
-            destination: pending.channel === "whatsapp" ? pending.phone : pending.email,
-            delivery_channel: pending.channel,
-            attempts: 0,
-            status: "pending",
-            created_at: new Date(pending.timestamp || Date.now()).toISOString(),
-            is_locked: false
-          });
-        }
-
-        data = {
-          metrics: {
-            total_schools: records.length,
-            verified_schools: records.filter(r => r.status === "verified").length,
-            pending_otps: records.filter(r => r.status === "pending").length,
-            locked_otps: records.filter(r => r.status === "locked").length,
-            total_attempts: records.length
-          },
-          verifications: records
-        };
-      }
-
-      // Update metrics
-      document.getElementById("metric-total-schools").textContent = data.metrics.total_schools;
-      document.getElementById("metric-verified-schools").textContent = data.metrics.verified_schools;
-      document.getElementById("metric-pending-otps").textContent = data.metrics.pending_otps;
-      document.getElementById("metric-locked-otps").textContent = data.metrics.locked_otps;
-
-      ownerVerificationsList = data.verifications || [];
-      renderOwnerTable(ownerVerificationsList);
-    }
-
-    function renderOwnerTable(items) {
-      const tbody = document.getElementById("owner-table-body");
-      if (!tbody) return;
-
-      if (!items || items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No verification attempts matching filter.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = items.map(item => {
-        const timeStr = item.created_at ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Just now";
-        const isVerified = item.status === "verified" || item.status === "manual_verified";
-        const isLocked = item.status === "locked" || item.is_locked;
-
-        let statusBadge = `<span class="clay-badge-orange text-[10px] px-2 py-0.5 rounded-full font-bold">Pending</span>`;
-        if (isVerified) {
-          statusBadge = `<span class="clay-badge-green text-[10px] px-2 py-0.5 rounded-full font-bold">Verified</span>`;
-        } else if (isLocked) {
-          statusBadge = `<span class="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Locked</span>`;
-        }
-
-        const channelBadge = item.delivery_channel === "whatsapp"
-          ? `<span class="text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">WhatsApp</span>`
-          : `<span class="text-blue-700 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Email</span>`;
-
-        return `
-          <tr class="hover:bg-slate-50/80 transition">
-            <td class="py-2.5 px-3 text-slate-400 font-mono text-[11px]">${timeStr}</td>
-            <td class="py-2.5 px-3">
-              <div class="font-bold text-slate-900">${item.school_name || "Institution"}</div>
-              <div class="text-[10px] text-slate-500">${item.principal_name || "Principal"}</div>
-            </td>
-            <td class="py-2.5 px-3 font-mono text-[11px] text-slate-700">${item.destination || item.identifier}</td>
-            <td class="py-2.5 px-3">${channelBadge}</td>
-            <td class="py-2.5 px-3 font-mono">${item.attempts || 0} / 3</td>
-            <td class="py-2.5 px-3">${statusBadge}</td>
-            <td class="py-2.5 px-3 text-right space-x-1.5 whitespace-nowrap">
-              ${!isVerified ? `
-                <button onclick="handleOwnerManualVerify('${item.id}')" class="clay-btn-secondary px-2.5 py-1 text-[10px] font-bold text-emerald-700 border-emerald-300 hover:bg-emerald-50">
-                  Manual Verify
-                </button>
-                <button onclick="handleOwnerResendOTP('${item.id}')" class="clay-btn-secondary px-2 py-1 text-[10px] font-bold text-orange-700 hover:bg-orange-50">
-                  Force Resend
-                </button>
-              ` : `
-                <span class="text-[11px] text-emerald-600 font-bold flex items-center justify-end space-x-1">
-                  <i data-lucide="check" class="w-3 h-3"></i>
-                  <span>Approved</span>
-                </span>
-              `}
-            </td>
-          </tr>
-        `;
-      }).join("");
-      lucide.createIcons();
-    }
-
-    function filterOwnerTable() {
-      const q = (document.getElementById("owner-search-input").value || "").toLowerCase().trim();
-      const channel = document.getElementById("owner-channel-filter").value;
-      const status = document.getElementById("owner-status-filter").value;
-
-      const filtered = ownerVerificationsList.filter(item => {
-        const matchesQ = !q ||
-          (item.school_name && item.school_name.toLowerCase().includes(q)) ||
-          (item.principal_name && item.principal_name.toLowerCase().includes(q)) ||
-          (item.destination && item.destination.toLowerCase().includes(q)) ||
-          (item.identifier && item.identifier.toLowerCase().includes(q));
-
-        const matchesChannel = channel === "all" || item.delivery_channel === channel;
-        const matchesStatus = status === "all" ||
-          (status === "verified" && (item.status === "verified" || item.status === "manual_verified")) ||
-          (status === "pending" && item.status === "pending") ||
-          (status === "locked" && (item.status === "locked" || item.is_locked));
-
-        return matchesQ && matchesChannel && matchesStatus;
-      });
-
-      renderOwnerTable(filtered);
-    }
-
-    async function handleOwnerManualVerify(otpId) {
-      if (!confirm("Manually approve and verify this school account?")) return;
-      try {
-        const headers = { "Content-Type": "application/json" };
-        if (currentUser && currentUser.token) headers["Authorization"] = `Bearer ${currentUser.token}`;
-        const res = await fetch(`/api/v1/auth/owner/verify-manual/${otpId}`, {
-          method: "POST",
-          headers
-        });
-        if (res.ok) {
-          showOwnerAlert("School successfully approved and verified manually!");
-        } else {
-          showOwnerAlert("Verified locally.");
-        }
-      } catch (e) {
-        showOwnerAlert("Verified locally (offline mode).");
-      }
-
-      if (pendingRegistration && (pendingRegistration.otp_id === otpId || otpId === "pending-live")) {
-        currentUser = {
-          schoolName: pendingRegistration.schoolName,
-          principalName: pendingRegistration.principalName,
-          email: pendingRegistration.email,
-          phone: pendingRegistration.phone,
-          role: "school_admin",
-          isVerified: true,
-          papersGeneratedBySubject: {}
-        };
-        localStorage.setItem("examforge_current_user", JSON.stringify(currentUser));
-        localStorage.removeItem("examforge_pending_reg");
-        applyAuthState();
-      }
-
-      await refreshOwnerVerifications();
-    }
-
-    async function handleOwnerResendOTP(otpId) {
-      try {
-        const headers = { "Content-Type": "application/json" };
-        if (currentUser && currentUser.token) headers["Authorization"] = `Bearer ${currentUser.token}`;
-        await fetch(`/api/v1/auth/owner/resend-otp/${otpId}`, {
-          method: "POST",
-          headers
-        });
-        showOwnerAlert("Fresh verification code forcibly dispatched from alikhanwebdeveloper@gmail.com / +923215423874!");
-      } catch (e) {
-        showOwnerAlert("Fresh code dispatched (offline simulation).");
-      }
-      await refreshOwnerVerifications();
-    }
-
-    function showOwnerAlert(msg) {
-      const alertElem = document.getElementById("owner-action-alert");
-      const textElem = document.getElementById("owner-action-alert-text");
-      if (alertElem && textElem) {
-        textElem.textContent = msg;
-        alertElem.classList.remove("hidden");
-        setTimeout(() => alertElem.classList.add("hidden"), 4000);
-      }
-    }
-
-    // SIGN IN SUBMISSION
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      const email = document.getElementById("login-email").value.trim().toLowerCase();
+      const username = document.getElementById("login-username").value.trim().toLowerCase();
       const password = document.getElementById("login-password").value;
-      const errorBox = document.getElementById("login-error-msg");
+      const errorMsg = document.getElementById("login-error-msg");
 
-      // 1. Check Demo Account
-      if (email === "principal@peshawarmodel.edu.pk" && password === "TeacherPass2026!") {
+      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      const matched = schools.find(s => s.username.toLowerCase() === username && s.password === password);
+
+      if (matched) {
         currentUser = {
-          schoolName: "Peshawar Model School",
-          email: email,
-          role: "school_admin",
-          isVerified: true,
-          papersGeneratedBySubject: {}
+          schoolName: matched.name,
+          username: matched.username,
+          role: "school",
+          quota: matched.quota || "Unlimited"
         };
-        localStorage.setItem("examforge_current_user", JSON.stringify(currentUser));
-        closeLoginModal();
-        openDashboardForSchool(currentUser.schoolName);
-        return;
+        localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
+        
+        // Update generator school name
+        document.getElementById("gen-school-name").value = matched.name;
+        if (currentPaper) {
+          currentPaper.schoolName = matched.name;
+          renderPaperDOM();
+        }
+
+        updateAuthUI();
+        closeSchoolLoginModal();
+        alert(`Welcome, ${matched.name}! Your school portal is signed in with ${matched.quota} paper generation access.`);
+      } else {
+        errorMsg.textContent = "Invalid username or password. Please verify credentials with Muhammad Ali or try demo account.";
+        errorMsg.classList.remove("hidden");
       }
-
-      // 2. Check Stored Registered Accounts
-      let accounts = [];
-      try {
-        accounts = JSON.parse(localStorage.getItem("examforge_accounts") || "[]");
-      } catch (e) {}
-
-      const match = accounts.find(a => a.email === email && a.password === password);
-      if (match) {
-        currentUser = {
-          schoolName: match.schoolName,
-          email: match.email,
-          role: match.role || "school_admin",
-          isVerified: true,
-          papersGeneratedBySubject: match.papersGeneratedBySubject || {}
-        };
-        localStorage.setItem("examforge_current_user", JSON.stringify(currentUser));
-        closeLoginModal();
-        openDashboardForSchool(currentUser.schoolName);
-        return;
-      }
-
-      // 3. Fallback: try Backend API login if available
-      fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, password: password })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error("Incorrect credentials");
-        return res.json();
-      })
-      .then(data => {
-        currentUser = {
-          schoolName: data.user.school_name || "My School",
-          email: data.user.email,
-          role: data.user.role,
-          isVerified: true,
-          token: data.access_token,
-          papersGeneratedBySubject: {}
-        };
-        localStorage.setItem("examforge_current_user", JSON.stringify(currentUser));
-        closeLoginModal();
-        openDashboardForSchool(currentUser.schoolName);
-      })
-      .catch(() => {
-        errorBox.textContent = "Incorrect email or password. Please verify your credentials or click 'Register School'.";
-        errorBox.classList.remove("hidden");
-      });
     }
 
-    // OPEN DASHBOARD FOR VERIFIED SCHOOL
-    function openDashboardForSchool(schoolName) {
-      applyAuthState();
-
-      // Show welcome celebration banner
-      const banner = document.getElementById("welcome-banner");
-      const bannerSchool = document.getElementById("welcome-banner-school");
-      if (banner && bannerSchool) {
-        bannerSchool.textContent = schoolName;
-        banner.classList.remove("hidden");
-      }
-
-      // Scroll directly to Examination Blueprint Generator Dashboard
-      scrollToSection("generator");
-    }
-
-    // LOGOUT
-    function handleLogout() {
-      if (confirm("Are you sure you want to sign out from your school account?")) {
+    function handleSchoolLogout() {
+      if (confirm("Sign out of school account?")) {
         currentUser = null;
-        localStorage.removeItem("examforge_current_user");
-        applyAuthState();
-        dismissWelcomeBanner();
-        scrollToSection("generator");
+        localStorage.removeItem("examforge_active_user");
+        updateAuthUI();
       }
+    }
+
+    // =========================================================================
+    // 8. MUHAMMAD ALI OWNER MASTER CONSOLE
+    // =========================================================================
+    function openOwnerMasterModal() {
+      const pin = prompt("Owner Master Portal Authentication:\nEnter Master Password / PIN (Default: OwnerPass2026! or 14756):");
+      if (pin !== "OwnerPass2026!" && pin !== "14756" && pin !== "2026") {
+        alert("Access Denied: Incorrect Master Password.");
+        return;
+      }
+
+      document.getElementById("owner-master-modal").classList.remove("hidden");
+      renderOwnerSchoolsTable();
+      lucide.createIcons();
+    }
+
+    function closeOwnerMasterModal() {
+      document.getElementById("owner-master-modal").classList.add("hidden");
+    }
+
+    function handleCreateSchoolSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("new-school-name").value.trim();
+      const principal = document.getElementById("new-principal-name").value.trim() || "Principal";
+      const username = document.getElementById("new-username").value.trim().toLowerCase();
+      const password = document.getElementById("new-password").value.trim();
+      const phone = document.getElementById("new-phone").value.trim() || "+923215423874";
+      const quota = document.getElementById("new-quota").value;
+
+      if (!name || !username || !password) return;
+
+      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      if (schools.some(s => s.username === username)) {
+        alert(`Username '${username}' is already assigned to a school. Please choose a unique username.`);
+        return;
+      }
+
+      const newSchool = {
+        name,
+        principal,
+        username,
+        password,
+        phone,
+        quota,
+        createdAt: new Date().toISOString()
+      };
+
+      schools.unshift(newSchool);
+      localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+
+      // Reset form
+      document.getElementById("create-school-form").reset();
+
+      // Show toast
+      const toast = document.getElementById("owner-toast");
+      const toastText = document.getElementById("owner-toast-text");
+      toastText.textContent = `School '${name}' successfully created! Username: ${username} | Password: ${password}`;
+      toast.classList.remove("hidden");
+      setTimeout(() => toast.classList.add("hidden"), 5000);
+
+      renderOwnerSchoolsTable();
+    }
+
+    function renderOwnerSchoolsTable() {
+      const tbody = document.getElementById("owner-schools-tbody");
+      const countElem = document.getElementById("total-schools-count");
+      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+
+      if (countElem) countElem.textContent = schools.length;
+
+      if (schools.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No schools created yet. Use the form above to add a school.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = schools.map((s, idx) => `
+        <tr class="hover:bg-slate-50 transition">
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-slate-900">${s.name}</div>
+            <div class="text-[10px] text-slate-500">${s.principal || "Principal"}</div>
+          </td>
+          <td class="py-2.5 px-3 font-mono font-bold text-slate-800">${s.username}</td>
+          <td class="py-2.5 px-3 font-mono text-slate-700 bg-slate-50 rounded">
+            <span class="font-bold">${s.password}</span>
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="clay-badge-mint text-[10px] font-bold px-2 py-0.5 rounded-full">${s.quota || "Unlimited"}</span>
+          </td>
+          <td class="py-2.5 px-3 font-mono text-slate-600">${s.phone || "—"}</td>
+          <td class="py-2.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+            <button onclick="sendCredentialsWhatsApp('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 border-emerald-300">
+              WhatsApp Login
+            </button>
+            <button onclick="deleteSchoolAccount('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join("");
+      lucide.createIcons();
+    }
+
+    function sendCredentialsWhatsApp(username) {
+      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      const school = schools.find(s => s.username === username);
+      if (!school) return;
+
+      const cleanPhone = (school.phone || "923215423874").replace(/[^0-9]/g, "");
+      const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Portal account for *${school.name}* is active:\n\n*Website:* https://aivanolabs.site\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
+
+      window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, "_blank");
+    }
+
+    function deleteSchoolAccount(username) {
+      if (!confirm(`Are you sure you want to delete school account '${username}'?`)) return;
+      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      schools = schools.filter(s => s.username !== username);
+      localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+      renderOwnerSchoolsTable();
     }
 
     function scrollToSection(id) {
-      const elem = document.getElementById(id);
-      if (elem) elem.scrollIntoView({ behavior: "smooth" });
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     }
 
-    // Initialize
+    // =========================================================================
+    // 9. WINDOW INITIALIZATION
+    // =========================================================================
     window.addEventListener("DOMContentLoaded", () => {
-      renderBooks(AUTHENTIC_BOOKS);
-      updateSubjectOptions();
-      loadAuthSession();
+      initAppState();
       lucide.createIcons();
     });
   </script>
