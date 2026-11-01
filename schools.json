@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Peshawar Model School",
+    "principal": "Director Academics",
+    "username": "pms",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Islamia College School & College Peshawar",
+    "principal": "Prof. Tariq Khan",
+    "username": "ics",
+    "password": "456",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Peshawar Cambridge School",
+    "principal": "Mr. Farhan Ahmad",
+    "username": "pcs",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Army Public School & College Peshawar",
+    "principal": "Brig. (R) Asad Ullah",
+    "username": "aps",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Government Centennial Model High School",
+    "principal": "Headmaster Sahib",
+    "username": "ghs",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Lahore Grammar School (LGS)",
+    "principal": "Academic Principal",
+    "username": "lgs",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Principal Demonstration Portal",
+    "principal": "School Principal",
+    "username": "principal",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "ExamForge Test School",
+    "principal": "Vice Principal",
+    "username": "test",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "ExamForge School Portal",
+    "principal": "Administrator",
+    "username": "school",
+    "password": "123",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Peshawar Model School (Legacy)",
+    "principal": "Dr. Ahmad Raza",
+    "username": "peshawarmodel",
+    "password": "Model2026!",
+    "quota": "Unlimited",
+    "phone": "+923215423874",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  },
+  {
+    "name": "Islamia College School (Legacy)",
+    "principal": "Prof. Farooq Khan",
+    "username": "islamia",
+    "password": "Islamia2026!",
+    "quota": "Unlimited",
+    "phone": "+923339123456",
+    "createdAt": "2026-11-01T12:00:00.000Z"
+  }
+]

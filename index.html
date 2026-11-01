@@ -944,12 +944,31 @@
 
       <!-- CREATED SCHOOLS TABLE -->
       <div class="space-y-3">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h4 class="text-sm font-black text-slate-900 flex items-center space-x-2">
             <i data-lucide="building" class="w-4 h-4 text-slate-600"></i>
             <span>Active Registered Schools (<span id="total-schools-count">0</span>)</span>
           </h4>
-          <span class="text-[11px] text-slate-500 font-medium">Click "Send via WhatsApp" to message the principal directly</span>
+          <span class="text-[11px] text-slate-500 font-medium">Click <strong>"Copy Link"</strong> or <strong>"WhatsApp"</strong> to send direct sign-in links</span>
+        </div>
+
+        <!-- Cross-Device Sync Action Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-2 bg-gradient-to-r from-sky-50 to-blue-50 border border-sky-200 rounded-xl p-3 text-xs">
+          <div class="flex items-center space-x-2 text-sky-950 font-bold">
+            <i data-lucide="smartphone" class="w-4 h-4 text-sky-600 shrink-0"></i>
+            <span>📱 <strong>Multi-Device Ready:</strong> Built-in default schools (<code>pms</code> / <code>123</code>, <code>ics</code> / <code>456</code>, etc.) work on any device. For custom schools, tap <strong>"Copy Link"</strong> to open directly on other phones.</span>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <button type="button" onclick="exportSchoolsSyncCode()" class="clay-btn-secondary px-2.5 py-1 text-[11px] font-bold text-sky-800 bg-white hover:bg-sky-100 border-sky-300 shadow-sm" title="Copy code to sync all schools to your other devices or phone">
+              📋 Copy Sync Code
+            </button>
+            <button type="button" onclick="importSchoolsSyncCode()" class="clay-btn-secondary px-2.5 py-1 text-[11px] font-bold text-purple-800 bg-white hover:bg-purple-100 border-purple-300 shadow-sm" title="Paste sync code from another device">
+              📥 Import Sync Code
+            </button>
+            <button type="button" onclick="downloadSchoolsJson()" class="clay-btn-secondary px-2.5 py-1 text-[11px] font-bold text-slate-700 bg-white hover:bg-slate-100 border-slate-300 shadow-sm" title="Download schools.json">
+              💾 Export JSON
+            </button>
+          </div>
         </div>
 
         <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
@@ -1666,6 +1685,224 @@
     let guestPapersGenerated = 0;
     const MAX_GUEST_PAPERS = 5;
 
+    // Multi-Device Built-In Registered School Accounts Matrix
+    const DEFAULT_SCHOOL_ACCOUNTS = [
+      {
+        name: "Peshawar Model School",
+        principal: "Director Academics",
+        username: "pms",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Islamia College School & College Peshawar",
+        principal: "Prof. Tariq Khan",
+        username: "ics",
+        password: "456",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Peshawar Cambridge School",
+        principal: "Mr. Farhan Ahmad",
+        username: "pcs",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Army Public School & College Peshawar",
+        principal: "Brig. (R) Asad Ullah",
+        username: "aps",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Government Centennial Model High School",
+        principal: "Headmaster Sahib",
+        username: "ghs",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Lahore Grammar School (LGS)",
+        principal: "Academic Principal",
+        username: "lgs",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Principal Demonstration Portal",
+        principal: "School Principal",
+        username: "principal",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "ExamForge Test School",
+        principal: "Vice Principal",
+        username: "test",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "ExamForge School Portal",
+        principal: "Administrator",
+        username: "school",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Peshawar Model School (Legacy)",
+        principal: "Dr. Ahmad Raza",
+        username: "peshawarmodel",
+        password: "Model2026!",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Islamia College School (Legacy)",
+        principal: "Prof. Farooq Khan",
+        username: "islamia",
+        password: "Islamia2026!",
+        quota: "Unlimited",
+        phone: "+923339123456",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      }
+    ];
+
+    function getSchoolAccounts() {
+      let stored = [];
+      try {
+        stored = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      } catch (e) {
+        stored = [];
+      }
+      const map = new Map();
+      DEFAULT_SCHOOL_ACCOUNTS.forEach(s => map.set((s.username || "").toLowerCase(), s));
+      stored.forEach(s => map.set((s.username || "").toLowerCase(), s));
+      return Array.from(map.values());
+    }
+
+    function saveSchoolAccounts(schools) {
+      try {
+        localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+      } catch (e) {
+        console.warn("Storage save error:", e);
+      }
+    }
+
+    async function syncSchoolsFromStaticFile() {
+      try {
+        const res = await fetch('./schools.json?v=' + Date.now());
+        if (res.ok) {
+          const fileSchools = await res.json();
+          if (Array.isArray(fileSchools)) {
+            let current = getSchoolAccounts();
+            let updated = false;
+            for (const s of fileSchools) {
+              if (!current.some(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase())) {
+                current.push(s);
+                updated = true;
+              }
+            }
+            if (updated) {
+              saveSchoolAccounts(current);
+              renderOwnerSchoolsTable();
+            }
+          }
+        }
+      } catch (e) {
+        // silent fallback
+      }
+    }
+
+    function checkDirectUrlLogin() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        
+        // 1. Direct Owner Access
+        const authType = params.get("auth");
+        const ownerKey = params.get("key") || params.get("owner_key");
+        if (authType === "owner" || (ownerKey && isOwnerPasswordValid(ownerKey))) {
+          sessionStorage.setItem("examforge_owner_auth", "true");
+          openOwnerMasterModal();
+          cleanUrlParams();
+          return;
+        }
+
+        // 2. Direct School Login (?auth=school&u=...&p=... or ?school=...&pwd=...)
+        const u = (params.get("u") || params.get("school") || params.get("username") || "").trim().toLowerCase();
+        const p = (params.get("p") || params.get("pwd") || params.get("password") || "").trim();
+        const schoolName = params.get("name") || params.get("school_name");
+
+        if (u && p) {
+          let schools = getSchoolAccounts();
+          let matched = schools.find(s => (s.username || "").toLowerCase() === u && s.password === p);
+
+          // If school does not exist locally yet, register it dynamically on this device!
+          if (!matched) {
+            matched = {
+              name: schoolName ? decodeURIComponent(schoolName) : `${u.toUpperCase()} Portal`,
+              username: u,
+              password: p,
+              principal: "Principal",
+              quota: "Unlimited",
+              phone: "+923215423874",
+              createdAt: new Date().toISOString()
+            };
+            schools.unshift(matched);
+            saveSchoolAccounts(schools);
+          }
+
+          currentUser = {
+            schoolName: matched.name,
+            username: matched.username,
+            role: "school",
+            quota: matched.quota || "Unlimited"
+          };
+          localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
+
+          const schoolNameInput = document.getElementById("gen-school-name");
+          if (schoolNameInput) schoolNameInput.value = matched.name;
+
+          const grade = document.getElementById("gen-grade")?.value || "9";
+          const subject = document.getElementById("gen-subject")?.value || "Physics";
+          generatePaperFromSyllabus(grade, subject);
+
+          updateAuthUI();
+          cleanUrlParams();
+          scrollToSection("generator");
+          alert(`Welcome, ${matched.name}! Your school account has been successfully configured and signed in on this device.`);
+        }
+      } catch (err) {
+        console.warn("Direct login check error:", err);
+      }
+    }
+
+    function cleanUrlParams() {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+
     // Load state from localStorage on init
     function initAppState() {
       // 0. Register uploaded custom textbook PDFs
@@ -1683,31 +1920,8 @@
         });
       });
 
-      // 1. Seed default school accounts if empty
-      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      if (schools.length === 0) {
-        schools = [
-          {
-            name: "Peshawar Model School",
-            username: "peshawarmodel",
-            password: "Model2026!",
-            quota: "Unlimited",
-            principal: "Dr. Ahmad Raza",
-            phone: "+923215423874",
-            createdAt: new Date().toISOString()
-          },
-          {
-            name: "Islamia College School Peshawar",
-            username: "islamia",
-            password: "Islamia2026!",
-            quota: "Unlimited",
-            principal: "Prof. Farooq Khan",
-            phone: "+923339123456",
-            createdAt: new Date().toISOString()
-          }
-        ];
-        localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
-      }
+      // 1. Ensure default school accounts are seeded
+      saveSchoolAccounts(getSchoolAccounts());
 
       // 2. Load active session
       const savedUser = localStorage.getItem("examforge_active_user");
@@ -1732,6 +1946,12 @@
 
       // 7. Generate initial default paper immediately!
       generatePaperFromSyllabus("9", "Mathematics");
+
+      // 8. Check for Direct 1-Click Login Link (from WhatsApp or SMS)
+      checkDirectUrlLogin();
+
+      // 9. Sync any new schools from static repository file
+      syncSchoolsFromStaticFile();
     }
 
     function updateAuthUI() {
@@ -2909,8 +3129,8 @@
       document.getElementById("school-login-modal").classList.add("hidden");
     }
 
-    function handleSchoolLoginSubmit(e) {
-      e.preventDefault();
+    async function handleSchoolLoginSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
       const usernameInput = document.getElementById("login-username");
       const passwordInput = document.getElementById("login-password");
       const username = (usernameInput ? usernameInput.value : "").trim().toLowerCase();
@@ -2925,12 +3145,36 @@
         return;
       }
 
-      // 1. Check registered school accounts FIRST
-      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      const matched = schools.find(s => 
+      // 1. Check registered school accounts (Built-in + LocalStorage)
+      let schools = getSchoolAccounts();
+      let matched = schools.find(s => 
         (s.username || "").trim().toLowerCase() === username && 
         (s.password || "").trim() === password
       );
+
+      // Asynchronous remote fallback check if not matched
+      if (!matched) {
+        try {
+          const res = await fetch('./schools.json?v=' + Date.now());
+          if (res.ok) {
+            const remoteSchools = await res.json();
+            if (Array.isArray(remoteSchools)) {
+              for (const r of remoteSchools) {
+                if (!schools.some(s => (s.username || "").toLowerCase() === (r.username || "").toLowerCase())) {
+                  schools.push(r);
+                }
+              }
+              saveSchoolAccounts(schools);
+              matched = schools.find(s => 
+                (s.username || "").trim().toLowerCase() === username && 
+                (s.password || "").trim() === password
+              );
+            }
+          }
+        } catch (fetchErr) {
+          console.warn("Remote check fallback:", fetchErr);
+        }
+      }
 
       if (matched) {
         currentUser = {
@@ -3056,8 +3300,8 @@
 
       if (!name || !username || !password) return;
 
-      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      if (schools.some(s => s.username === username)) {
+      let schools = getSchoolAccounts();
+      if (schools.some(s => (s.username || "").toLowerCase() === username)) {
         alert(`Username '${username}' is already assigned to a school. Please choose a unique username.`);
         return;
       }
@@ -3073,17 +3317,18 @@
       };
 
       schools.unshift(newSchool);
-      localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+      saveSchoolAccounts(schools);
 
       // Reset form
       document.getElementById("create-school-form").reset();
 
-      // Show toast
+      // Show toast with multi-device direct link
+      const directUrl = getDirectSchoolUrl(newSchool);
       const toast = document.getElementById("owner-toast");
       const toastText = document.getElementById("owner-toast-text");
-      toastText.textContent = `School '${name}' successfully created! Username: ${username}`;
+      toastText.innerHTML = `School '<strong>${name}</strong>' created! Username: <code>${username}</code>. Direct Link ready for WhatsApp & SMS.`;
       toast.classList.remove("hidden");
-      setTimeout(() => toast.classList.add("hidden"), 5000);
+      setTimeout(() => toast.classList.add("hidden"), 8000);
 
       renderOwnerSchoolsTable();
     }
@@ -3091,7 +3336,7 @@
     function renderOwnerSchoolsTable() {
       const tbody = document.getElementById("owner-schools-tbody");
       const countElem = document.getElementById("total-schools-count");
-      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      const schools = getSchoolAccounts();
 
       if (countElem) countElem.textContent = schools.length;
 
@@ -3119,14 +3364,17 @@
             <span class="clay-badge-mint text-[10px] font-bold px-2 py-0.5 rounded-full">${s.quota || "Unlimited"}</span>
           </td>
           <td class="py-2.5 px-3 font-mono text-slate-600">${s.phone || "—"}</td>
-          <td class="py-2.5 px-3 text-right space-x-1.5 whitespace-nowrap">
-            <button onclick="quickLoginAsSchool('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-orange-700 hover:bg-orange-50 border-orange-300" title="Quickly test sign in as this school">
-              Test Login
+          <td class="py-2.5 px-3 text-right space-x-1 whitespace-nowrap">
+            <button onclick="quickLoginAsSchool('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[10px] sm:text-[11px] font-bold text-orange-700 hover:bg-orange-50 border-orange-300" title="Quickly test sign in as this school on this device">
+              Test
             </button>
-            <button onclick="sendCredentialsWhatsApp('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 border-emerald-300" title="Send credentials to School Principal via WhatsApp">
+            <button onclick="copyDirectSchoolLink('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[10px] sm:text-[11px] font-bold text-sky-700 hover:bg-sky-50 border-sky-300" title="Copy 1-Click Direct Link to open on other mobile or PC">
+              Copy Link
+            </button>
+            <button onclick="sendCredentialsWhatsApp('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[10px] sm:text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 border-emerald-300" title="Send credentials & direct login link to Principal via WhatsApp">
               WhatsApp
             </button>
-            <button onclick="deleteSchoolAccount('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200" title="Delete school account">
+            <button onclick="deleteSchoolAccount('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[10px] sm:text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200" title="Delete school account">
               Delete
             </button>
           </td>
@@ -3136,7 +3384,7 @@
     }
 
     function quickLoginAsSchool(username) {
-      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      const schools = getSchoolAccounts();
       const matched = schools.find(s => (s.username || "").trim().toLowerCase() === (username || "").trim().toLowerCase());
       if (!matched) return;
 
@@ -3161,23 +3409,100 @@
       alert(`Signed in as '${matched.name}'. The paper generator has been loaded with unlimited access!`);
     }
 
-    function sendCredentialsWhatsApp(username) {
-      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      const school = schools.find(s => s.username === username);
+    function getDirectSchoolUrl(school) {
+      const origin = (window.location && window.location.origin && window.location.origin !== "null") ? window.location.origin : "https://aivanolabs.site";
+      const path = (window.location && window.location.pathname) ? window.location.pathname : "/";
+      return `${origin}${path}?auth=school&u=${encodeURIComponent(school.username)}&p=${encodeURIComponent(school.password)}&name=${encodeURIComponent(school.name)}`;
+    }
+
+    function copyDirectSchoolLink(username) {
+      const schools = getSchoolAccounts();
+      const school = schools.find(s => (s.username || "").toLowerCase() === (username || "").toLowerCase());
       if (!school) return;
 
+      const url = getDirectSchoolUrl(school);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          alert(`Direct 1-Click Login Link for '${school.name}' copied!\n\n${url}\n\nSend this link to any phone, iPad, or computer. Clicking it signs in automatically with Unlimited privileges.`);
+        }).catch(() => {
+          prompt("Copy 1-Click Login Link for other device:", url);
+        });
+      } else {
+        prompt("Copy 1-Click Login Link for other device:", url);
+      }
+    }
+
+    function sendCredentialsWhatsApp(username) {
+      const schools = getSchoolAccounts();
+      const school = schools.find(s => (s.username || "").toLowerCase() === (username || "").toLowerCase());
+      if (!school) return;
+
+      const directUrl = getDirectSchoolUrl(school);
       const cleanPhone = (school.phone || "923215423874").replace(/[^0-9]/g, "");
-      const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Portal account for *${school.name}* is active:\n\n*Website:* https://aivanolabs.site\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
+      const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Examination Portal account for *${school.name}* is active:\n\n*Portal Website:* https://aivanolabs.site\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\n👉 *Direct 1-Click Login Link (Any Mobile or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
 
       window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, "_blank");
     }
 
     function deleteSchoolAccount(username) {
       if (!confirm(`Are you sure you want to delete school account '${username}'?`)) return;
-      let schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      schools = schools.filter(s => s.username !== username);
-      localStorage.setItem("examforge_school_accounts", JSON.stringify(schools));
+      let schools = getSchoolAccounts();
+      schools = schools.filter(s => (s.username || "").toLowerCase() !== (username || "").toLowerCase());
+      saveSchoolAccounts(schools);
       renderOwnerSchoolsTable();
+    }
+
+    // Cross-Device Sync Helpers
+    function exportSchoolsSyncCode() {
+      const schools = getSchoolAccounts();
+      const json = JSON.stringify(schools);
+      const b64 = btoa(encodeURIComponent(json));
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(b64).then(() => {
+          alert("All school accounts copied as a Sync Code!\n\nOn your other device or phone, open the Owner Console and click 'Import Sync Code' to transfer all schools immediately.");
+        }).catch(() => {
+          prompt("Copy this Sync Code to your other device:", b64);
+        });
+      } else {
+        prompt("Copy this Sync Code to your other device:", b64);
+      }
+    }
+
+    function importSchoolsSyncCode() {
+      const code = prompt("Paste the Sync Code copied from your other device:");
+      if (!code) return;
+      try {
+        const json = decodeURIComponent(atob(code.trim()));
+        const imported = JSON.parse(json);
+        if (Array.isArray(imported)) {
+          let current = getSchoolAccounts();
+          let count = 0;
+          for (const s of imported) {
+            if (!current.some(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase())) {
+              current.unshift(s);
+              count++;
+            }
+          }
+          saveSchoolAccounts(current);
+          renderOwnerSchoolsTable();
+          alert(`Successfully imported ${count} new schools! All accounts are now active on this device.`);
+        } else {
+          alert("Invalid Sync Code structure.");
+        }
+      } catch (err) {
+        alert("Failed to import sync code. Please check that the code was copied completely.");
+      }
+    }
+
+    function downloadSchoolsJson() {
+      const schools = getSchoolAccounts();
+      const blob = new Blob([JSON.stringify(schools, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "schools.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function scrollToSection(id) {
