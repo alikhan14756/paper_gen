@@ -215,6 +215,12 @@
           <span class="sm:hidden font-extrabold text-[10px]">Free Guest</span>
         </div>
 
+        <!-- Paper Generator Quick Navigation -->
+        <button onclick="scrollToSection('generator')" class="clay-btn-secondary bg-orange-50/80 border-orange-200 text-orange-800 hover:bg-orange-100 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black flex items-center space-x-1 sm:space-x-1.5 shadow-sm" title="Jump to Class 9th & 10th Paper Generator">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600"></i>
+          <span>Paper Generator</span>
+        </button>
+
         <!-- Magic Tool Button (New!) -->
         <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black flex items-center space-x-1.5 shadow-sm" title="Upload picture of handwritten paper and convert to formatted Word document">
           <i data-lucide="wand-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600"></i>
@@ -269,9 +275,9 @@
         </div>
 
         <div class="flex flex-col sm:flex-row items-center gap-2 w-full md:w-auto">
-          <button onclick="scrollToSection('generator')" class="w-full sm:w-auto clay-btn-primary px-5 py-2.5 sm:py-3 text-xs font-extrabold flex items-center justify-center space-x-2">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            <span>Create Paper Now</span>
+          <button onclick="scrollToSection('generator')" class="w-full sm:w-auto clay-btn-primary px-5 py-2.5 sm:py-3 text-xs font-black flex items-center justify-center space-x-2 shadow-md">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Launch Paper Generator</span>
           </button>
           <button onclick="openMagicOcrModal()" class="w-full sm:w-auto px-4 py-2.5 sm:py-3 text-xs font-extrabold rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex items-center justify-center space-x-2 shadow-md shadow-purple-500/20 hover:from-purple-700 hover:to-indigo-700 transition">
             <i data-lucide="wand-2" class="w-4 h-4"></i>
@@ -318,14 +324,24 @@
   <section id="generator" class="max-w-7xl mx-auto px-4 sm:px-8 py-6 no-print">
     <div class="clay-card p-6 sm:p-8 space-y-6">
       
+      <!-- School Active Welcome Banner (Shown when logged in) -->
+      <div id="generator-school-banner" class="hidden p-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold shadow-md flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="school" class="w-4 h-4"></i>
+          <span>Signed in as: <strong id="banner-school-title" class="underline">Peshawar Model School</strong></span>
+          <span class="bg-white/20 text-white text-[10px] font-black px-2 py-0.5 rounded-full">Unlimited Mode Active</span>
+        </div>
+        <span class="text-[11px] opacity-90">All generated papers will carry your school name & official header.</span>
+      </div>
+
       <div class="border-b border-slate-200/80 pb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
           <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
             <i data-lucide="sliders" class="w-3.5 h-3.5 text-orange-600"></i>
-            <span>Blueprint Builder</span>
+            <span>⚡ KPK BISEP Examination Paper Generator</span>
           </div>
-          <h3 class="text-xl font-black text-slate-900">Step 1: Configure Examination Paper</h3>
-          <p class="text-xs text-slate-500">Choose Grade, Subject, Chapters, Question counts, and Paper Layout Style.</p>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">Class 9th & 10th Paper Generator & Blueprint Builder</h3>
+          <p class="text-xs text-slate-500">Configure target class, subject, textbook syllabus chapters, and question distribution.</p>
         </div>
 
         <div class="flex items-center space-x-2 text-xs">
@@ -1550,6 +1566,95 @@
         longs: [
           { text: "اپنے سکول کے ہیڈ ماسٹر / پرنسپل کے نام فیس معافی یا بیماری کی رخصت کے لیے جامع درخواست تحریر کریں۔", marks: 8, solution: "بخدمت جناب ہیڈماسٹر صاحب... عنوان: درخواست برائے معافی فیس... خاکہ، گزارشات، مالی حالات اور مؤدبانہ اختتام۔" }
         ]
+      },
+      "Computer Science": {
+        mcqs: [
+          { text: "The physical tangible components of a computer system are known as:", options: ["(A) Software", "(B) Hardware", "(C) Firmware", "(D) Malware"], answer: 1, marks: 1 },
+          { text: "The central processing unit (CPU) is commonly referred to as the:", options: ["(A) Heart of computer", "(B) Brain of computer", "(C) Memory", "(D) Input unit"], answer: 1, marks: 1 },
+          { text: "Which type of memory is volatile and loses its contents when power is switched off?", options: ["(A) ROM", "(B) RAM", "(C) Hard Disk", "(D) Flash Memory"], answer: 1, marks: 1 },
+          { text: "In C programming language, every statement must terminate with a:", options: ["(A) Colon (:)", "(B) Semicolon (;)", "(C) Period (.)", "(D) Comma (,)"], answer: 1, marks: 1 },
+          { text: "Which loop structure in C executes its body at least once even if the condition is false?", options: ["(A) for loop", "(B) while loop", "(C) do-while loop", "(D) nested loop"], answer: 2, marks: 1 },
+          { text: "The geometric symbol used for decision making in a flowchart is:", options: ["(A) Oval", "(B) Rectangle", "(C) Diamond", "(D) Parallelogram"], answer: 2, marks: 1 }
+        ],
+        shorts: [
+          { text: "Differentiate between Hardware and Software with two examples of each.", marks: 4, solution: "Hardware refers to physical components (e.g. CPU, Keyboard). Software refers to instructions/programs (e.g. Windows OS, MS Word)." },
+          { text: "What is an Operating System? Write two of its core functions in a computer.", marks: 4, solution: "An OS is system software that manages computer hardware and software resources (e.g. Process Management, Memory Management, File System Management)." },
+          { text: "Define an Algorithm and state two characteristics of a standard algorithm.", marks: 4, solution: "An algorithm is a step-by-step finite procedure to solve a problem. Characteristics: Precision/unambiguity, finiteness, input/output definition." },
+          { text: "Explain the syntax and purpose of the 'if-else' selection structure in C language.", marks: 4, solution: "Syntax: if (condition) { statement1; } else { statement2; }. It executes one block if condition is true and alternate block if false." }
+        ],
+        longs: [
+          { text: "What is a Flowchart? Draw the standard flowchart symbols and explain how an algorithm is converted into a flowchart.", marks: 8, solution: "Flowchart is pictorial representation of algorithm. Symbols: Start/Stop (Oval), Input/Output (Parallelogram), Process (Rectangle), Decision (Diamond), Flow Lines." },
+          { text: "Write a detailed note on Data Communication and explain its basic components: Sender, Receiver, Medium, Message, and Protocol.", marks: 8, solution: "Components: 1. Sender (transmits data). 2. Receiver (receives data). 3. Medium (physical transmission channel). 4. Message (information). 5. Protocol (governing rules)." }
+        ]
+      },
+      "Islamiyat": {
+        lang: "ur",
+        mcqs: [
+          { text: "سورۃ الانفال قرآن مجید کی کس نوعیت کی سورت ہے؟", options: ["(الف) مکی", "(ب) مدنی", "(ج) بصری", "(د) شامی"], answer: 1, marks: 1 },
+          { text: "لفظ 'انفال' کا لغوی معنی کیا ہے؟", options: ["(الف) مالِ غنیمت", "(ب) صدقات", "(ج) زکوۃ", "(د) امانت"], answer: 0, marks: 1 },
+          { text: "حضور اکرم صلی اللہ علیہ وآلہ وسلم کے آخری نبی ہونے کے بنیادی عقیدے کو کیا کہا جاتا ہے؟", options: ["(الف) عقیدہ توحید", "(ب) عقیدہ ختمِ نبوت", "(ج) عقیدہ رسالت", "(د) عقیدہ آخرت"], answer: 1, marks: 1 },
+          { text: "اسلام کی بنیادی عمارت کتنے ارکان پر استوار ہے؟", options: ["(الف) تین", "(ب) چار", "(ج) پانچ", "(د) سات"], answer: 2, marks: 1 }
+        ],
+        shorts: [
+          { text: "سورۃ الانفال کی روشنی میں حقیقی مومنین کی کوئی سی تین بنیادی صفات تحریر کریں۔", marks: 4, solution: "۱. جب اللہ کا ذکر ہو تو دل دہل جاتے ہیں۔ ۲. آیات کی تلاوت پر ایمان میں اضافہ ہوتا ہے۔ ۳. اپنے رب پر کامل بھروسا اور نماز قائم کرتے ہیں۔" },
+          { text: "عقیدہ ختم نبوت صلی اللہ علیہ وآلہ وسلم کی اہمیت پر قرآن و حدیث کی روشنی میں جامع نوٹ لکھیں۔", marks: 4, solution: "حضور اکرم ﷺ اللہ کے آخری نبی ہیں اور سلسلہ نبوت آپ ﷺ پر مکمل ہو چکا ہے۔ قرآن: 'مَّا كَانَ مُحَمَّدٌ أَبَا أَحَدٍ مِّن رِّجَالِكُمْ وَلَٰكِن رَّسُولَ اللَّهِ وَخَاتَمَ النَّبِيِّينَ'۔" },
+          { text: "قرآن و سنت کی روشنی میں والدین کے حقوق اور ان کے ساتھ حسنِ سلوک کے آداب تحریر کریں۔", marks: 4, solution: "والدین کی اطاعت، ان کے آگے عاجزی اختیار کرنا، جھڑکنے سے پرہیز اور ان کے لیے دعائے مغفرت: 'رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا'۔" }
+        ],
+        longs: [
+          { text: "غزوہ بدر کے اسباب، اہم واقعات اور مسلمانوں کی فتح کے نتائج پر جامع نوٹ تحریر کریں۔", marks: 8, solution: "اسباب: قریش مکہ کی عداوت، تجارتی قافلہ۔ واقعات: ۱۷ رمضان المبارک ۲ ہجری، ۳۱۳ نہتے مسلمان بمقابلہ ۱۰۰۰ کا لشکر، نصرتِ الٰہی۔ نتائج: اسلام کی پہلی فیصلہ کن فتح اور مشرکین کا غرور خاک میں ملنا۔" },
+          { text: "سیرت النبی صلی اللہ علیہ وآلہ وسلم کی روشنی میں اسوہ حسنہ اور اخلاقِ نبوی ﷺ کے نمایاں پہلوؤں کی تفصیل بیان کریں۔", marks: 8, solution: "صداقت، امانت، عفو و درگزر، شجاعت، بچوں پر شفقت، عدل و انصاف اور دشمنوں کے لیے بھی رحمت بننا۔" }
+        ]
+      },
+      "Pakistan Studies": {
+        mcqs: [
+          { text: "The historic Pakistan Resolution (Lahore Resolution) was officially passed in the year:", options: ["(A) 1930", "(B) 1940", "(C) 1946", "(D) 1947"], answer: 1, marks: 1 },
+          { text: "Quaid-e-Azam Muhammad Ali Jinnah presented his famous Fourteen Points in the year:", options: ["(A) 1928", "(B) 1929", "(C) 1935", "(D) 1940"], answer: 1, marks: 1 },
+          { text: "The second highest mountain peak in the world, K2 (Godwin Austen), is located in the range of:", options: ["(A) Himalayas", "(B) Karakoram", "(C) Hindu Kush", "(D) Sulaiman"], answer: 1, marks: 1 },
+          { text: "The current permanent Constitution of the Islamic Republic of Pakistan was promulgated in:", options: ["(A) 1956", "(B) 1962", "(C) 1973", "(D) 1985"], answer: 2, marks: 1 }
+        ],
+        shorts: [
+          { text: "Define the Ideology of Pakistan (Nazria-e-Pakistan) in the light of the Two-Nation Theory.", marks: 4, solution: "The Ideology of Pakistan is based on Islam and the Two-Nation Theory, stating that Muslims and Hindus are two distinct nations with distinct culture, religion, and way of life." },
+          { text: "State two fundamental resolutions and historical significance of the Lahore Resolution 1940.", marks: 4, solution: "Passed on 23 March 1940 at Minto Park Lahore, stating that contiguous Muslim-majority units in North-Western and Eastern zones should be grouped to constitute independent states." },
+          { text: "Mention two major Islamic provisions enshrined in the 1973 Constitution of Pakistan.", marks: 4, solution: "1. Islam shall be the state religion. 2. The President and Prime Minister must be Muslims. 3. All existing laws shall be brought in conformity with Quran and Sunnah." }
+        ],
+        longs: [
+          { text: "Explain the origin, historical evolution, and significance of the Two-Nation Theory in the creation of Pakistan.", marks: 8, solution: "Detailed background: Sir Syed Ahmad Khan's educational awakening, Allama Iqbal's 1930 Allahabad Address, Quaid-e-Azam's leadership, cultural/religious divergence, culmination in 1947." },
+          { text: "Describe the major physical landforms and climatic regions of Pakistan with their economic importance.", marks: 8, solution: "Northern & Western Mountain Ranges, Indus River Plains, Balochistan Plateau, Coastal Areas. Agricultural importance, irrigation system, climate variations and trade routes." }
+        ]
+      },
+      "Mathematics_10": {
+        mcqs: [
+          { text: "The standard form of a quadratic equation is:", options: ["(A) ax² + bx + c = 0", "(B) ax + b = 0", "(C) ax³ + bx² + c = 0", "(D) x² = c"], answer: 0, marks: 1 },
+          { text: "If b² - 4ac > 0 and is a perfect square, the roots of the quadratic equation are:", options: ["(A) Real, Rational and Unequal", "(B) Real, Irrational and Unequal", "(C) Complex", "(D) Equal"], answer: 0, marks: 1 },
+          { text: "The value of sin²θ + cos²θ is always equal to:", options: ["(A) 0", "(B) 1", "(C) -1", "(D) 2"], answer: 1, marks: 1 },
+          { text: "A line touching a circle at only one single point without intersecting it is called a:", options: ["(A) Secant", "(B) Tangent", "(C) Chord", "(D) Diameter"], answer: 1, marks: 1 }
+        ],
+        shorts: [
+          { text: "Solve the quadratic equation by factorization method: x² - x - 2 = 0.", marks: 4, solution: "x² - 2x + x - 2 = 0 => x(x-2) + 1(x-2) = 0 => (x-2)(x+1) = 0. Solution Set = {2, -1}." },
+          { text: "Define direct variation and inverse variation with appropriate mathematical equations.", marks: 4, solution: "Direct variation: y ∝ x (y = kx). Inverse variation: y ∝ 1/x (y = k/x), where k is the non-zero constant of variation." },
+          { text: "Prove the fundamental trigonometric identity: 1 + tan²θ = sec²θ.", marks: 4, solution: "In right triangle: Hyp² = Perp² + Base². Divide by Base²: Hyp²/Base² = Perp²/Base² + 1 => sec²θ = tan²θ + 1." }
+        ],
+        longs: [
+          { text: "Solve the quadratic equation using the quadratic formula: 5x² - 13x + 6 = 0.", marks: 8, solution: "a=5, b=-13, c=6. x = [13 ± √((-13)² - 4(5)(6))] / 10 = [13 ± √(169 - 120)] / 10 = [13 ± 7] / 10. Roots: x = 20/10 = 2, and x = 6/10 = 3/5. Solution Set = {2, 3/5}." },
+          { text: "Prove that a straight line drawn from the centre of a circle to bisect a chord (which is not a diameter) is at right angles to the chord.", marks: 8, solution: "Standard Circle Theorem 1: Given circle with centre O and chord AB bisected at M. Prove OM ⊥ AB. Prove ΔOMA ≅ ΔOMB via SSS postulate, m∠OMA = m∠OMB = 90°." }
+        ]
+      },
+      "Physics_10": {
+        mcqs: [
+          { text: "The time period of a simple pendulum of length 1 meter on surface of Earth is approximately:", options: ["(A) 1 second", "(B) 2 seconds", "(C) 3.14 seconds", "(D) 0.5 seconds"], answer: 1, marks: 1 },
+          { text: "Sound waves are classified according to their physical propagation as:", options: ["(A) Longitudinal waves", "(B) Transverse waves", "(C) Electromagnetic waves", "(D) Stationary waves"], answer: 0, marks: 1 },
+          { text: "The unit of electrical potential difference (Voltage) is:", options: ["(A) Ampere", "(B) Volt", "(C) Coulomb", "(D) Ohm"], answer: 1, marks: 1 },
+          { text: "Which logic gate gives an output of 1 only when both of its inputs are 1?", options: ["(A) OR Gate", "(B) AND Gate", "(C) NOT Gate", "(D) NAND Gate"], answer: 1, marks: 1 }
+        ],
+        shorts: [
+          { text: "What is an echo? State the minimum distance of reflecting surface required to hear a distinct echo in air.", marks: 4, solution: "An echo is the repetition of sound caused by reflection from a hard obstacle. Minimum distance is 17 meters (v = 340 m/s, t = 0.1s)." },
+          { text: "State Coulomb's Law of Electrostatics and write its mathematical equation.", marks: 4, solution: "The electrostatic force between two point charges is directly proportional to product of charges and inversely to square of distance: F = k(q1·q2)/r²." },
+          { text: "Differentiate between Step-up and Step-down Transformers.", marks: 4, solution: "Step-up transformer increases voltage (Ns > Np). Step-down transformer decreases voltage (Ns < Np)." }
+        ],
+        longs: [
+          { text: "Explain with a neat diagram the Simple Harmonic Motion of a mass attached to a spring and derive its time period formula T = 2π√(m/k).", marks: 8, solution: "Restoring force F = -kx. By Newton's second law F = ma => ma = -kx => a = -(k/m)x. Since acceleration is proportional to negative displacement, motion is SHM. Time period T = 2π√(m/k)." },
+          { text: "Describe the construction and working of a Cathode Ray Oscilloscope (CRO) with a neat labeled block diagram.", marks: 8, solution: "CRO parts: 1. Electron Gun (cathode, grid, anodes). 2. Deflecting Plates (X and Y plates). 3. Fluorescent Screen. Working and application in waveform display." }
+        ]
       }
     };
 
@@ -1635,12 +1740,17 @@
       const loginBtn = document.getElementById("btn-nav-login");
       const activeModeLabel = document.getElementById("active-mode-label");
       const guestBadge = document.getElementById("guest-quota-badge");
+      const genSchoolBanner = document.getElementById("generator-school-banner");
+      const bannerSchoolTitle = document.getElementById("banner-school-title");
 
       if (currentUser && currentUser.username) {
         if (guestStatus) guestStatus.classList.add("hidden");
         if (schoolStatus) schoolStatus.classList.remove("hidden");
         if (loginBtn) loginBtn.classList.add("hidden");
-        document.getElementById("nav-school-name").textContent = currentUser.schoolName;
+        const navSchoolName = document.getElementById("nav-school-name");
+        if (navSchoolName) navSchoolName.textContent = currentUser.schoolName;
+        if (genSchoolBanner) genSchoolBanner.classList.remove("hidden");
+        if (bannerSchoolTitle) bannerSchoolTitle.textContent = currentUser.schoolName;
         if (activeModeLabel) {
           activeModeLabel.textContent = `School: ${currentUser.schoolName} (Unlimited Mode)`;
           activeModeLabel.className = "clay-badge-orange font-bold px-2.5 py-1 rounded-full text-[11px]";
@@ -1649,6 +1759,7 @@
         if (guestStatus) guestStatus.classList.remove("hidden");
         if (schoolStatus) schoolStatus.classList.add("hidden");
         if (loginBtn) loginBtn.classList.remove("hidden");
+        if (genSchoolBanner) genSchoolBanner.classList.add("hidden");
         if (guestBadge) {
           guestBadge.textContent = `Guest Free Mode: ${guestPapersGenerated} / ${MAX_GUEST_PAPERS} Free Papers Used`;
         }
@@ -1786,21 +1897,22 @@
     }
 
     function generatePaperFromSyllabus(grade, subject, variationCode = "A") {
-      const schoolName = document.getElementById("gen-school-name").value.trim() || "Board of Intermediate & Secondary Education Peshawar";
-      let examTitle = document.getElementById("gen-exam-title").value.trim() || `Class ${grade}th Annual Examination 2026`;
+      const schoolName = document.getElementById("gen-school-name")?.value?.trim() || "Board of Intermediate & Secondary Education Peshawar";
+      let examTitle = document.getElementById("gen-exam-title")?.value?.trim() || `Class ${grade}th Annual Examination 2026`;
       if (variationCode && variationCode !== "A" && !examTitle.includes(`(Set ${variationCode})`)) {
         examTitle = `${examTitle} (Set ${variationCode})`;
       }
-      const timeAllowed = document.getElementById("gen-time").value.trim() || "3 Hours";
-      const paperStyle = document.getElementById("gen-paper-style").value || "bisep-classic";
+      const timeAllowed = document.getElementById("gen-time")?.value?.trim() || "3 Hours";
+      const paperStyle = document.getElementById("gen-paper-style")?.value || "bisep-classic";
 
-      const numMcqs = parseInt(document.getElementById("count-mcqs")?.value || "15", 10);
-      const numShorts = parseInt(document.getElementById("count-short")?.value || "12", 10);
-      const numShortsAttempt = parseInt(document.getElementById("attempt-short")?.value || "9", 10);
-      const numLongs = parseInt(document.getElementById("count-long")?.value || "5", 10);
-      const numLongsAttempt = parseInt(document.getElementById("attempt-long")?.value || "3", 10);
+      const numMcqs = parseInt(document.getElementById("count-mcqs")?.value, 10) || 15;
+      const numShorts = parseInt(document.getElementById("count-short")?.value, 10) || 12;
+      const numShortsAttempt = parseInt(document.getElementById("attempt-short")?.value, 10) || 9;
+      const numLongs = parseInt(document.getElementById("count-long")?.value, 10) || 5;
+      const numLongsAttempt = parseInt(document.getElementById("attempt-long")?.value, 10) || 3;
 
-      const bank = QUESTION_BANKS[subject] || QUESTION_BANKS["Physics"];
+      const bankKey = `${subject}_${grade}`;
+      const bank = QUESTION_BANKS[bankKey] || QUESTION_BANKS[subject] || QUESTION_BANKS["Physics"];
 
       // Pick or clone questions with optional shuffle if variation is not A
       let availableMcqs = [...(bank.mcqs || [])];
@@ -2799,25 +2911,26 @@
 
     function handleSchoolLoginSubmit(e) {
       e.preventDefault();
-      const username = document.getElementById("login-username").value.trim().toLowerCase();
-      const password = document.getElementById("login-password").value.trim();
+      const usernameInput = document.getElementById("login-username");
+      const passwordInput = document.getElementById("login-password");
+      const username = (usernameInput ? usernameInput.value : "").trim().toLowerCase();
+      const password = (passwordInput ? passwordInput.value : "").trim();
       const errorMsg = document.getElementById("login-error-msg");
 
-      // Check if user is logging in as Site Owner
-      if (["admin", "owner", "alikhan", "alikhan14756"].includes(username) || isOwnerPasswordValid(password)) {
-        if (isOwnerPasswordValid(password) || isOwnerPasswordValid(username)) {
-          sessionStorage.setItem("examforge_owner_auth", "true");
-          closeSchoolLoginModal();
-          document.getElementById("owner-master-modal").classList.remove("hidden");
-          renderOwnerSchoolsTable();
-          lucide.createIcons();
-          alert("Welcome Muhammad Ali! Site Owner & Master Console unlocked.");
-          return;
+      if (!username || !password) {
+        if (errorMsg) {
+          errorMsg.textContent = "Please enter both username and password.";
+          errorMsg.classList.remove("hidden");
         }
+        return;
       }
 
+      // 1. Check registered school accounts FIRST
       const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
-      const matched = schools.find(s => s.username.toLowerCase() === username && s.password === password);
+      const matched = schools.find(s => 
+        (s.username || "").trim().toLowerCase() === username && 
+        (s.password || "").trim() === password
+      );
 
       if (matched) {
         currentUser = {
@@ -2829,16 +2942,32 @@
         localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
         
         // Update generator school name
-        document.getElementById("gen-school-name").value = matched.name;
-        if (currentPaper) {
-          currentPaper.schoolName = matched.name;
-          renderPaperDOM();
-        }
+        const schoolNameInput = document.getElementById("gen-school-name");
+        if (schoolNameInput) schoolNameInput.value = matched.name;
+        
+        const grade = document.getElementById("gen-grade")?.value || "9";
+        const subject = document.getElementById("gen-subject")?.value || "Physics";
+        generatePaperFromSyllabus(grade, subject);
 
         updateAuthUI();
         closeSchoolLoginModal();
+        scrollToSection("generator");
         alert(`Welcome, ${matched.name}! Your school portal is signed in with ${matched.quota} paper generation access.`);
-      } else {
+        return;
+      }
+
+      // 2. Check if user is logging in as Site Owner / Admin
+      if (["admin", "owner", "alikhan", "alikhan14756"].includes(username) && isOwnerPasswordValid(password)) {
+        sessionStorage.setItem("examforge_owner_auth", "true");
+        closeSchoolLoginModal();
+        document.getElementById("owner-master-modal").classList.remove("hidden");
+        renderOwnerSchoolsTable();
+        lucide.createIcons();
+        alert("Welcome Muhammad Ali! Site Owner & Master Console unlocked.");
+        return;
+      }
+
+      if (errorMsg) {
         errorMsg.textContent = "Invalid username or password. Please verify your credentials or contact site owner Muhammad Ali.";
         errorMsg.classList.remove("hidden");
       }
@@ -2848,6 +2977,11 @@
       if (confirm("Sign out of school account?")) {
         currentUser = null;
         localStorage.removeItem("examforge_active_user");
+        const schoolNameInput = document.getElementById("gen-school-name");
+        if (schoolNameInput) schoolNameInput.value = "Board of Intermediate & Secondary Education Peshawar";
+        const grade = document.getElementById("gen-grade")?.value || "9";
+        const subject = document.getElementById("gen-subject")?.value || "Physics";
+        generatePaperFromSyllabus(grade, subject);
         updateAuthUI();
       }
     }
@@ -2986,16 +3120,45 @@
           </td>
           <td class="py-2.5 px-3 font-mono text-slate-600">${s.phone || "—"}</td>
           <td class="py-2.5 px-3 text-right space-x-1.5 whitespace-nowrap">
-            <button onclick="sendCredentialsWhatsApp('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 border-emerald-300">
-              WhatsApp Login
+            <button onclick="quickLoginAsSchool('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-orange-700 hover:bg-orange-50 border-orange-300" title="Quickly test sign in as this school">
+              Test Login
             </button>
-            <button onclick="deleteSchoolAccount('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200">
+            <button onclick="sendCredentialsWhatsApp('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-emerald-700 hover:bg-emerald-50 border-emerald-300" title="Send credentials to School Principal via WhatsApp">
+              WhatsApp
+            </button>
+            <button onclick="deleteSchoolAccount('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[11px] font-bold text-red-600 hover:bg-red-50 border-red-200" title="Delete school account">
               Delete
             </button>
           </td>
         </tr>
       `).join("");
       lucide.createIcons();
+    }
+
+    function quickLoginAsSchool(username) {
+      const schools = JSON.parse(localStorage.getItem("examforge_school_accounts") || "[]");
+      const matched = schools.find(s => (s.username || "").trim().toLowerCase() === (username || "").trim().toLowerCase());
+      if (!matched) return;
+
+      currentUser = {
+        schoolName: matched.name,
+        username: matched.username,
+        role: "school",
+        quota: matched.quota || "Unlimited"
+      };
+      localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
+
+      const schoolNameInput = document.getElementById("gen-school-name");
+      if (schoolNameInput) schoolNameInput.value = matched.name;
+
+      const grade = document.getElementById("gen-grade")?.value || "9";
+      const subject = document.getElementById("gen-subject")?.value || "Physics";
+      generatePaperFromSyllabus(grade, subject);
+
+      updateAuthUI();
+      closeOwnerMasterModal();
+      scrollToSection("generator");
+      alert(`Signed in as '${matched.name}'. The paper generator has been loaded with unlimited access!`);
     }
 
     function sendCredentialsWhatsApp(username) {
@@ -3019,7 +3182,13 @@
 
     function scrollToSection(id) {
       const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      if (el) {
+        if (typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({ behavior: "smooth" });
+        } else if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+          window.scrollTo(0, el.offsetTop || 0);
+        }
+      }
     }
 
     // =========================================================================
