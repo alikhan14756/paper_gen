@@ -3,6 +3,7 @@
     "name": "Peshawar Model School",
     "principal": "Director Academics",
     "username": "pms",
+    "password": "123",
     "quota": "Unlimited",
     "phone": "+923215423874",
     "createdAt": "2026-11-01T12:00:00.000Z"
@@ -11,62 +12,16 @@
     "name": "Islamia College School & College Peshawar",
     "principal": "Prof. Tariq Khan",
     "username": "ics",
+    "password": "456",
     "quota": "Unlimited",
     "phone": "+923215423874",
     "createdAt": "2026-11-01T12:00:00.000Z"
   },
   {
-    "name": "Peshawar Cambridge School",
-    "principal": "Mr. Farhan Ahmad",
-    "username": "pcs",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "Army Public School & College Peshawar",
-    "principal": "Brig. (R) Asad Ullah",
-    "username": "aps",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "Government Centennial Model High School",
-    "principal": "Headmaster Sahib",
-    "username": "ghs",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "Lahore Grammar School (LGS)",
-    "principal": "Academic Principal",
-    "username": "lgs",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "Principal Demonstration Portal",
-    "principal": "School Principal",
-    "username": "principal",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "ExamForge Test School",
-    "principal": "Vice Principal",
-    "username": "test",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "name": "ExamForge School Portal",
-    "principal": "Administrator",
-    "username": "school",
+    "name": "Government Primary School Ganapur",
+    "principal": "Headmaster",
+    "username": "nomankhan",
+    "password": "123",
     "quota": "Unlimited",
     "phone": "+923215423874",
     "createdAt": "2026-11-01T12:00:00.000Z"

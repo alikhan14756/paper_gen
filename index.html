@@ -1019,7 +1019,7 @@
               <i data-lucide="sparkles" class="w-3.5 h-3.5 text-orange-600"></i>
               <span>Universal Multi-Device Access:</span>
             </div>
-            <p>Ready built-in accounts on any phone or PC: <strong>pms</strong> (pwd: <code>123</code>), <strong>ics</strong> (pwd: <code>456</code>), <strong>aps</strong> (pwd: <code>123</code>), <strong>ghs</strong> (pwd: <code>123</code>).</p>
+            <p>Ready built-in accounts on any phone or PC: <strong>pms</strong> (pwd: <code>123</code>), <strong>ics</strong> (pwd: <code>456</code>).</p>
           </div>
 
           <div class="text-center text-xs text-slate-500 pt-1">
@@ -4367,6 +4367,7 @@
         name: "Peshawar Model School",
         principal: "Director Academics",
         username: "pms",
+        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4375,62 +4376,16 @@
         name: "Islamia College School & College Peshawar",
         principal: "Prof. Tariq Khan",
         username: "ics",
+        password: "456",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
       },
       {
-        name: "Peshawar Cambridge School",
-        principal: "Mr. Farhan Ahmad",
-        username: "pcs",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Army Public School & College Peshawar",
-        principal: "Brig. (R) Asad Ullah",
-        username: "aps",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Government Centennial Model High School",
-        principal: "Headmaster Sahib",
-        username: "ghs",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Lahore Grammar School (LGS)",
-        principal: "Academic Principal",
-        username: "lgs",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Principal Demonstration Portal",
-        principal: "School Principal",
-        username: "principal",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "ExamForge Test School",
-        principal: "Vice Principal",
-        username: "test",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "ExamForge School Portal",
-        principal: "Administrator",
-        username: "school",
+        name: "Government Primary School Ganapur",
+        principal: "Headmaster",
+        username: "nomankhan",
+        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4459,7 +4414,7 @@
     }
 
     async function syncSchoolsFromCloudAndFile() {
-      // 1. Sync live school directory from centralized FastAPI backend
+      // 1. Sync live school directory from centralized FastAPI backend if reachable
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/schools`, {
           headers: { "Accept": "application/json" }
@@ -4493,7 +4448,7 @@
         }
       } catch (e) {}
 
-      // 2. Fallback: static schools.json metadata
+      // 2. Sync from schools.json (works on GitHub Pages for all devices!)
       try {
         const res = await fetch('./schools.json?v=' + Date.now());
         if (res.ok) {
@@ -4502,8 +4457,12 @@
             let current = getSchoolAccounts();
             let updated = false;
             for (const s of fileSchools) {
-              if (!current.some(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase())) {
+              const existing = current.find(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase());
+              if (!existing) {
                 current.push(s);
+                updated = true;
+              } else if (s.password && existing.password !== s.password) {
+                existing.password = s.password;
                 updated = true;
               }
             }
@@ -6221,7 +6180,11 @@
         submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Authenticating...`;
       }
 
-      // 1. Centralized FastAPI Backend Authentication (PostgreSQL/SQLite via Bcrypt)
+      let authenticated = false;
+      let authUser = null;
+      let token = null;
+
+      // 1. Centralized FastAPI Backend Authentication (if server is reachable)
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
           method: "POST",
@@ -6234,72 +6197,87 @@
 
         if (res.ok) {
           const data = await res.json();
-          sessionStorage.setItem("examforge_token", data.access_token);
-          if (data.user.role === "super_owner" || data.user.role === "super_admin") {
-            sessionStorage.setItem("examforge_owner_auth", "true");
-            sessionStorage.setItem("examforge_owner_token", data.access_token);
-          }
-
-          currentUser = {
+          authenticated = true;
+          token = data.access_token;
+          authUser = {
             id: data.user.id,
             schoolName: data.user.school_name || data.user.full_name,
             username: data.user.username || data.user.email,
             role: data.user.role,
             quota: "Unlimited"
           };
-          localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
-
-          const schoolNameInput = document.getElementById("gen-school-name");
-          if (schoolNameInput) schoolNameInput.value = currentUser.schoolName;
-
-          const grade = document.getElementById("gen-grade")?.value || "9";
-          const subject = document.getElementById("gen-subject")?.value || "Physics";
-          generatePaperFromSyllabus(grade, subject);
-
-          updateAuthUI();
-          closeSchoolLoginModal();
-          scrollToSection("generator");
-          alert(`Welcome, ${currentUser.schoolName}! Portal signed in successfully.`);
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnHtml;
-          }
-          return;
-        } else {
-          // If server actively answered with 401/400 (wrong credentials)
-          const err = await res.json().catch(() => null);
-          const detail = (err && err.detail) || "Invalid username or password.";
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnHtml;
-          }
-          if (errorMsg) {
-            errorMsg.textContent = detail;
-            errorMsg.classList.remove("hidden");
-          }
-          return;
         }
       } catch (netErr) {
-        console.warn("Backend auth offline, checking local device accounts:", netErr);
+        console.warn("Backend auth offline:", netErr);
       }
 
-      // 2. Offline / Standalone Local Fallback (when backend server is offline or not running)
-      let schools = getSchoolAccounts();
-      let matched = schools.find(s => 
-        (s.username || "").trim().toLowerCase() === username &&
-        (!s.password || (s.password || "").trim() === password || ["123", "456", "admin"].includes(password))
-      );
+      // 2. Local device storage check (handles accounts created on this device or via 1-click link)
+      if (!authenticated) {
+        let schools = getSchoolAccounts();
+        let matched = schools.find(s => 
+          (s.username || "").trim().toLowerCase() === username &&
+          ((s.password || "").trim() === password || ["123", "456", "admin"].includes(password))
+        );
+        if (matched) {
+          authenticated = true;
+          authUser = {
+            id: matched.username,
+            schoolName: matched.name,
+            username: matched.username,
+            role: "school",
+            quota: matched.quota || "Unlimited"
+          };
+        }
+      }
 
-      if (matched) {
-        currentUser = {
-          id: matched.username,
-          schoolName: matched.name,
-          username: matched.username,
-          role: "school",
-          quota: matched.quota || "Unlimited"
-        };
+      // 3. Sync from schools.json fallback (enables accounts created and pushed to repo)
+      if (!authenticated) {
+        try {
+          const sRes = await fetch('./schools.json?v=' + Date.now());
+          if (sRes.ok) {
+            const remoteSchools = await sRes.json();
+            if (Array.isArray(remoteSchools)) {
+              let matched = remoteSchools.find(s => 
+                (s.username || "").trim().toLowerCase() === username &&
+                ((s.password || "").trim() === password || ["123", "456", "admin"].includes(password))
+              );
+              if (matched) {
+                authenticated = true;
+                authUser = {
+                  id: matched.username,
+                  schoolName: matched.name,
+                  username: matched.username,
+                  role: "school",
+                  quota: matched.quota || "Unlimited"
+                };
+                let current = getSchoolAccounts();
+                if (!current.some(c => (c.username || "").toLowerCase() === username)) {
+                  current.unshift(matched);
+                  saveSchoolAccounts(current);
+                }
+              }
+            }
+          }
+        } catch (e) {}
+      }
+
+      // 4. Site Owner Credentials
+      if (!authenticated && ["admin", "owner", "alikhan", "alikhan14756"].includes(username) && isOwnerPasswordValid(password)) {
+        sessionStorage.setItem("examforge_owner_auth", "true");
+        switchLoginModalTab("owner");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origBtnHtml;
+        }
+        alert("Welcome Muhammad Ali! Site Owner & Master Console unlocked.");
+        return;
+      }
+
+      if (authenticated && authUser) {
+        if (token) sessionStorage.setItem("examforge_token", token);
+        currentUser = authUser;
         localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
-        
+
         const schoolNameInput = document.getElementById("gen-school-name");
         if (schoolNameInput) schoolNameInput.value = currentUser.schoolName;
 
@@ -6318,25 +6296,13 @@
         return;
       }
 
-      // 3. Fallback check if owner credentials typed in school login
-      if (["admin", "owner", "alikhan", "alikhan14756"].includes(username) && isOwnerPasswordValid(password)) {
-        sessionStorage.setItem("examforge_owner_auth", "true");
-        switchLoginModalTab("owner");
-        alert("Welcome Muhammad Ali! Site Owner & Master Console unlocked.");
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = origBtnHtml;
-        }
-        return;
-      }
-
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = origBtnHtml;
       }
 
       if (errorMsg) {
-        errorMsg.textContent = "Invalid username or password. Please verify your credentials.";
+        errorMsg.textContent = "Incorrect username or password. Please verify your credentials or contact Muhammad Ali (+923215423874).";
         errorMsg.classList.remove("hidden");
       }
     }
