@@ -4349,8 +4349,10 @@
         if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
           return "http://localhost:8000";
         }
+        // In production on HTTPS (aivanolabs.site / GitHub Pages), do not fall back to localhost
+        return "";
       }
-      return "http://localhost:8000";
+      return "";
     }
 
     function setApiBaseUrl(url) {
@@ -4414,11 +4416,13 @@
     }
 
     async function syncSchoolsFromCloudAndFile() {
-      // 1. Sync live school directory from centralized FastAPI backend if reachable
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/schools`, {
-          headers: { "Accept": "application/json" }
-        });
+      // 1. Sync live school directory from centralized backend if configured
+      const baseUrl = getApiBaseUrl();
+      if (baseUrl) {
+        try {
+          const res = await fetch(`${baseUrl}/api/v1/auth/schools`, {
+            headers: { "Accept": "application/json" }
+          });
         if (res.ok) {
           const apiSchools = await res.json();
           if (Array.isArray(apiSchools)) {
@@ -4446,7 +4450,8 @@
             }
           }
         }
-      } catch (e) {}
+        } catch (e) {}
+      }
 
       // 2. Sync from schools.json (works on GitHub Pages for all devices!)
       try {
@@ -5962,9 +5967,11 @@
 
       sessionStorage.setItem("examforge_owner_key", pin);
 
-      // 1. Try real FastAPI backend owner login
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+      // 1. Try centralized backend owner login if configured
+      const baseUrl = getApiBaseUrl();
+      if (baseUrl) {
+        try {
+          const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -5981,8 +5988,9 @@
           updateOwnerQuickSectionState();
           return;
         }
-      } catch (netErr) {
-        console.warn("Backend auth offline, checking fallback master key:", netErr);
+        } catch (netErr) {
+          console.warn("Backend auth offline, checking fallback master key:", netErr);
+        }
       }
 
       // 2. Offline master fallback
@@ -6037,11 +6045,13 @@
       };
       if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
 
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify({
+      const baseUrl = getApiBaseUrl();
+      if (baseUrl) {
+        try {
+          const res = await fetch(`${baseUrl}/api/v1/auth/owner/create-school`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
             school_name: name,
             username: username,
             password: password,
@@ -6061,8 +6071,9 @@
             isDuplicateUser = true;
           }
         }
-      } catch (netErr) {
-        console.warn("Backend server not reached (offline mode):", netErr);
+        } catch (netErr) {
+          console.warn("Backend server not reached (offline mode):", netErr);
+        }
       }
 
       btn.disabled = false;
@@ -6184,16 +6195,18 @@
       let authUser = null;
       let token = null;
 
-      // 1. Centralized FastAPI Backend Authentication (if server is reachable)
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username_or_email: username,
-            password: password
-          })
-        });
+      // 1. Centralized Cloud / Backend Authentication (if configured)
+      const baseUrl = getApiBaseUrl();
+      if (baseUrl) {
+        try {
+          const res = await fetch(`${baseUrl}/api/v1/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username_or_email: username,
+              password: password
+            })
+          });
 
         if (res.ok) {
           const data = await res.json();
@@ -6207,8 +6220,9 @@
             quota: "Unlimited"
           };
         }
-      } catch (netErr) {
-        console.warn("Backend auth offline:", netErr);
+        } catch (netErr) {
+          console.warn("Backend auth offline:", netErr);
+        }
       }
 
       // 2. Local device storage check (handles accounts created on this device or via 1-click link)
@@ -6363,9 +6377,11 @@
 
       sessionStorage.setItem("examforge_owner_key", input || "14756");
 
-      // 1. Try real FastAPI backend owner login
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+      // 1. Centralized backend owner login if configured
+      const baseUrlOwner = getApiBaseUrl();
+      if (baseUrlOwner) {
+        try {
+          const res = await fetch(`${baseUrlOwner}/api/v1/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -6383,8 +6399,9 @@
           lucide.createIcons();
           return;
         }
-      } catch (err) {
-        console.warn("Backend owner login error, trying master key:", err);
+        } catch (err) {
+          console.warn("Backend owner login error, trying master key:", err);
+        }
       }
 
       // 2. Offline master fallback
@@ -6439,8 +6456,10 @@
       };
       if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
 
-      try {
-        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
+      const baseUrlSchool = getApiBaseUrl();
+      if (baseUrlSchool) {
+        try {
+          const res = await fetch(`${baseUrlSchool}/api/v1/auth/owner/create-school`, {
           method: "POST",
           headers: headers,
           body: JSON.stringify({
@@ -6463,8 +6482,9 @@
             isDuplicateUser = true;
           }
         }
-      } catch (netErr) {
-        console.warn("Backend server not reached (offline mode):", netErr);
+        } catch (netErr) {
+          console.warn("Backend server not reached (offline mode):", netErr);
+        }
       }
 
       if (submitBtn) {
