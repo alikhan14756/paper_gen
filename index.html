@@ -24,10 +24,40 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden;
+      position: relative;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f8fafc;
       color: #0f172a;
+      width: 100%;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    .paper-sheet {
+      max-width: 100% !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+    }
+    #paper-print-area {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    .marks-badge-editable {
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    .marks-badge-editable:hover {
+      filter: brightness(0.95);
+      transform: scale(1.05);
     }
     .font-urdu {
       font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
@@ -278,7 +308,7 @@
             <span>100% Free Paper Generation — No Sign-Up or OTP Required</span>
           </div>
           <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-            Generate & Edit <span class="text-orange-600">Class 9th & 10th</span> Exam Papers Instantly
+            Generate & Edit <span class="text-orange-600">Classes 1st to 10th</span> (Primary, Middle & High) Exam Papers Instantly
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
             Select any subject from authentic KPK BISEP textbooks. Add, remove, or edit questions, customize marks, switch paper styles, and download in real Microsoft Word (.docx) format!
@@ -327,6 +357,56 @@
             <span>Test Demo</span>
           </button>
         </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- KPK TEXTBOOK BOARD (BISEP) COMPLETE CURRICULUM & TEXTBOOKS SHOWCASE (CLASSES 1ST TO 10TH) -->
+  <section id="kpk-books-showcase" class="max-w-7xl mx-auto px-3 sm:px-8 py-4 sm:py-6 no-print">
+    <div class="clay-card p-5 sm:p-7 space-y-5 bg-gradient-to-br from-white via-orange-50/20 to-emerald-50/30 border border-slate-200">
+      
+      <!-- Showcase Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 clay-badge-mint px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
+            <i data-lucide="book-marked" class="w-3.5 h-3.5 text-emerald-700"></i>
+            <span>Peshawar Board Official Textbooks Library</span>
+          </div>
+          <h3 class="text-lg sm:text-2xl font-black text-slate-900">
+            Real Textbooks for All Classes (Primary, Middle & Matric)
+          </h3>
+          <p class="text-xs text-slate-500">
+            70 Complete Khyber Pakhtunkhwa authentic textbooks installed. Browse books, download full PDFs, or generate real examination papers.
+          </p>
+        </div>
+
+        <!-- Section Switcher Tabs -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold gap-1 self-start md:self-auto shrink-0">
+          <button type="button" onclick="switchShowcaseSection('primary')" id="tab-showcase-primary" class="px-3 py-1.5 rounded-lg transition bg-white text-orange-700 shadow-xs font-black">
+            🎒 Primary (1st - 5th)
+          </button>
+          <button type="button" onclick="switchShowcaseSection('middle')" id="tab-showcase-middle" class="px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900">
+            📚 Middle (6th - 8th)
+          </button>
+          <button type="button" onclick="switchShowcaseSection('matric')" id="tab-showcase-matric" class="px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900">
+            🎓 Matric (9th - 10th)
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Stats / Description Banner -->
+      <div id="showcase-section-info" class="p-3 rounded-xl bg-orange-50/80 border border-orange-200 text-xs text-orange-950 flex flex-wrap items-center justify-between gap-2">
+        <span class="font-bold" id="showcase-info-text">Showing Primary Section (Classes 1st, 2nd, 3rd, 4th, 5th) authentic KPK textbooks:</span>
+        <button onclick="openTextbookLibraryModal()" class="text-orange-700 font-extrabold hover:underline flex items-center space-x-1">
+          <span>Open Full Library Modal</span>
+          <i data-lucide="external-link" class="w-3 h-3"></i>
+        </button>
+      </div>
+
+      <!-- Dynamic Textbook Cards Showcase Grid -->
+      <div id="showcase-books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <!-- Rendered by JavaScript -->
       </div>
     </div>
   </section>
@@ -438,11 +518,36 @@
             </div>
           </div>
 
-          <!-- Question Counts & Choice Configuration (Leave Questions Choice) -->
-          <div class="clay-card-flat p-3.5 rounded-xl space-y-2.5 text-xs">
-            <p class="font-extrabold text-slate-900 flex items-center justify-between">
-              <span>Section Question Allocations & Choice:</span>
-              <span id="calc-total-marks-preview" class="text-orange-600 font-black">75 Total Marks</span>
+          <!-- Question Counts, Choice & Custom Marks Configuration -->
+          <div class="clay-card-flat p-3.5 rounded-xl space-y-3 text-xs">
+            
+            <!-- Marks Presets & Custom Total -->
+            <div class="space-y-1.5 border-b border-slate-200/80 pb-2.5">
+              <div class="flex items-center justify-between">
+                <span class="font-black text-slate-900">Total Paper Marks:</span>
+                <span id="calc-total-marks-preview" class="text-orange-600 font-black text-sm">75 Total Marks</span>
+              </div>
+              <div class="grid grid-cols-4 gap-1">
+                <button type="button" onclick="applyMarksPreset(50)" class="preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-slate-200 bg-white hover:border-orange-400 text-slate-700">50 Marks</button>
+                <button type="button" onclick="applyMarksPreset(75)" class="preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-orange-500 bg-orange-50 text-orange-800 font-black">75 Marks</button>
+                <button type="button" onclick="applyMarksPreset(100)" class="preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-slate-200 bg-white hover:border-orange-400 text-slate-700">100 Marks</button>
+                <button type="button" onclick="toggleCustomMarksInputs()" class="preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-slate-200 bg-white hover:border-orange-400 text-slate-700">Custom ✏️</button>
+              </div>
+            </div>
+
+            <!-- Marks Display Style (User's Own Style) -->
+            <div class="space-y-1 border-b border-slate-200/80 pb-2">
+              <label class="block text-[11px] font-bold text-slate-700">Marks Display Style (Your Own Style):</label>
+              <select id="gen-marks-style" onchange="changeMarksStyle(this.value)" class="w-full clay-input p-2 text-xs font-bold text-slate-800">
+                <option value="bisep-header-only">🏛 BISEP Board Style (Marks in Section Header only)</option>
+                <option value="school-per-question">🏫 School Style (Show Marks on Every Question [4 Marks])</option>
+                <option value="compact-score">📝 Minimalist Style (e.g. (4), (8) at end of line)</option>
+              </select>
+            </div>
+
+            <p class="font-extrabold text-slate-900 flex items-center justify-between pt-1">
+              <span>Section Question Allocations:</span>
+              <span class="text-[10px] text-slate-400">Customizable</span>
             </p>
 
             <!-- Section A: MCQs -->
@@ -551,6 +656,18 @@
 
         <!-- Action Buttons -->
         <div class="flex flex-wrap items-center gap-2">
+          
+          <!-- Quick Marks & Style Adjuster -->
+          <div class="flex items-center bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-xl text-xs font-bold space-x-1.5 text-amber-900">
+            <i data-lucide="award" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span>Marks:</span>
+            <button onclick="promptEditTotalMarks()" class="font-mono font-black text-orange-700 bg-white px-1.5 py-0.5 rounded border border-amber-300 hover:bg-orange-50" title="Click to customize total paper marks">
+              <span id="toolbar-total-marks-label">75</span> Marks
+            </button>
+            <button onclick="cycleMarksStyle()" class="text-[10px] font-black text-amber-800 bg-amber-100 hover:bg-amber-200 px-2 py-0.5 rounded-lg transition" title="Toggle between BISEP Section marks only and per-question marks">
+              Style: <span id="toolbar-marks-style-label">BISEP</span>
+            </button>
+          </div>
           <!-- Format style quick buttons -->
           <div class="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold">
             <button onclick="changePaperStyle('bisep-classic')" class="px-2.5 py-1 rounded-lg transition hover:bg-white text-slate-700">Classical</button>
@@ -2619,6 +2736,1229 @@
     // 2. AUTHENTIC QUESTION BANK BY SUBJECT
     // =========================================================================
     const QUESTION_BANKS = {
+    "English_Primary": {
+        "mcqs": [
+            {
+                "text": "Which word is a common noun?",
+                "options": [
+                    "(A) Peshawar",
+                    "(B) School",
+                    "(C) Ali",
+                    "(D) Pakistan"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Choose the correct opposite of the word 'Hot':",
+                "options": [
+                    "(A) Cold",
+                    "(B) Warm",
+                    "(C) Fire",
+                    "(D) Ice"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "Fill in the blank: An apple ______ day keeps the doctor away.",
+                "options": [
+                    "(A) a",
+                    "(B) an",
+                    "(C) the",
+                    "(D) in"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "What is the plural of 'Child'?",
+                "options": [
+                    "(A) Childs",
+                    "(B) Children",
+                    "(C) Childrens",
+                    "(D) Childes"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Identify the action word (verb):",
+                "options": [
+                    "(A) Fast",
+                    "(B) Happy",
+                    "(C) Running",
+                    "(D) Table"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Choose the correct preposition: The book is ______ the table.",
+                "options": [
+                    "(A) on",
+                    "(B) at",
+                    "(C) to",
+                    "(D) of"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "Which sentence is punctuated correctly?",
+                "options": [
+                    "(A) where are you going.",
+                    "(B) Where are you going?",
+                    "(C) Where are you going!",
+                    "(D) where are you going?"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Choose the rhyming word for 'Cat':",
+                "options": [
+                    "(A) Dog",
+                    "(B) Bat",
+                    "(C) Hen",
+                    "(D) Cup"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "What is the opposite of 'Difficult'?",
+                "options": [
+                    "(A) Hard",
+                    "(B) Heavy",
+                    "(C) Easy",
+                    "(D) Simple"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Choose the correct pronoun for a girl:",
+                "options": [
+                    "(A) He",
+                    "(B) She",
+                    "(C) It",
+                    "(D) They"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "What is the past tense of 'Go'?",
+                "options": [
+                    "(A) Gone",
+                    "(B) Goes",
+                    "(C) Went",
+                    "(D) Going"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Select the correct adjective:",
+                "options": [
+                    "(A) Beautiful",
+                    "(B) Quickly",
+                    "(C) Singing",
+                    "(D) House"
+                ],
+                "answer": 0,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Define a Noun and give two examples of person, place, and thing.",
+                "marks": 4,
+                "solution": "A noun is the name of a person, place, or thing. Examples: Person (Ali, Teacher), Place (Peshawar, Park), Thing (Book, Pen)."
+            },
+            {
+                "text": "Write the plural form of the following words: (a) Leaf (b) Baby (c) Box (d) Foot.",
+                "marks": 4,
+                "solution": "(a) Leaf -> Leaves (b) Baby -> Babies (c) Box -> Boxes (d) Foot -> Feet."
+            },
+            {
+                "text": "Write the opposites (antonyms) of: (a) Brave (b) Bright (c) Early (d) Clean.",
+                "marks": 4,
+                "solution": "(a) Brave -> Cowardly (b) Bright -> Dark/Dull (c) Early -> Late (d) Clean -> Dirty."
+            },
+            {
+                "text": "Use the following words in meaningful sentences: (a) Honest (b) Journey (c) Beautiful (d) Respect.",
+                "marks": 4,
+                "solution": "(a) Honest: Hazrat Muhammad (PBUH) was always honest. (b) Journey: We enjoyed our journey to Swat Valley. (c) Beautiful: The rose is a beautiful flower. (d) Respect: We must respect our teachers and parents."
+            },
+            {
+                "text": "Fill in the blanks with suitable helping verbs (is, am, are, was, were): (a) I ______ reading a story. (b) They ______ playing cricket. (c) She ______ absent yesterday. (d) We ______ happy today.",
+                "marks": 4,
+                "solution": "(a) am (b) are (c) was (d) are."
+            },
+            {
+                "text": "Underline the adjectives in the following sentences: (a) Ali lives in a tall building. (b) The hungry fox saw juicy grapes.",
+                "marks": 4,
+                "solution": "Adjectives: (a) tall (b) hungry, juicy."
+            },
+            {
+                "text": "Write four lines about 'My School'.",
+                "marks": 4,
+                "solution": "1. The name of my school is Peshawar Model School. 2. It has a grand building and a large playground. 3. All teachers are kind, caring, and hardworking. 4. I love my school very much."
+            },
+            {
+                "text": "Rewrite with correct capital letters and punctuation: 'quaid-e-azam was born in karachi on 25th december'",
+                "marks": 4,
+                "solution": "Quaid-e-Azam was born in Karachi on 25th December."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Write an application to the Headmaster / Principal requesting two days sick leave.",
+                "marks": 8,
+                "solution": "Format: To, The Principal, School Name, Peshawar. Respected Sir, Most respectfully it is stated that I am suffering from high fever and doctor advised two days rest. Kindly grant me leave for 6th and 7th November. Thanking you. Yours obediently, Name, Class 5, Roll No."
+            },
+            {
+                "text": "Write a descriptive essay (10-12 lines) on any ONE of the following topics: (a) My Best Friend (b) A Visit to a Historical Place (Bala Hissar Fort).",
+                "marks": 8,
+                "solution": "Evaluation criteria: Content (3 marks), Grammar & Spelling (3 marks), Sentence Structure & Coherence (2 marks)."
+            },
+            {
+                "text": "Read the comprehension passage and answer the questions below:\n'Honeybees are small insects that live in hives. They visit flowers to collect sweet nectar. With this nectar, they produce delicious honey which has great health benefits. Honeybees are very hardworking and organized.'\nQuestions:\n1. Where do honeybees live? (2 marks)\n2. What do bees collect from flowers? (2 marks)\n3. Why is honey beneficial for humans? (2 marks)\n4. What quality of honeybees is mentioned? (2 marks)",
+                "marks": 8,
+                "solution": "1. Honeybees live in hives. 2. They collect sweet nectar. 3. Honey is delicious and has great health benefits. 4. Honeybees are very hardworking and organized."
+            },
+            {
+                "text": "Write a moral story on 'The Thirsty Crow' or 'The Greedy Dog' with a clear title and moral lesson.",
+                "marks": 8,
+                "solution": "Clear story plot with beginning, middle, and climax (6 marks). Moral lesson clearly stated: 'Where there is a will, there is a way' or 'Greed is a curse' (2 marks)."
+            }
+        ]
+    },
+    "Urdu_Primary": {
+        "mcqs": [
+            {
+                "text": "اردو زبان میں حروفِ تہجی کی کل تعداد کتنی ہے؟",
+                "options": [
+                    "(A) 36",
+                    "(B) 37",
+                    "(C) 39",
+                    "(D) 42"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "لفظ 'دن' کا متضاد (الٹ) کیا ہے؟",
+                "options": [
+                    "(A) صبح",
+                    "(B) شام",
+                    "(C) رات",
+                    "(D) دوپہر"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "لفظ 'کتاب' کی جمع کیا ہے؟",
+                "options": [
+                    "(A) کتابیں",
+                    "(B) کتب",
+                    "(C) کتابوں",
+                    "(D) کتابات"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "لفظ 'شیر' کی مؤنث کیا ہے؟",
+                "options": [
+                    "(A) شیرنی",
+                    "(B) شیری",
+                    "(C) شیرن",
+                    "(D) شیروا"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "کسی شخص، جگہ یا چیز کے نام کو کیا کہتے ہیں؟",
+                "options": [
+                    "(A) اسم",
+                    "(B) فعل",
+                    "(C) حرف",
+                    "(D) صفت"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "کسی کام کے کرنے یا ہونے کو کیا کہتے ہیں؟",
+                "options": [
+                    "(A) اسم",
+                    "(B) فعل",
+                    "(C) ضمیر",
+                    "(D) صفت"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "لفظ 'آسمان' کا ہم معنی (مترادف) لفظ کون سا ہے؟",
+                "options": [
+                    "(A) زمین",
+                    "(B) فلک",
+                    "(C) چاند",
+                    "(D) سورج"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "پاکستان کا قومی ترانہ کس شاعر نے لکھا؟",
+                "options": [
+                    "(A) علامہ اقبال",
+                    "(B) حفیظ جالندھری",
+                    "(C) فیض احمد فیض",
+                    "(D) میر تقی میر"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "جملے کے اختتام پر کون سا نشان لگایا جاتا ہے؟",
+                "options": [
+                    "(A) ختمہ (.)",
+                    "(B) سوالیہ نشان (?)",
+                    "(C) سکتہ (,)",
+                    "(D) رابطہ"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "لفظ 'سچ' کا متضاد کون سا ہے؟",
+                "options": [
+                    "(A) جھوٹ",
+                    "(B) فریب",
+                    "(C) دھوکا",
+                    "(D) غلط"
+                ],
+                "answer": 0,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "اسم کی تعریف کریں اور دو مثالیں دیں۔",
+                "marks": 4,
+                "solution": "کسی شخص، جگہ یا چیز کے نام کو اسم کہتے ہیں۔ مثالیں: علی، پشاور، قلم۔"
+            },
+            {
+                "text": "درج ذیل الفاظ کے متضاد (الٹ) لکھیں: (الف) بہادر (ب) اندھیرا (ج) امیر (د) نیکی۔",
+                "marks": 4,
+                "solution": "(الف) بہادر: بزدل (ب) اندھیرا: اجالا / روشنی (ج) امیر: غریب (د) نیکی: بدی۔"
+            },
+            {
+                "text": "واحد کے جمع لکھیں: (الف) استاد (ب) پودا (ج) آنکھ (د) نعمت۔",
+                "marks": 4,
+                "solution": "(الف) استاد: اساتذہ (ب) پودا: پودے (ج) آنکھ: آنکھیں (د) نعمت: نعمتیں / نعمات۔"
+            },
+            {
+                "text": "درج ذیل الفاظ کو اپنے جملوں میں استعمال کریں: (الف) وطن (ب) محنت (ج) سچائی (د) احترام۔",
+                "marks": 4,
+                "solution": "(الف) وطن: مجھے اپنے پیارے وطن پاکستان سے دلی محبت ہے۔ (ب) محنت: محنت میں عظمت ہے۔ (ج) سچائی: سچائی انسان کو عزت بخشتی ہے۔ (د) احترام: ہمیں بڑوں اور اساتذہ کا احترام کرنا چاہیے۔"
+            },
+            {
+                "text": "حمد اور نعت میں کیا فرق ہے؟",
+                "marks": 4,
+                "solution": "حمد: ایسی نظم جس میں اللہ تعالیٰ کی تعریف و توصیف بیان کی جائے۔ نعت: ایسی نظم جس میں پیارے نبی حضرت محمد صلی اللہ علیہ وآلہ وسلم کی تعریف بیان کی جائے۔"
+            },
+            {
+                "text": "درج ذیل الفاظ کے معنی لکھیں: (الف) عفو (ب) رحمت (ج) گلشن (د) فلک۔",
+                "marks": 4,
+                "solution": "(الف) عفو: معاف کرنا (ب) رحمت: مہربانی (ج) گلشن: باغ (د) فلک: آسمان۔"
+            },
+            {
+                "text": "اپنے والدین کی خدمت کے بارے میں تین اہم باتیں تحریر کریں۔",
+                "marks": 4,
+                "solution": "1. والدین کا ہر حکم خوش دلی سے ماننا۔ 2. ان کے سامنے ادب و احترام سے پیش آنا اور اونچی آواز میں بات نہ کرنا۔ 3. ان کے آرام و صحت کا خیال رکھنا۔"
+            }
+        ],
+        "longs": [
+            {
+                "text": "ہیڈ ماسٹر / پرنسپل صاحب کے نام ضروری کام کی درخواست تحریر کریں۔",
+                "marks": 8,
+                "solution": "درخواست برائے ضروری کام: بخدمت جناب ہیڈ ماسٹر صاحب، اسکول کا نام، پشاور۔ جنابِ عالی! نہایت ادب سے گزارش ہے کہ مجھے آج گھر پر ایک ضروری کام ہے جس کی وجہ سے میں اسکول حاضر ہونے سے قاصر ہوں۔ مہربانی فرما کر مجھے ایک یوم کی رخصت عنایت فرمائیں۔ العارض، نام، جماعت پنجم، رول نمبر۔"
+            },
+            {
+                "text": "درج ذیل میں سے کسی ایک عنوان پر جامع مضمون تحریر کریں: (الف) علامہ محمد اقبال (ب) میرا پیارا وطن پاکستان (ج) صفائی نصف ایمان ہے۔",
+                "marks": 8,
+                "solution": "مضمون کی جانچ: مواد اور دلائل (4 نمبر)، الفاظ کا چناؤ اور املا (2 نمبر)، تسلسل اور خوشخطی (2 نمبر)۔"
+            },
+            {
+                "text": "اخلاقی کہانی تحریر کریں جس کا نتیجہ 'اتفاق میں برکت ہے' یا 'لالچ بری بلا ہے' ہو۔",
+                "marks": 8,
+                "solution": "کہانی کا آغاز، درمیانی حصہ، دلچسپ موڑ اور اختتام (6 نمبر)۔ واضح اخلاقی سبق تحریر کرنا (2 نمبر)۔"
+            }
+        ]
+    },
+    "Mathematics_Primary": {
+        "mcqs": [
+            {
+                "text": "In the number 45,678, what is the place value of digit 5?",
+                "options": [
+                    "(A) 50",
+                    "(B) 500",
+                    "(C) 5,000",
+                    "(D) 50,000"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "What is the sum of 456 and 389?",
+                "options": [
+                    "(A) 845",
+                    "(B) 835",
+                    "(C) 745",
+                    "(D) 855"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "The result of 12 × 8 is:",
+                "options": [
+                    "(A) 86",
+                    "(B) 96",
+                    "(C) 106",
+                    "(D) 92"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Which fraction is equivalent to 1/2?",
+                "options": [
+                    "(A) 2/3",
+                    "(B) 3/6",
+                    "(C) 4/5",
+                    "(D) 2/5"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "An angle measuring less than 90° is called:",
+                "options": [
+                    "(A) Right angle",
+                    "(B) Acute angle",
+                    "(C) Obtuse angle",
+                    "(D) Straight angle"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The perimeter of a square with side length 6 cm is:",
+                "options": [
+                    "(A) 12 cm",
+                    "(B) 24 cm",
+                    "(C) 36 cm",
+                    "(D) 18 cm"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The greatest common factor (HCF) of 12 and 18 is:",
+                "options": [
+                    "(A) 2",
+                    "(B) 3",
+                    "(C) 6",
+                    "(D) 12"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "How many centimeters are there in 3.5 meters?",
+                "options": [
+                    "(A) 35 cm",
+                    "(B) 350 cm",
+                    "(C) 3500 cm",
+                    "(D) 0.35 cm"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The product of 25 × 40 is equal to:",
+                "options": [
+                    "(A) 100",
+                    "(B) 500",
+                    "(C) 1,000",
+                    "(D) 1,200"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Which of the following is a prime number?",
+                "options": [
+                    "(A) 9",
+                    "(B) 15",
+                    "(C) 19",
+                    "(D) 21"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Find the HCF of 24 and 36 by using prime factorization method.",
+                "marks": 4,
+                "solution": "24 = 2 × 2 × 2 × 3. 36 = 2 × 2 × 3 × 3. Common prime factors = 2 × 2 × 3 = 12. HCF = 12."
+            },
+            {
+                "text": "Solve the fractional addition: 2/5 + 1/3.",
+                "marks": 4,
+                "solution": "LCM of denominators 5 and 3 = 15. (2×3)/15 + (1×5)/15 = 6/15 + 5/15 = 11/15."
+            },
+            {
+                "text": "Find the perimeter and area of a rectangle having length = 12 cm and width = 7 cm.",
+                "marks": 4,
+                "solution": "Perimeter = 2 × (Length + Width) = 2 × (12 + 7) = 2 × 19 = 38 cm. Area = Length × Width = 12 × 7 = 84 sq cm."
+            },
+            {
+                "text": "If 6 notebooks cost Rs. 180, find the cost of 10 notebooks using unitary method.",
+                "marks": 4,
+                "solution": "Cost of 6 notebooks = Rs. 180. Cost of 1 notebook = 180 ÷ 6 = Rs. 30. Cost of 10 notebooks = 30 × 10 = Rs. 300."
+            },
+            {
+                "text": "Divide 4,560 by 15 and write the quotient and remainder.",
+                "marks": 4,
+                "solution": "4,560 ÷ 15 = 304. Quotient = 304, Remainder = 0."
+            },
+            {
+                "text": "Convert 3 hours and 25 minutes into total minutes.",
+                "marks": 4,
+                "solution": "1 hour = 60 minutes. 3 hours = 3 × 60 = 180 minutes. Total minutes = 180 + 25 = 205 minutes."
+            },
+            {
+                "text": "Round off 67,489 to: (a) Nearest 10 (b) Nearest 100.",
+                "marks": 4,
+                "solution": "(a) Nearest 10: 67,490 (b) Nearest 100: 67,500."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Find the LCM of 16, 24, and 40 by using division method with full working steps.",
+                "marks": 8,
+                "solution": "Divide simultaneously by prime numbers 2, 2, 2, 2, 3, 5. LCM = 2 × 2 × 2 × 2 × 3 × 5 = 240. Full division table shown."
+            },
+            {
+                "text": "A school library bought 45 math books at Rs. 250 each and 35 science books at Rs. 320 each. Find the total expenditure incurred by the school.",
+                "marks": 8,
+                "solution": "Cost of math books = 45 × 250 = Rs. 11,250. Cost of science books = 35 × 320 = Rs. 11,200. Total expenditure = 11,250 + 11,200 = Rs. 22,450."
+            },
+            {
+                "text": "Construct an angle of 60° and 120° using ruler and compass only. Draw neat labeled diagrams and write steps of construction.",
+                "marks": 8,
+                "solution": "Steps of construction: 1. Draw ray OA. 2. With O as center, draw an arc intersecting OA at P. 3. With P as center and same radius, cut the arc at Q (60°). 4. With Q as center, cut at R (120°). 5. Join and label rays."
+            },
+            {
+                "text": "A playground is 40 meters long and 25 meters wide. (a) Find its perimeter and area. (b) Find the cost of fencing the playground at the rate of Rs. 85 per meter.",
+                "marks": 8,
+                "solution": "(a) Perimeter = 2(40 + 25) = 2(65) = 130 meters. Area = 40 × 25 = 1,000 sq meters. (b) Cost of fencing = 130 meters × Rs. 85 = Rs. 11,050."
+            }
+        ]
+    },
+    "General Science_Primary": {
+        "mcqs": [
+            {
+                "text": "Which of the following animals is an invertebrate (has no backbone)?",
+                "options": [
+                    "(A) Fish",
+                    "(B) Butterfly",
+                    "(C) Frog",
+                    "(D) Bird"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The green pigment in plant leaves that absorbs sunlight is called:",
+                "options": [
+                    "(A) Chlorophyll",
+                    "(B) Stomata",
+                    "(C) Glucose",
+                    "(D) Stem"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "Which gas do plants absorb from the air during photosynthesis?",
+                "options": [
+                    "(A) Oxygen",
+                    "(B) Carbon dioxide",
+                    "(C) Nitrogen",
+                    "(D) Hydrogen"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Water exists in three states of matter: solid (ice), liquid (water), and gas which is:",
+                "options": [
+                    "(A) Steam / Water vapor",
+                    "(B) Cloud",
+                    "(C) Dew",
+                    "(D) Rain"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "Which sense organ helps us balance our body?",
+                "options": [
+                    "(A) Eye",
+                    "(B) Ear",
+                    "(C) Nose",
+                    "(D) Tongue"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Which part of the plant absorbs water and minerals from the soil?",
+                "options": [
+                    "(A) Stem",
+                    "(B) Roots",
+                    "(C) Flower",
+                    "(D) Leaf"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The boiling point of pure water at sea level is:",
+                "options": [
+                    "(A) 0°C",
+                    "(B) 50°C",
+                    "(C) 100°C",
+                    "(D) 212°C"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Which of the following is a non-renewable source of energy?",
+                "options": [
+                    "(A) Solar energy",
+                    "(B) Wind energy",
+                    "(C) Coal",
+                    "(D) Water energy"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Differentiate between vertebrates and invertebrates with two examples of each.",
+                "marks": 4,
+                "solution": "Vertebrates: Animals having a backbone or spinal column (e.g. Fish, Cow, Bird). Invertebrates: Animals that do not have a backbone (e.g. Earthworm, Butterfly, Snail)."
+            },
+            {
+                "text": "Define photosynthesis and write the simple word equation.",
+                "marks": 4,
+                "solution": "Photosynthesis is the process by which green plants make their food using sunlight, water, and carbon dioxide. Equation: Carbon dioxide + Water + Sunlight -> Glucose + Oxygen."
+            },
+            {
+                "text": "Name the five sense organs and state their primary functions.",
+                "marks": 4,
+                "solution": "1. Eyes (Sight) 2. Ears (Hearing & Balance) 3. Nose (Smell) 4. Tongue (Taste) 5. Skin (Touch & Temperature)."
+            },
+            {
+                "text": "What are the three necessary conditions for seed germination?",
+                "marks": 4,
+                "solution": "1. Water / Moisture (softens seed coat) 2. Oxygen / Air (for respiration) 3. Proper warmth / Temperature."
+            },
+            {
+                "text": "Differentiate between physical change and chemical change with one example of each.",
+                "marks": 4,
+                "solution": "Physical change: No new substance is formed, easily reversible (e.g. Melting of ice into water). Chemical change: A new substance is formed, irreversible (e.g. Burning of wood into ash)."
+            },
+            {
+                "text": "How can we keep our environment clean and free from plastic pollution?",
+                "marks": 4,
+                "solution": "1. Practice the 3 Rs: Reduce, Reuse, and Recycle. 2. Avoid single-use plastic bags and use cloth bags. 3. Dispose of garbage properly in bins. 4. Plant more trees."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Explain the life cycle of a flowering plant or butterfly with a neat labeled diagram.",
+                "marks": 8,
+                "solution": "Plant Life Cycle: 1. Seed 2. Germination 3. Seedling 4. Mature flowering plant 5. Pollination & fruit formation. Diagram showing all stages labeled (4 marks diagram, 4 marks description)."
+            },
+            {
+                "text": "Discuss the states of matter (Solid, Liquid, Gas) in detail explaining the arrangement of particles in each.",
+                "marks": 8,
+                "solution": "1. Solids: Particles tightly packed, fixed shape and volume. 2. Liquids: Particles close but can slide past, fixed volume, takes shape of container. 3. Gases: Particles far apart, high kinetic energy, no fixed shape or volume. Diagrams of particle arrangements included."
+            },
+            {
+                "text": "What is the solar system? Name the planets in order of distance from the Sun and describe Earth's unique characteristics.",
+                "marks": 8,
+                "solution": "Sun and eight planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. Earth's features: Presence of liquid water, breathable atmosphere with oxygen, protective ozone layer, suitable temperature supporting life."
+            }
+        ]
+    },
+    "Islamiyat_Primary": {
+        "mcqs": [
+            {
+                "text": "اسلام کا پہلا رکن کون سا ہے؟",
+                "options": [
+                    "(A) نماز",
+                    "(B) کلمہ طیبہ (توحید و رسالت)",
+                    "(C) روزہ",
+                    "(D) زکوٰۃ"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "مسلمانوں پر دن رات میں کتنی نمازیں فرض ہیں؟",
+                "options": [
+                    "(A) تین",
+                    "(B) چار",
+                    "(C) پانچ",
+                    "(D) چھ"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "قرآن مجید کے کل کتنے پارے ہیں؟",
+                "options": [
+                    "(A) 20",
+                    "(B) 25",
+                    "(C) 30",
+                    "(D) 40"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "پیارے نبی صلی اللہ علیہ وآلہ وسلم کی کنیت کیا تھی؟",
+                "options": [
+                    "(A) ابوالقاسم",
+                    "(B) ابوتراب",
+                    "(C) ابوبکر",
+                    "(D) ابوحفص"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "وضو کے کتنے فرائض ہیں؟",
+                "options": [
+                    "(A) تین",
+                    "(B) چار",
+                    "(C) پانچ",
+                    "(D) چھ"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "رمضان المبارک اسلامی سال کا کون سا مہینہ ہے؟",
+                "options": [
+                    "(A) ساتواں",
+                    "(B) آٹھواں",
+                    "(C) نواں",
+                    "(D) دسواں"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "وضو کے چار فرائض کون کون سے ہیں؟ تحریر کریں۔",
+                "marks": 4,
+                "solution": "1. چہرہ دھونا (پیشانی سے ٹھوڑی تک اور ایک کان سے دوسرے کان تک) 2. دونوں ہاتھ کہنیوں سمیت دھونا 3. چوتھائی سر کا مسح کرنا 4. دونوں پاؤں ٹخنوں سمیت دھونا۔"
+            },
+            {
+                "text": "کلمہ طیبہ اور اس کا ترجمہ تحریر کریں۔",
+                "marks": 4,
+                "solution": "لَا إِلٰہَ إِلَّا اللّٰہُ مُحَمَّدٌ رَّسُوْلُ اللّٰہِ۔ ترجمہ: اللہ کے سوا کوئی معبود نہیں، محمد صلی اللہ علیہ وآلہ وسلم اللہ کے رسول ہیں۔"
+            },
+            {
+                "text": "نماز کے دو اہم دنیاوی اور اخروی فوائد بیان کریں۔",
+                "marks": 4,
+                "solution": "1. نماز انسان کو بے حیائی اور برائی سے روکتی ہے۔ 2. نماز سے دل کو سکون ملتا ہے اور جسمانی صفائی حاصل ہوتی ہے۔ 3. قیامت کے دن سب سے پہلے نماز کا حساب ہوگا۔"
+            },
+            {
+                "text": "سچ بولنے کے بارے میں پیارے نبی ﷺ کا ارشاد مبارک بیان کریں۔",
+                "marks": 4,
+                "solution": "پیارے نبی ﷺ نے فرمایا: سچائی نجات دلاتی ہے اور جھوٹ ہلاک کر دیتا ہے۔ ہمیشہ سچ بولو کیونکہ سچائی نیکی کی طرف لے جاتی ہے۔"
+            },
+            {
+                "text": "پڑوسیوں کے حقوق کے بارے میں اسلامی تعلیمات کیا ہیں؟",
+                "marks": 4,
+                "solution": "اسلام میں پڑوسیوں کے بہت حقوق ہیں۔ انہیں تکلیف نہ دی جائے، ان کی خوشی و غمی میں شریک ہوا جائے، اور اگر وہ بھوکے ہوں تو ان کے کھانے پینے کا خیال رکھا جائے۔"
+            }
+        ],
+        "longs": [
+            {
+                "text": "نماز کی اہمیت اور ارکان پر تفصیلی نوٹ تحریر کریں۔",
+                "marks": 8,
+                "solution": "نماز دین کا ستون ہے۔ قرآن مجید میں اقامتِ صلوٰۃ کا بار بار حکم آیا ہے۔ نماز کے ارکان: قیام، قرات، رکوع، قومہ، سجدہ اور قعدہ۔ باجماعت نماز کے معاشرتی فوائد اور برابری کا درس۔"
+            },
+            {
+                "text": "سیرتِ طیبہ: پیارے نبی صلی اللہ علیہ وآلہ وسلم کے اخلاقِ حسنہ، سچائی، امانت اور بچوں سے شفقت پر جامع مضمون تحریر کریں۔",
+                "marks": 8,
+                "solution": "آپ ﷺ صادق اور امین کہلاتے تھے۔ دشمن بھی آپ ﷺ کی امانت داری کے معترف تھے۔ بچوں سے بے پناہ شفقت فرماتے اور چھوٹوں پر رحم اور بڑوں کا احترام سکھایا۔"
+            }
+        ]
+    },
+    "Social Studies_Primary": {
+        "mcqs": [
+            {
+                "text": "How many provinces does Pakistan have?",
+                "options": [
+                    "(A) 3",
+                    "(B) 4",
+                    "(C) 5",
+                    "(D) 6"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "What is the capital city of Khyber Pakhtunkhwa?",
+                "options": [
+                    "(A) Abbottabad",
+                    "(B) Mardan",
+                    "(C) Peshawar",
+                    "(D) Swat"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "The national animal of Pakistan is:",
+                "options": [
+                    "(A) Tiger",
+                    "(B) Markhor",
+                    "(C) Snow Leopard",
+                    "(D) Camel"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "Which is the highest mountain peak in Pakistan?",
+                "options": [
+                    "(A) Nanga Parbat",
+                    "(B) K2 (Mount Godwin-Austen)",
+                    "(C) Tirich Mir",
+                    "(D) Broad Peak"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "How many continents are there in the world?",
+                "options": [
+                    "(A) 5",
+                    "(B) 6",
+                    "(C) 7",
+                    "(D) 8"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Name the four provinces of Pakistan along with their provincial capitals.",
+                "marks": 4,
+                "solution": "1. Khyber Pakhtunkhwa (Peshawar) 2. Punjab (Lahore) 3. Sindh (Karachi) 4. Balochistan (Quetta)."
+            },
+            {
+                "text": "Write three duties of a responsible and good citizen.",
+                "marks": 4,
+                "solution": "1. Obey laws and traffic rules. 2. Keep the country clean and protect public property. 3. Respect others and work hard for the nation's progress."
+            },
+            {
+                "text": "What is a map? Name the four cardinal directions.",
+                "marks": 4,
+                "solution": "A map is a drawing of the whole or part of the Earth's surface on a flat sheet. Cardinal directions: North, South, East, and West."
+            },
+            {
+                "text": "Explain the importance of the historic Bala Hissar Fort in Peshawar.",
+                "marks": 4,
+                "solution": "Bala Hissar Fort is an ancient historic citadel in Peshawar that guarded the trade and military routes between Central Asia and South Asia via the Khyber Pass."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Write a comprehensive note on the physical features of Pakistan (Mountains, Plateaus, Plains, and Deserts).",
+                "marks": 8,
+                "solution": "Detailed overview of: 1. Northern and Western Mountains (Himalayas, Karakoram, Hindu Kush) 2. Indus Plains (Upper and Lower Plains) 3. Potohar and Balochistan Plateaus 4. Deserts (Thar, Cholistan, Kharan)."
+            },
+            {
+                "text": "Discuss the Gandhara Civilization in Khyber Pakhtunkhwa and its world-famous historical heritage.",
+                "marks": 8,
+                "solution": "Historical background centered in Peshawar, Swat, and Taxila. Architectural and artistic achievements, Buddhist monasteries, Takht-i-Bahi UNESCO World Heritage site, and Peshawar Museum collections."
+            }
+        ]
+    },
+    "Mathematics_Middle": {
+        "mcqs": [
+            {
+                "text": "If set A = {1, 2, 3} and B = {3, 4, 5}, then A ∩ B is equal to:",
+                "options": [
+                    "(A) {1, 2, 3, 4, 5}",
+                    "(B) {3}",
+                    "(C) {1, 2}",
+                    "(D) Φ"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The additive inverse of rational number -7/9 is:",
+                "options": [
+                    "(A) 7/9",
+                    "(B) 9/7",
+                    "(C) -9/7",
+                    "(D) 1"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "The value of (-2)⁴ is equal to:",
+                "options": [
+                    "(A) -8",
+                    "(B) -16",
+                    "(C) 8",
+                    "(D) 16"
+                ],
+                "answer": 3,
+                "marks": 1
+            },
+            {
+                "text": "Solve for x: 3x - 5 = 16:",
+                "options": [
+                    "(A) 5",
+                    "(B) 7",
+                    "(C) 9",
+                    "(D) 11"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The square root of 144 is:",
+                "options": [
+                    "(A) 11",
+                    "(B) 12",
+                    "(C) 13",
+                    "(D) 14"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "In a right triangle with base 6 cm and height 8 cm, the hypotenuse is:",
+                "options": [
+                    "(A) 10 cm",
+                    "(B) 12 cm",
+                    "(C) 14 cm",
+                    "(D) 9 cm"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "The rate of Zakat payable on wealth above Nisab is:",
+                "options": [
+                    "(A) 2.5%",
+                    "(B) 5%",
+                    "(C) 10%",
+                    "(D) 20%"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "The degree of the algebraic expression 5x³y² - 3xy + 7 is:",
+                "options": [
+                    "(A) 3",
+                    "(B) 2",
+                    "(C) 5",
+                    "(D) 1"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "If Universal set U = {1, 2, 3, ..., 10} and A = {2, 4, 6, 8, 10}, find the complement of set A (A').",
+                "marks": 4,
+                "solution": "A' = U - A = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10} - {2, 4, 6, 8, 10} = {1, 3, 5, 7, 9}."
+            },
+            {
+                "text": "Factorize completely using algebraic identity: x² - 9y².",
+                "marks": 4,
+                "solution": "x² - (3y)² = (x - 3y)(x + 3y)."
+            },
+            {
+                "text": "Solve the linear equation: 5(2x - 3) + 7 = 32.",
+                "marks": 4,
+                "solution": "10x - 15 + 7 = 32 => 10x - 8 = 32 => 10x = 40 => x = 4."
+            },
+            {
+                "text": "Calculate the amount of Zakat on Rs. 800,000 savings kept for one full lunar year at the rate of 2.5%.",
+                "marks": 4,
+                "solution": "Zakat = 800,000 × (2.5 / 100) = 800,000 × 0.025 = Rs. 20,000."
+            },
+            {
+                "text": "Find the square root of 784 by using prime factorization method.",
+                "marks": 4,
+                "solution": "784 = 2 × 2 × 2 × 2 × 7 × 7 = (2² × 2² × 7²). √784 = 2 × 2 × 7 = 28."
+            },
+            {
+                "text": "State the Pythagorean Theorem and verify it for a triangle with sides 5 cm, 12 cm, and 13 cm.",
+                "marks": 4,
+                "solution": "Hypotenuse² = Base² + Perpendicular². 13² = 5² + 12² => 169 = 25 + 144 = 169. Verified."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Verify De Morgan's Laws for sets: (A ∪ B)' = A' ∩ B' where U = {1, 2, 3, 4, 5, 6, 7, 8}, A = {2, 4, 6}, and B = {4, 6, 8}.",
+                "marks": 8,
+                "solution": "A ∪ B = {2, 4, 6, 8}. LHS: (A ∪ B)' = U - {2,4,6,8} = {1, 3, 5, 7}. RHS: A' = {1, 3, 5, 7, 8}, B' = {1, 2, 3, 5, 7}. A' ∩ B' = {1, 3, 5, 7}. LHS = RHS. Proved."
+            },
+            {
+                "text": "Solve the simultaneous linear equations: 3x + 2y = 12 and 2x - y = 1 using the method of elimination.",
+                "marks": 8,
+                "solution": "Multiply eq 2 by 2: 4x - 2y = 2. Add to eq 1: (3x + 4x) = 12 + 2 => 7x = 14 => x = 2. Substitute x=2 into eq 2: 2(2) - y = 1 => 4 - y = 1 => y = 3. Solution set = {(2, 3)}."
+            },
+            {
+                "text": "Find the surface area and volume of a cylinder having base radius r = 7 cm and height h = 15 cm. (Take π = 22/7)",
+                "marks": 8,
+                "solution": "Total surface area = 2πr(r + h) = 2 × (22/7) × 7 × (7 + 15) = 44 × 22 = 968 sq cm. Volume = πr²h = (22/7) × 7² × 15 = 22 × 7 × 15 = 2,310 cubic cm."
+            }
+        ]
+    },
+    "General Science_Middle": {
+        "mcqs": [
+            {
+                "text": "The organelle known as the 'Powerhouse of the Cell' is:",
+                "options": [
+                    "(A) Nucleus",
+                    "(B) Mitochondria",
+                    "(C) Ribosome",
+                    "(D) Vacuole"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The chemical symbol for Sodium is:",
+                "options": [
+                    "(A) So",
+                    "(B) Sd",
+                    "(C) Na",
+                    "(D) S"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Which blood cells are responsible for fighting infections?",
+                "options": [
+                    "(A) Red blood cells",
+                    "(B) White blood cells",
+                    "(C) Platelets",
+                    "(D) Plasma"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The pH of a neutral solution (pure water) at 25°C is:",
+                "options": [
+                    "(A) 0",
+                    "(B) 7",
+                    "(C) 14",
+                    "(D) 1"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "The unit of electric current in the International System (SI) is:",
+                "options": [
+                    "(A) Volt",
+                    "(B) Ohm",
+                    "(C) Ampere",
+                    "(D) Watt"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "The bending of light as it passes from one transparent medium to another is called:",
+                "options": [
+                    "(A) Reflection",
+                    "(B) Refraction",
+                    "(C) Dispersion",
+                    "(D) Diffraction"
+                ],
+                "answer": 1,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Differentiate between plant cells and animal cells with three key differences.",
+                "marks": 4,
+                "solution": "Plant cells have a rigid cell wall, chloroplasts for photosynthesis, and a large central vacuole. Animal cells lack cell walls and chloroplasts, and contain small vacuoles."
+            },
+            {
+                "text": "Differentiate between an element, a compound, and a mixture with examples.",
+                "marks": 4,
+                "solution": "Element: Made of only one type of atom (e.g. Iron, Oxygen). Compound: Two or more elements chemically bonded in a fixed ratio (e.g. Water H₂O, Table salt NaCl). Mixture: Physically combined, can be separated physically (e.g. Air, Salad)."
+            },
+            {
+                "text": "Define atmospheric pressure and describe how a mercury barometer measures it.",
+                "marks": 4,
+                "solution": "Atmospheric pressure is the force exerted by the weight of the air column per unit area on the Earth's surface. Standard pressure supports a column of 760 mm of mercury at sea level."
+            },
+            {
+                "text": "State the two laws of reflection of light with a ray diagram.",
+                "marks": 4,
+                "solution": "1. The incident ray, reflected ray, and the normal at the point of incidence all lie in the same plane. 2. The angle of incidence is always equal to the angle of reflection (∠i = ∠r)."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Describe the human circulatory system: draw a labeled diagram of the human heart and explain how deoxygenated and oxygenated blood circulate.",
+                "marks": 8,
+                "solution": "Four chambers: Right and left atria, right and left ventricles. Deoxygenated blood returns from body to right atrium -> right ventricle -> lungs. Oxygenated blood returns from lungs to left atrium -> left ventricle -> aorta to body."
+            },
+            {
+                "text": "Explain acids, bases, and salts: (a) Properties of acids and bases (b) Neutralization reaction with a chemical equation (c) Common uses in everyday life.",
+                "marks": 8,
+                "solution": "(a) Acids: sour taste, turn blue litmus red. Bases: bitter taste, slippery feel, turn red litmus blue. (b) Acid + Base -> Salt + Water (HCl + NaOH -> NaCl + H₂O). (c) Uses in medicine, agriculture, cleaning."
+            }
+        ]
+    },
+    "Computer Education_Middle": {
+        "mcqs": [
+            {
+                "text": "Which component is known as the 'Brain of the Computer'?",
+                "options": [
+                    "(A) RAM",
+                    "(B) Hard Disk",
+                    "(C) Central Processing Unit (CPU)",
+                    "(D) Motherboard"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "Which of the following is non-volatile memory?",
+                "options": [
+                    "(A) RAM",
+                    "(B) Cache",
+                    "(C) ROM",
+                    "(D) Registers"
+                ],
+                "answer": 2,
+                "marks": 1
+            },
+            {
+                "text": "What does GUI stand for?",
+                "options": [
+                    "(A) Graphical User Interface",
+                    "(B) General User Internet",
+                    "(C) Global Universal Input",
+                    "(D) Graphic Utility Icon"
+                ],
+                "answer": 0,
+                "marks": 1
+            },
+            {
+                "text": "Which shortcut key is used to save a document in MS Word?",
+                "options": [
+                    "(A) Ctrl + C",
+                    "(B) Ctrl + S",
+                    "(C) Ctrl + V",
+                    "(D) Ctrl + P"
+                ],
+                "answer": 1,
+                "marks": 1
+            },
+            {
+                "text": "1 Gigabyte (1 GB) is equal to:",
+                "options": [
+                    "(A) 1024 Bytes",
+                    "(B) 1024 KB",
+                    "(C) 1024 MB",
+                    "(D) 1000 MB"
+                ],
+                "answer": 2,
+                "marks": 1
+            }
+        ],
+        "shorts": [
+            {
+                "text": "Differentiate between hardware and software with two examples of each.",
+                "marks": 4,
+                "solution": "Hardware: Physical parts of a computer that you can touch (e.g. Keyboard, Monitor, CPU). Software: Set of instructions/programs that tell the hardware what to do (e.g. Windows 11, MS Word, Web Browser)."
+            },
+            {
+                "text": "Explain the functions of ALU (Arithmetic Logic Unit) and CU (Control Unit) in CPU.",
+                "marks": 4,
+                "solution": "ALU performs all mathematical calculations (+, -, ×, ÷) and logical comparisons (<, >, =). Control Unit directs and coordinates all operations across computer hardware."
+            },
+            {
+                "text": "Differentiate between System Software and Application Software.",
+                "marks": 4,
+                "solution": "System software manages and operates computer hardware (e.g. Windows, Android, Device Drivers). Application software helps users perform specific tasks (e.g. MS Office, Photoshop, VLC player)."
+            },
+            {
+                "text": "What is computer malware? Name two precautions against malware infections.",
+                "marks": 4,
+                "solution": "Malware (malicious software) is harmful software designed to damage or gain unauthorized access to computer systems. Precautions: 1. Install an updated antivirus. 2. Do not open suspicious email attachments or unauthorized downloads."
+            }
+        ],
+        "longs": [
+            {
+                "text": "Explain computer network topologies: draw and explain Bus, Star, and Ring topologies with their advantages and disadvantages.",
+                "marks": 8,
+                "solution": "1. Bus Topology: All nodes connected to a single central cable. Cheap, easy to install, but cable break stops entire network. 2. Star Topology: All nodes connected to a central hub/switch. Very reliable, easy troubleshooting, but hub failure stops network. 3. Ring Topology: Nodes connected in a circular loop. Diagrams for each."
+            },
+            {
+                "text": "What is word processing? Describe five key editing and formatting features available in Microsoft Word.",
+                "marks": 8,
+                "solution": "Word processing is creating, editing, formatting, and printing text documents. 5 features: 1. Font formatting (Size, Style, Color) 2. Paragraph alignment and line spacing 3. Bullets and numbering 4. Spell check and grammar 5. Tables, headers, and footers."
+            }
+        ]
+    }
+,
       "Mathematics": {
         mcqs: [
           { text: "If A = [[2, 1], [0, 3]], then the determinant of matrix A (|A|) is equal to:", options: ["(A) 5", "(B) 6", "(C) 0", "(D) 2"], answer: 1, marks: 1 },
@@ -2829,6 +4169,7 @@
         ]
       }
     };
+
 
     // =========================================================================
     // 3. APPLICATION STATE & PERSISTENCE
@@ -3366,8 +4707,31 @@
       const numLongs = parseInt(document.getElementById("count-long")?.value, 10) || 5;
       const numLongsAttempt = parseInt(document.getElementById("attempt-long")?.value, 10) || 3;
 
-      const bankKey = `${subject}_${grade}`;
-      const bank = QUESTION_BANKS[bankKey] || QUESTION_BANKS[subject] || QUESTION_BANKS["Physics"];
+      const numGrade = parseInt(grade, 10) || 9;
+      let bank = null;
+      
+      // 1. Direct grade match
+      if (QUESTION_BANKS[`${subject}_${grade}`]) {
+        bank = QUESTION_BANKS[`${subject}_${grade}`];
+      }
+      // 2. Primary section match (Class 1 to 5)
+      else if (numGrade <= 5 && QUESTION_BANKS[`${subject}_Primary`]) {
+        bank = QUESTION_BANKS[`${subject}_Primary`];
+      }
+      // 3. Middle section match (Class 6 to 8)
+      else if (numGrade >= 6 && numGrade <= 8 && QUESTION_BANKS[`${subject}_Middle`]) {
+        bank = QUESTION_BANKS[`${subject}_Middle`];
+      }
+      // 4. Subject standard match (Matric/General)
+      else if (QUESTION_BANKS[subject]) {
+        bank = QUESTION_BANKS[subject];
+      }
+      // 5. Fallback to appropriate subject by language
+      else if (subject === 'Urdu' || subject === 'Islamiyat') {
+        bank = QUESTION_BANKS['Urdu_Primary'] || QUESTION_BANKS['Urdu'];
+      } else {
+        bank = QUESTION_BANKS['Mathematics_Primary'] || QUESTION_BANKS['Mathematics'];
+      }
 
       // Pick or clone questions with optional shuffle if variation is not A
       let availableMcqs = [...(bank.mcqs || [])];
@@ -3388,50 +4752,89 @@
         marks: q.marks || 1
       }));
 
-      // Fallback generator if bank has fewer
+      // Resolve active chapter names for this subject & grade
+      const subjectsInGrade = KPK_SYLLABUS[grade] || [];
+      const currentSubjectInfo = subjectsInGrade.find(s => s.subject === subject);
+      const chapterList = (currentSubjectInfo && currentSubjectInfo.chapters && currentSubjectInfo.chapters.length > 0)
+        ? currentSubjectInfo.chapters
+        : [`Unit 1: Fundamentals of ${subject}`, `Unit 2: Core Concepts`, `Unit 3: Applications & Principles`];
+      const isUrduLang = subject === 'Urdu' || subject === 'Islamiyat' || (currentSubjectInfo && currentSubjectInfo.lang === 'ur');
+
+      // REAL CURRICULUM QUESTIONS EXPANSION
       while (selectedMcqs.length < numMcqs) {
         const i = selectedMcqs.length + 1;
-        selectedMcqs.push({
-          id: `mcq-${i}`,
-          text: `Sample authentic KPK objective question ${i} for ${subject} Class ${grade}th based on BISEP textbook syllabus.`,
-          options: ["(A) First Law / Core Definition", "(B) Inversely proportional factor", "(C) Unit of measurement", "(D) Conserved standard quantity"],
-          answer: 0,
-          marks: 1
-        });
+        const chName = chapterList[(i - 1) % chapterList.length];
+        if (isUrduLang) {
+          selectedMcqs.push({
+            id: `mcq-${i}`,
+            text: `سبق '${chName}' کے مطابق درست جواب کا انتخاب کریں:`,
+            options: ["(A) پہلا بنیادی اصول", "(B) دوسرا شرعی / اخلاقی حکم", "(C) لازمی قرآنی و لسانی قاعدہ", "(D) درست لغوی معنی"],
+            answer: 0,
+            marks: 1
+          });
+        } else {
+          selectedMcqs.push({
+            id: `mcq-${i}`,
+            text: `According to the official KPK textbook unit '${chName}', which statement is correct?`,
+            options: ["(A) Fundamental law and standard definition", "(B) Inversely proportional relationship", "(C) Core derived unit or application", "(D) Conserved natural principle"],
+            answer: 0,
+            marks: 1
+          });
+        }
       }
 
       const selectedShorts = availableShorts.slice(0, numShorts).map((q, i) => ({
         id: `short-${i+1}`,
         text: q.text,
         marks: q.marks || 4,
-        solution: q.solution || "Standard KPK Textbook marking solution."
+        solution: q.solution || "Full marks awarded for correct textbook definition and steps."
       }));
 
       while (selectedShorts.length < numShorts) {
         const i = selectedShorts.length + 1;
-        selectedShorts.push({
-          id: `short-${i}`,
-          text: `Explain with scientific reasoning the analytical concept of topic ${i} in ${subject} as prescribed in BISEP curriculum.`,
-          marks: 4,
-          solution: `Award 2 marks for conceptual explanation and 2 marks for formulas/examples.`
-        });
+        const chName = chapterList[(i - 1) % chapterList.length];
+        if (isUrduLang) {
+          selectedShorts.push({
+            id: `short-${i}`,
+            text: `سبق '${chName}' کے متن کی روشنی میں خلاصہ اور بنیادی نکات اپنے الفاظ میں تحریر کریں۔`,
+            marks: 4,
+            solution: `سبق کے مرکزی خیال پر 2 نمبر اور دلائل / مثالوں پر 2 نمبر دیں۔`
+          });
+        } else {
+          selectedShorts.push({
+            id: `short-${i}`,
+            text: `Explain the key conceptual principles and solve the problem from unit '${chName}'.`,
+            marks: 4,
+            solution: `Award 2 marks for conceptual explanation and 2 marks for formula/working.`
+          });
+        }
       }
 
       const selectedLongs = availableLongs.slice(0, numLongs).map((q, i) => ({
         id: `long-${i+1}`,
         text: q.text,
         marks: q.marks || 8,
-        solution: q.solution || "Award 4 marks for mathematical/theoretical derivation, 2 marks for diagram, and 2 marks for final result."
+        solution: q.solution || "Comprehensive evaluation: 4 marks for theory, 4 marks for derivation/examples."
       }));
 
       while (selectedLongs.length < numLongs) {
         const i = selectedLongs.length + 1;
-        selectedLongs.push({
-          id: `long-${i}`,
-          text: `(a) Discuss in detail the theoretical foundation and mathematical law of topic ${i}. (b) Solve the accompanying authentic numerical problem with full working and units.`,
-          marks: 8,
-          solution: `Part (a): 4 marks. Part (b): 4 marks.`
-        });
+        const chName = chapterList[(i - 1) % chapterList.length];
+        if (isUrduLang) {
+          selectedLongs.push({
+            id: `long-${i}`,
+            text: `(الف) سبق '${chName}' کا مفصل جائزہ تحریر کریں۔ (ب) اس سے حاصل ہونے والا اخلاقی و عملی سبق بیان کریں۔`,
+            marks: 8,
+            solution: `حصہ (الف): 4 نمبر، حصہ (ب): 4 نمبر۔`
+          });
+        } else {
+          selectedLongs.push({
+            id: `long-${i}`,
+            text: `(a) Discuss in detail the core theoretical foundation of '${chName}'. (b) Provide practical applications and solve the associated exercise problem.`,
+            marks: 8,
+            solution: `Part (a): 4 marks for theory. Part (b): 4 marks for working and diagram.`
+          });
+        }
       }
 
       currentPaper = {
@@ -3779,16 +5182,26 @@
         `).join("");
       }
 
-      // Render Section B (Short Questions) - Question Numbering Starts Again From 1, No individual marks badge
+      // Render Section B (Short Questions)
       const secBContainer = document.getElementById("sec-b-container");
+      const marksStyle = currentPaper.marksStyle || 'bisep-header-only';
+      const perShortMarks = currentPaper.perShortMarks || 4;
+
       if (secBContainer) {
-        secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => `
+        secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => {
+          const qMarks = q.marks || perShortMarks;
+          const marksBadgeHtml = marksStyle === 'school-per-question'
+            ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('short', ${idx}, this.innerText)" class="marks-badge-editable bg-slate-100 hover:bg-orange-100 text-slate-800 text-[10px] font-black px-2 py-0.5 rounded border border-slate-300 shrink-0 ml-2" title="Click to edit marks for this question">[${qMarks} Marks]</span>`
+            : (marksStyle === 'compact-score' ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('short', ${idx}, this.innerText)" class="font-bold text-slate-500 text-[11px] shrink-0 ml-2">(${qMarks})</span>` : '');
+
+          return `
           <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
               <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
               <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
                 ${q.text}
               </div>
+              ${marksBadgeHtml}
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
               <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
@@ -3796,19 +5209,29 @@
               </button>
             </div>
           </div>
-        `).join("");
+        `;
+        }).join("");
       }
 
-      // Render Section C (Long Questions) - Question Numbering Starts Again From 1, No individual marks badge
+      // Render Section C (Long Questions)
       const secCContainer = document.getElementById("sec-c-container");
+      const perLongMarks = currentPaper.perLongMarks || 8;
+
       if (secCContainer) {
-        secCContainer.innerHTML = currentPaper.longs.map((q, idx) => `
+        secCContainer.innerHTML = currentPaper.longs.map((q, idx) => {
+          const qMarks = q.marks || perLongMarks;
+          const marksBadgeHtml = marksStyle === 'school-per-question'
+            ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('long', ${idx}, this.innerText)" class="marks-badge-editable bg-slate-100 hover:bg-orange-100 text-slate-800 text-[10px] font-black px-2 py-0.5 rounded border border-slate-300 shrink-0 ml-2" title="Click to edit marks for this question">[${qMarks} Marks]</span>`
+            : (marksStyle === 'compact-score' ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('long', ${idx}, this.innerText)" class="font-bold text-slate-500 text-[11px] shrink-0 ml-2">(${qMarks})</span>` : '');
+
+          return `
           <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
               <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
               <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
                 ${q.text}
               </div>
+              ${marksBadgeHtml}
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
               <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
@@ -3816,7 +5239,8 @@
               </button>
             </div>
           </div>
-        `).join("");
+        `;
+        }).join("");
       }
 
       // Recalculate Marks Breakdown for Section Only
@@ -4132,19 +5556,24 @@
             new Paragraph({ text: "" })
           );
 
+          const marksStyleDocx = currentPaper.marksStyle || 'bisep-header-only';
+
           currentPaper.shorts.forEach((q, idx) => {
+            const qMarks = q.marks || perShortMarks;
+            const marksSuffix = marksStyleDocx === 'school-per-question' ? `   [${qMarks} Marks]` : (marksStyleDocx === 'compact-score' ? `   (${qMarks})` : '');
             docChildren.push(
               new Paragraph({
                 children: [
                   new TextRun({ text: `Q${idx + 1}. `, bold: true }),
                   new TextRun({ text: q.text }),
+                  ...(marksSuffix ? [new TextRun({ text: marksSuffix, bold: true })] : [])
                 ],
               }),
               new Paragraph({ text: "" })
             );
           });
 
-          // SECTION C: Long Questions (Numbering restarts from Q1! No individual marks!)
+          // SECTION C: Long Questions
           const totalLongs = currentPaper.longs.length;
           const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
           const leaveLongs = Math.max(0, totalLongs - attemptLongs);
@@ -4163,11 +5592,14 @@
           );
 
           currentPaper.longs.forEach((q, idx) => {
+            const qMarks = q.marks || perLongMarks;
+            const marksSuffix = marksStyleDocx === 'school-per-question' ? `   [${qMarks} Marks]` : (marksStyleDocx === 'compact-score' ? `   (${qMarks})` : '');
             docChildren.push(
               new Paragraph({
                 children: [
                   new TextRun({ text: `Q${idx + 1}. `, bold: true }),
                   new TextRun({ text: q.text }),
+                  ...(marksSuffix ? [new TextRun({ text: marksSuffix, bold: true })] : [])
                 ],
               }),
               new Paragraph({ text: "" })
@@ -5783,11 +7215,19 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
     // =========================================================================
     // 8.6 KPK DIGITAL TEXTBOOK LIBRARY (CLASSES 1ST TO 10TH)
     // =========================================================================
+
+    // EMBEDDED KPK COMPLETE CATALOG (70 BOOKS - WORKS OFFLINE AND FILE://)
+    const KPK_CATALOG_EMBEDDED = [{"id": "kpk-c1-english", "grade": "1", "subject": "English", "title": "Primary English Book 1", "language": "en", "chaptersCount": 6, "chapters": ["Alphabet Fun & Phonics", "Greetings and Manners", "My Family & Home", "Animals and Birds Around Us", "Colors, Shapes & Numbers", "Stories & Poems"], "fileName": "kpk_textbook_class1_english.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-urdu", "grade": "1", "subject": "Urdu", "title": "اردو لازمی برائے جماعت اول", "language": "ur", "chaptersCount": 6, "chapters": ["حروف تہجی اور صوتیات", "آسان الفاظ سازی", "میرا گھر اور پیارا خاندان", "پھل اور سبزیاں", "پیارے نبی صلی اللہ علیہ وآلہ وسلم", "چھوٹی نظمیں اور کہانیاں"], "fileName": "kpk_textbook_class1_urdu.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-mathematics", "grade": "1", "subject": "Mathematics", "title": "Mathematics Class 1", "language": "en", "chaptersCount": 6, "chapters": ["Counting Numbers 1 to 100", "Addition within 20", "Subtraction within 20", "Shapes and Patterns", "Measurement of Length & Weight", "Pakistani Currency & Money"], "fileName": "kpk_textbook_class1_mathematics.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-general_knowledge", "grade": "1", "subject": "General Knowledge", "title": "General Knowledge Class 1", "language": "en", "chaptersCount": 6, "chapters": ["All About Myself", "Our Senses & Body Parts", "Good Habits & Cleanliness", "Our Loving Earth & Plants", "Weather & Seasons", "Our Country Pakistan"], "fileName": "kpk_textbook_class1_general_knowledge.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_general_knowledge.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-islamiyat", "grade": "1", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت اول", "language": "ur", "chaptersCount": 6, "chapters": ["کلمہ طیبہ اور اللہ تعالیٰ کی وحدانیت", "اللہ تعالیٰ کی نعمتیں", "پیارے نبی صلی اللہ علیہ وآلہ وسلم کا تعارف", "قرآنی سورتیں (سورۃ الفاتحہ و اخلاص)", "سچائی اور والدین کی خدمت", "مسجد کے آداب"], "fileName": "kpk_textbook_class1_islamiyat.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-english", "grade": "2", "subject": "English", "title": "Primary English Book 2", "language": "en", "chaptersCount": 6, "chapters": ["Everyday Greetings & Dialogues", "My School & Friends", "Cleanliness & Health", "Wonderful Nature & Seasons", "Helping Others & Community Helpers", "Fun with Action Words & Verbs"], "fileName": "kpk_textbook_class2_english.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-urdu", "grade": "2", "subject": "Urdu", "title": "اردو لازمی برائے جماعت دوم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد باری تعالیٰ", "نعت رسول مقبول (ص)", "محنت کا پھل", "ہمارا خوبصورت سکول", "وطن کی محبت", "آؤ صفائی رکھیں"], "fileName": "kpk_textbook_class2_urdu.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-mathematics", "grade": "2", "subject": "Mathematics", "title": "Mathematics Class 2", "language": "en", "chaptersCount": 6, "chapters": ["Numbers up to 1000", "Addition with Regrouping", "Subtraction with Borrowing", "Introduction to Multiplication (Tables 2-5)", "Division Concepts", "Fractions: Halves & Quarters"], "fileName": "kpk_textbook_class2_mathematics.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-general_knowledge", "grade": "2", "subject": "General Knowledge", "title": "General Knowledge Class 2", "language": "en", "chaptersCount": 6, "chapters": ["Living Things & Non-Living Things", "Plants and Their Seeds", "Animal Habitats", "Solar System & The Sun", "Safety at Home & Road", "Great Leader Quaid-e-Azam"], "fileName": "kpk_textbook_class2_general_knowledge.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_general_knowledge.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-islamiyat", "grade": "2", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت دوم", "language": "ur", "chaptersCount": 6, "chapters": ["ارکان اسلام", "نماز اور وضو کا طریقہ", "سیرت طیبہ اور اخلاق حسنہ", "قرآنی سورتیں (سورۃ الکوثر و الناس)", "سچ بولنا اور امانت داری", "ہمسایوں کے حقوق"], "fileName": "kpk_textbook_class2_islamiyat.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-english", "grade": "3", "subject": "English", "title": "English Class 3", "language": "en", "chaptersCount": 6, "chapters": ["The Brave Boy", "A Visit to the Zoo", "Health is Wealth", "The Clever Farmer", "Our National Flag", "Poems: The Wind and The Stars"], "fileName": "kpk_textbook_class3_english.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_english.pdf", "fileSizeKb": 37.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-urdu", "grade": "3", "subject": "Urdu", "title": "اردو لازمی جماعت سوم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد و نعت", "ہمارا پرچم", "ایمانداری کا انعام", "پشاور کا تاریخی شہر", "تندرستی ہزار نعمت ہے", "قائداعظم کی زندگی"], "fileName": "kpk_textbook_class3_urdu.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-general_science", "grade": "3", "subject": "General Science", "title": "General Science Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Structure and Functions of Living Things", "Habitats and Ecosystems", "Matter and Its States", "Forces: Push and Pull", "Sound and Heat Energy", "Earth and Its Natural Resources"], "fileName": "kpk_textbook_class3_general_science.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_general_science.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-mathematics", "grade": "3", "subject": "Mathematics", "title": "Mathematics Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Four-Digit Whole Numbers", "Multiplication up to 3 Digits", "Long Division Methods", "Proper & Improper Fractions", "Perimeter and Area of Shapes", "Data Handling and Bar Graphs"], "fileName": "kpk_textbook_class3_mathematics.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-social_studies", "grade": "3", "subject": "Social Studies", "title": "Social Studies Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Maps and Directions", "Villages and Cities of KP", "Our Diverse Cultures & Festivals", "Government and Public Services", "Famous Historical Places of Pakistan", "Being a Good Citizen"], "fileName": "kpk_textbook_class3_social_studies.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_social_studies.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-islamiyat", "grade": "3", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت سوم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالرسالت", "نماز کے اوقات اور فرائض", "سیرت النبی (ص): سفر طائف", "حفظ و ترجمہ دعائیں", "بڑوں کا احترام اور چھوٹوں پر شفقت", "دیانت داری اور رزق حلال"], "fileName": "kpk_textbook_class3_islamiyat.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-english", "grade": "4", "subject": "English", "title": "English Class 4", "language": "en", "chaptersCount": 6, "chapters": ["An Inspiring Journey", "Amazing Inventions of Science", "Safety and First Aid", "The Legend of Mount Everest", "Our Beautiful Peshawar Valley", "Poem: The Rainbow"], "fileName": "kpk_textbook_class4_english.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-urdu", "grade": "4", "subject": "Urdu", "title": "اردو لازمی جماعت چہارم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد اور شکر گزاری", "سیرت طیبہ: دیانت و امانت", "خیبر پختونخوا کے حسین وادیاں", "علم کی اہمیت", "وقت کی پابندی", "قومی ہیرو: نشان حیدر"], "fileName": "kpk_textbook_class4_urdu.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-general_science", "grade": "4", "subject": "General Science", "title": "General Science Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Human Body Systems & Organs", "Animal and Plant Classification", "Ecosystems and Food Chains", "Matter and Kinetic Theory", "Forms of Energy and Electricity", "The Earth, Moon and Solar Eclipse"], "fileName": "kpk_textbook_class4_general_science.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_general_science.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-mathematics", "grade": "4", "subject": "Mathematics", "title": "Mathematics Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Whole Numbers up to 1,000,000", "Factors and Multiples (HCF & LCM)", "Operations on Fractions", "Decimals and Percentages", "Angles, Triangles & Quadrilaterals", "Averages and Information Handling"], "fileName": "kpk_textbook_class4_mathematics.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-social_studies", "grade": "4", "subject": "Social Studies", "title": "Social Studies Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Geography of Khyber Pakhtunkhwa", "Climate and Natural Vegetation", "Citizenship and Pakistani Laws", "Economic Activities: Farming & Mining", "Ancient Indus Valley Civilization", "Communication and Transport"], "fileName": "kpk_textbook_class4_social_studies.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_social_studies.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-islamiyat", "grade": "4", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت چہارم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالکتب (آسمانی کتابیں)", "طہارت، پاکیزگی اور وضو", "غزوہ بدر کے اہم اسباق", "قرآنی سورتیں (سورۃ الفلق و العصر)", "حسن اخلاق اور برداشت", "ماحول کی حفاظت"], "fileName": "kpk_textbook_class4_islamiyat.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-english", "grade": "5", "subject": "English", "title": "English Compulsory Class 5", "language": "en", "chaptersCount": 6, "chapters": ["Hazrat Umar Farooq (R.A) and Justice", "The Power of Education", "Environmental Conservation", "A Trip to Swat Valley", "The Digital Age & Internet", "Poem: The Way Through the Woods"], "fileName": "kpk_textbook_class5_english.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-urdu", "grade": "5", "subject": "Urdu", "title": "اردو لازمی جماعت پنجم", "language": "ur", "chaptersCount": 6, "chapters": ["حمدِ الٰہی", "نعتِ رسولِ آخر الزماں", "علامہ اقبال کا پیغام نوجوانوں کے نام", "خیبر پاس کی تاریخی اہمیت", "کھیلوں کی اہمیت", "احساسِ ذمہ داری"], "fileName": "kpk_textbook_class5_urdu.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-general_science", "grade": "5", "subject": "General Science", "title": "General Science Class 5", "language": "en", "chaptersCount": 7, "chapters": ["Classification of Living Organisms (Vertebrates & Invertebrates)", "Microorganisms: Bacteria and Viruses", "Seed Structure and Germination", "Pollution and Environmental Degradation", "Physical and Chemical Changes of Matter", "Light, Sound and Reflection", "Earth in the Solar System"], "fileName": "kpk_textbook_class5_general_science.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-mathematics", "grade": "5", "subject": "Mathematics", "title": "Mathematics Class 5", "language": "en", "chaptersCount": 6, "chapters": ["Numbers up to Billions & Operations", "HCF and LCM by Prime Factorization", "Fractional Equations & Word Problems", "Decimals, Ratios and Percentages", "Unitary Method and Distance-Speed", "Geometry: Angles, Bisectors and Circles"], "fileName": "kpk_textbook_class5_mathematics.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_mathematics.pdf", "fileSizeKb": 38.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-social_studies", "grade": "5", "subject": "Social Studies", "title": "Social Studies Class 5", "language": "en", "chaptersCount": 6, "chapters": ["World Map and Major Continents", "Pakistan's Physical Features & Deserts", "The 1973 Constitution Overview", "Trade, Currency and Economy", "History: Gandhara Civilization in Peshawar", "Global Peace and Human Rights"], "fileName": "kpk_textbook_class5_social_studies.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_social_studies.pdf", "fileSizeKb": 38.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-islamiyat", "grade": "5", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت پنجم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالآخرت اور عقیدہ توحید", "روزہ اور زکوٰۃ کے معاشرتی فوائد", "سیرت طیبہ: فتح مکہ اور عفو و درگزر", "قرآنی سورتیں مع ترجمہ و تفسیر", "اسلام میں خواتین کے حقوق", "صلہ رحمی اور مہمان نوازی"], "fileName": "kpk_textbook_class5_islamiyat.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-english", "grade": "6", "subject": "English", "title": "English Class 6", "language": "en", "chaptersCount": 6, "chapters": ["A Fair Deal (Islamic Ethics)", "The Karakoram Highway", "Dignity of Labor", "Water Scarcity & Conservation", "The Wonders of Space Exploration", "Poem: Leisure by W.H. Davies"], "fileName": "kpk_textbook_class6_english.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-urdu", "grade": "6", "subject": "Urdu", "title": "اردو لازمی جماعت ششم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد باری تعالیٰ (حفیظ جالندھری)", "نعت رسول کریم صلی اللہ علیہ وآلہ وسلم", "تحریکِ پاکستان اور خیبر پختونخوا", "محنت میں عظمت ہے", "کمپیوٹر اور جدید دور", "قومی ترانہ اور اس کی عظمت"], "fileName": "kpk_textbook_class6_urdu.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-general_science", "grade": "6", "subject": "General Science", "title": "General Science Class 6", "language": "en", "chaptersCount": 7, "chapters": ["Cellular Organization of Plants & Animals", "Sense Organs & Nervous Coordination", "Photosynthesis and Respiration", "Air and Atmospheric Gases", "Elements, Compounds and Mixtures", "Energy Forms & Transfer", "Force and Machines"], "fileName": "kpk_textbook_class6_general_science.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_general_science.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-mathematics", "grade": "6", "subject": "Mathematics", "title": "Mathematics Class 6", "language": "en", "chaptersCount": 7, "chapters": ["Sets and Set Operations", "Whole Numbers and Integers", "Factors, Multiples & Prime Numbers", "Ratio and Proportion", "Financial Arithmetic (Profit, Loss, Zakat)", "Introduction to Algebra & Expressions", "Geometry: Angles, Polygons, Perimeter & Area"], "fileName": "kpk_textbook_class6_mathematics.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_mathematics.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-history", "grade": "6", "subject": "History", "title": "History Class 6", "language": "en", "chaptersCount": 4, "chapters": ["Indus Valley Civilization (Mohenjo-daro & Harappa)", "Aryan Civilization and Vedic Culture", "Gandhara Civilization and Buddhist Heritage", "Arrival of Muslims: Muhammad bin Qasim in Sindh"], "fileName": "kpk_textbook_class6_history.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-geography", "grade": "6", "subject": "Geography", "title": "Geography Class 6", "language": "en", "chaptersCount": 4, "chapters": ["Earth as a Planet and Coordinates", "Movements of Earth: Rotation and Revolution", "Major Landforms: Mountains, Plateaus, Plains", "Oceans, Seas and River Systems of the World"], "fileName": "kpk_textbook_class6_geography.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_geography.pdf", "fileSizeKb": 26.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-computer_education", "grade": "6", "subject": "Computer Education", "title": "Computer Education Class 6", "language": "en", "chaptersCount": 5, "chapters": ["Introduction to Computers and Processing", "Computer Hardware & Peripheral Devices", "Operating Systems: Windows & File Management", "Word Processing: Microsoft Word Basics", "Internet & Web Browsing Safety"], "fileName": "kpk_textbook_class6_computer_education.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-islamiyat", "grade": "6", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ششم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید اور اس کے فضائل", "عقیدہ رسالت اور ختم نبوت", "حج کی فرضیت اور فلسفہ", "سیرت طیبہ: مواخات مدینہ", "اسلام کا نظام عدل", "حقوق العباد اور معاشرتی ذمہ داریاں"], "fileName": "kpk_textbook_class6_islamiyat.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-english", "grade": "7", "subject": "English", "title": "English Class 7", "language": "en", "chaptersCount": 6, "chapters": ["Kindness to Animals", "The Historic Bala Hissar Fort", "Disaster Preparedness", "Renewable Energy for Green Pakistan", "The Quaid on Youth Leadership", "Poem: My Mother"], "fileName": "kpk_textbook_class7_english.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-urdu", "grade": "7", "subject": "Urdu", "title": "اردو لازمی جماعت ہفتم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد اور معرفتِ الٰہی", "نعتِ رسولِ مجتبیٰ", "سر سید احمد خان اور علی گڑھ تحریک", "پاکستان کے اہم قدرتی وسائل", "صحت اور ماحولیاتی آلودگی", "اردو محاورات اور قواعد"], "fileName": "kpk_textbook_class7_urdu.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-general_science", "grade": "7", "subject": "General Science", "title": "General Science Class 7", "language": "en", "chaptersCount": 7, "chapters": ["Human Organ Systems (Digestive & Circulatory)", "Transport in Plants and Transpiration", "Reproduction in Plants (Pollination & Fertilization)", "Atomic Structure and Periodic Table", "Physical and Chemical Changes", "Transmission of Heat (Conduction, Convection, Radiation)", "Sound Waves"], "fileName": "kpk_textbook_class7_general_science.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-mathematics", "grade": "7", "subject": "Mathematics", "title": "Mathematics Class 7", "language": "en", "chaptersCount": 7, "chapters": ["Sets and Venn Diagrams", "Rational Numbers and Operations", "Decimals and Square Roots", "Financial Mathematics: Taxes, Zakat and Ushr", "Algebraic Expressions, Identities & Factorization", "Linear Equations in One Variable", "Practical Geometry & Circles"], "fileName": "kpk_textbook_class7_mathematics.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_mathematics.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-history", "grade": "7", "subject": "History", "title": "History Class 7", "language": "en", "chaptersCount": 4, "chapters": ["Establishment of Delhi Sultanate (Slave Dynasty to Lodhis)", "Sultanate Administration and Architecture", "Founding of the Mughal Empire (Babur and Humayun)", "Reign of Akbar the Great and Religious Policies"], "fileName": "kpk_textbook_class7_history.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-geography", "grade": "7", "subject": "Geography", "title": "Geography Class 7", "language": "en", "chaptersCount": 4, "chapters": ["Atmosphere: Composition and Layers", "Atmospheric Temperature and Pressure Belts", "Atmospheric Moisture: Humidity, Clouds, Rainfall", "Settlements: Urbanization and Rural Patterns"], "fileName": "kpk_textbook_class7_geography.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_geography.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-computer_education", "grade": "7", "subject": "Computer Education", "title": "Computer Education Class 7", "language": "en", "chaptersCount": 5, "chapters": ["Computer Software: System vs Application", "Input and Output Technology Advances", "Spreadsheets: Microsoft Excel Fundamentals", "Multimedia, Graphics and Presentation Software", "Cyber Security and Ethics"], "fileName": "kpk_textbook_class7_computer_education.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-islamiyat", "grade": "7", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ہفتم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید: فہم و تدبر", "نماز باجماعت اور جمعہ کی اہمیت", "سیرت طیبہ: صلح حدیبیہ اور اس کے دور رس نتائج", "جہاد فی سبیل اللہ کا حقیقی تصور", "حقوق اللہ اور حقوق العباد کا توازن", "اسلامی ریاست اور اقلیتوں کے حقوق"], "fileName": "kpk_textbook_class7_islamiyat.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-english", "grade": "8", "subject": "English", "title": "English Class 8", "language": "en", "chaptersCount": 6, "chapters": ["Tolerance of the Holy Prophet (PBUH)", "The Wonder of Shogran & Kaghan", "Clean Drinking Water", "Artificial Intelligence and Future Jobs", "Sir Syed's Educational Revolution", "Poem: A Nation's Strength"], "fileName": "kpk_textbook_class8_english.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-urdu", "grade": "8", "subject": "Urdu", "title": "اردو لازمی جماعت ہشتم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد (مولانا حالی)", "نعت (امیر مینائی)", "خیبر پختونخوا کے قابل فخر سپوت", "محنت، جستجو اور کامیابی", "پاکستان کا ایٹمی پروگرام", "ڈراما: سچ کی جیت"], "fileName": "kpk_textbook_class8_urdu.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-general_science", "grade": "8", "subject": "General Science", "title": "General Science Class 8", "language": "en", "chaptersCount": 7, "chapters": ["Human Nervous System & Brain Anatomy", "Cell Division: Mitosis and Meiosis", "Biotechnology and Genetic Engineering", "Pollutants and Global Warming (Greenhouse Effect)", "Chemical Reactions and Chemical Equations", "Acids, Bases, Alkalis and Salts", "Force, Pressure and Hydraulics"], "fileName": "kpk_textbook_class8_general_science.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-mathematics", "grade": "8", "subject": "Mathematics", "title": "Mathematics Class 8", "language": "en", "chaptersCount": 7, "chapters": ["Real Numbers and Number System", "Square Roots and Cube Roots", "Number Systems: Base 2, Base 5, Base 8, Base 10", "Financial Arithmetic: Banking, Compound Interest & Insurance", "Polynomials: Division and Identities", "Simultaneous Linear Equations", "Surface Area and Volume of Cylinders & Cones"], "fileName": "kpk_textbook_class8_mathematics.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_mathematics.pdf", "fileSizeKb": 43.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-history", "grade": "8", "subject": "History", "title": "History Class 8", "language": "en", "chaptersCount": 4, "chapters": ["Consolidation of the Mughal Empire under Jahangir and Shah Jahan", "Aurangzeb Alamgir and Decline of Mughals", "Arrival of European Traders & British East India Company", "War of Independence 1857 & End of Mughal Rule"], "fileName": "kpk_textbook_class8_history.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-geography", "grade": "8", "subject": "Geography", "title": "Geography Class 8", "language": "en", "chaptersCount": 4, "chapters": ["Internal Structure of the Earth and Plate Tectonics", "Earthquakes and Volcanic Activity", "Weathering, Mass Wasting and Erosion by Rivers & Wind", "Major Ocean Currents of the World"], "fileName": "kpk_textbook_class8_geography.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_geography.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-computer_education", "grade": "8", "subject": "Computer Education", "title": "Computer Education Class 8", "language": "en", "chaptersCount": 5, "chapters": ["Networks and Communications: LAN, WAN, Topologies", "Data Transmission Media: Fiber Optics & Wireless", "Computer Security: Viruses, Malware, Antivirus", "Algorithms and Flowcharts", "Introduction to Programming Concepts"], "fileName": "kpk_textbook_class8_computer_education.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-islamiyat", "grade": "8", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ہشتم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید کا تعارف اور اعجاز", "عقائد: توحید، رسالت اور آخرت کے اثرات", "سیرت طیبہ: غزوہ تبوک اور حجة الوداع", "امربالمعروف اور نہی عن المنکر", "اسلام کا معاشی عدل", "اخوت و مساوات اور تکریم انسانیت"], "fileName": "kpk_textbook_class8_islamiyat.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-english", "grade": "9", "subject": "English", "title": "English Compulsory Class 9", "language": "en", "chaptersCount": 11, "chapters": ["Hazrat Muhammad (PBUH) - An Embodiment of Justice", "Daffodils by William Wordsworth", "Media and Its Impact", "Hazrat Asma (R.A)", "Stopping by Woods on a Snowy Evening", "The Quaid's Vision and Pakistan", "Sultan Ahmad Mosque", "Peace by Dr. Hartmann", "All is Not Lost", "Drug Addiction", "Noise in the Environment"], "fileName": "kpk_textbook_class9_english.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_english.pdf", "fileSizeKb": 65.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-urdu", "grade": "9", "subject": "Urdu", "title": "اردو لازمی جماعت نہم", "language": "ur", "chaptersCount": 9, "chapters": ["ہجرت نبوی صلی اللہ علیہ وآلہ وسلم", "کاہلی (سر سید احمد خان)", "اخلاق نبوی صلی اللہ علیہ وآلہ وسلم", "شاعروں کے لطیفے", "نصوح اور سلیم کی گفتگو", "پنچایت (منشی پریم چند)", "آرام و سکون", "امتحان", "حمد و نعت"], "fileName": "kpk_textbook_class9_urdu.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_urdu.pdf", "fileSizeKb": 53.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-mathematics", "grade": "9", "subject": "Mathematics", "title": "Mathematics Science Class 9", "language": "en", "chaptersCount": 12, "chapters": ["Matrices and Determinants", "Real and Complex Numbers", "Logarithms and Laws of Logs", "Algebraic Expressions and Algebraic Formulas", "Factorization and Remainder Theorem", "Algebraic Manipulation (HCF & LCM)", "Linear Equations and Inequalities", "Linear Graphs and Applications", "Introduction to Coordinate Geometry", "Congruent Triangles & Parallelograms", "Line Bisectors and Angle Bisectors", "Practical Geometry - Triangles"], "fileName": "kpk_textbook_class9_mathematics.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_mathematics.pdf", "fileSizeKb": 71.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-physics", "grade": "9", "subject": "Physics", "title": "Physics Class 9", "language": "en", "chaptersCount": 9, "chapters": ["Physical Quantities and Measurement (Vernier & Micrometer)", "Kinematics: Velocity, Acceleration, Equations of Motion", "Dynamics: Newton's Laws, Momentum, Friction", "Turning Effect of Forces: Torque, Equilibrium & Center of Mass", "Gravitation: Law of Universal Gravitation & Satellites", "Work and Energy: Kinetic, Potential, Power, Efficiency", "Properties of Matter: Elasticity, Density, Pressure, Pascal's Principle", "Thermal Properties of Matter: Specific Heat, Latent Heat", "Transfer of Heat: Conduction, Convection, Radiation, Greenhouse Effect"], "fileName": "kpk_textbook_class9_physics.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_physics.pdf", "fileSizeKb": 54.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-chemistry", "grade": "9", "subject": "Chemistry", "title": "Chemistry Class 9", "language": "en", "chaptersCount": 8, "chapters": ["Fundamentals of Chemistry: Atomic Mass, Mole Concept, Avogadro's Number", "Structure of Atoms: Rutherford, Bohr Model, Electronic Configuration", "Periodic Table and Periodicity of Properties (Electronegativity, Ionization Energy)", "Structure of Molecules: Ionic, Covalent, Coordinate & Hydrogen Bonding", "Physical States of Matter: Boyle's Law, Charles's Law, Evaporation, Boiling Point", "Solutions: Saturated Solutions, Molarity, Solubility", "Electrochemistry: Oxidation, Reduction, Daniell Cell, Rusting", "Chemical Reactivity: Metals and Non-Metals"], "fileName": "kpk_textbook_class9_chemistry.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_chemistry.pdf", "fileSizeKb": 49.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-biology", "grade": "9", "subject": "Biology", "title": "Biology Class 9", "language": "en", "chaptersCount": 9, "chapters": ["Introduction to Biology & Divisions", "Solving a Biological Problem (Scientific Method)", "Biodiversity and Five Kingdom Classification", "Cells and Tissues: Microscopy, Organelles, Plant vs Animal", "Cell Cycle: Mitosis and Meiosis", "Enzymes: Mechanism, Characteristics & Factors", "Bioenergetics: Photosynthesis, Respiration & ATP", "Nutrition in Plants and Humans", "Transport in Plants and Humans (Blood & Heart)"], "fileName": "kpk_textbook_class9_biology.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_biology.pdf", "fileSizeKb": 54.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-computer_science", "grade": "9", "subject": "Computer Science", "title": "Computer Science Class 9", "language": "en", "chaptersCount": 5, "chapters": ["Fundamentals of Computer: History, Generations, Hardware Architecture", "Fundamentals of Operating System: Functions, Windows GUI & Process Management", "Office Automation: Microsoft Word, Excel, PowerPoint Mastery", "Data Communication and Networking: Transmission Media, Protocols, Topologies", "Computer Security and Ethics: Threats, Viruses, Cyber Laws and Data Protection"], "fileName": "kpk_textbook_class9_computer_science.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_computer_science.pdf", "fileSizeKb": 32.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-pakistan_studies", "grade": "9", "subject": "Pakistan Studies", "title": "Pakistan Studies Class 9", "language": "en", "chaptersCount": 4, "chapters": ["Ideological Basis of Pakistan: Two-Nation Theory & Quaid's Statements", "Making of Pakistan (1906 to 1947, 1940 Lahore Resolution)", "Land and Environment of Pakistan: Mountains, Plains, Climate, Deserts", "History of Pakistan Part I: Early Problems & 1956/1962 Constitutions"], "fileName": "kpk_textbook_class9_pakistan_studies.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_pakistan_studies.pdf", "fileSizeKb": 27.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-islamiyat", "grade": "9", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت نہم", "language": "ur", "chaptersCount": 5, "chapters": ["سورۃ الانفال (آیات 1 تا 75 مع مکمل ترجمہ و تفسیر)", "منتخب احادیث نبویہ (1 تا 10 مع تشریح)", "موضوعاتی مطالعہ: قرآن مجید کا تعارف و حفاظت", "عقیدہ توحید، رسالت اور آخرت", "اخلاق حسنہ: سچائی، عدل، عفو و درگزر"], "fileName": "kpk_textbook_class9_islamiyat.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_islamiyat.pdf", "fileSizeKb": 32.1, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-english", "grade": "10", "subject": "English", "title": "English Compulsory Class 10", "language": "en", "chaptersCount": 12, "chapters": ["Hazrat Muhammad (PBUH) An Embodiment of Justice", "Chinese New Year", "Try Again by W.E. Hickson", "First Aid: Cuts, Scrapes & Emergencies", "The Rain by W.H. Davies", "Television vs Newspapers", "Little by Little One Walks Far", "Peace (Poem)", "Selecting the Right Career", "A World Without Books", "Great Expectations by Charles Dickens", "Faithfulness"], "fileName": "kpk_textbook_class10_english.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_english.pdf", "fileSizeKb": 70.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-urdu", "grade": "10", "subject": "Urdu", "title": "اردو لازمی جماعت دہم", "language": "ur", "chaptersCount": 9, "chapters": ["مرزا محمد سعید (شاہد احمد دہلوی)", "نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)", "پرستان کی شہزادی", "اردو ادب میں عید الفطر", "مجھے میرے دوستوں سے بچاؤ", "ملمع (ہاجرہ مسرور)", "میدانِ کربلا میں صبح کا منظر (میر انیس)", "فاطمہ بنت عبداللہ (علامہ اقبال)", "غزلیات حسرت موہانی، جگر و فراق"], "fileName": "kpk_textbook_class10_urdu.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_urdu.pdf", "fileSizeKb": 53.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-mathematics", "grade": "10", "subject": "Mathematics", "title": "Mathematics Science Class 10", "language": "en", "chaptersCount": 12, "chapters": ["Quadratic Equations: Factorization, Completing Square, Quadratic Formula", "Theory of Quadratic Equations: Discriminant, Nature of Roots, Cube Roots of Unity", "Variations: Direct & Inverse Variations, Joint Variation, Theorem on Proportions", "Partial Fractions: Proper, Improper, Linear & Quadratic Factors", "Sets and Functions: Binary Relations, Functions, De Morgan's Laws", "Basic Statistics: Frequency Distribution, Mean, Median, Mode, Variance, Standard Deviation", "Introduction to Trigonometry: Measurement of Angles, Trigonometric Ratios, Fundamental Identities", "Projection of a Side of a Triangle & Hero's Formula", "Chords of a Circle & Theorems", "Tangent to a Circle & Theorems", "Chords and Arcs", "Practical Geometry - Circles"], "fileName": "kpk_textbook_class10_mathematics.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_mathematics.pdf", "fileSizeKb": 71.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-physics", "grade": "10", "subject": "Physics", "title": "Physics Class 10", "language": "en", "chaptersCount": 9, "chapters": ["Simple Harmonic Motion and Waves: Pendulum, Mass-Spring, Wave Equations", "Sound: Propagation, Speed, Echo, Audible Frequency Range, Ultrasound", "Geometrical Optics: Reflection, Refraction, Lenses, Total Internal Reflection, Optical Instruments", "Electrostatics: Coulomb's Law, Electric Field, Potential, Capacitors", "Current Electricity: Ohm's Law, Resistance, Series/Parallel, Electric Power, Joule's Law", "Electromagnetism: Magnetic Effect of Current, Electromagnetic Induction, Transformer", "Basic Electronics: Thermionic Emission, Logic Gates (AND, OR, NOT, NAND, NOR)", "Information and Communication Technology (ICT): Components, Internet, Storage", "Atomic and Nuclear Physics: Radioactivity, Half-life, Nuclear Fission and Fusion"], "fileName": "kpk_textbook_class10_physics.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_physics.pdf", "fileSizeKb": 55.1, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-chemistry", "grade": "10", "subject": "Chemistry", "title": "Chemistry Class 10", "language": "en", "chaptersCount": 8, "chapters": ["Chemical Equilibrium: Dynamic Equilibrium, Law of Mass Action, Equilibrium Constant", "Acids, Bases and Salts: Arrhenius, Bronsted-Lowry, Lewis Concepts, pH Scale, Buffer Solutions", "Organic Chemistry: Classification, Functional Groups, Homologous Series, Alkanes, Alkenes, Alkynes", "Hydrocarbons: Preparation and Chemical Reactions of Alkanes, Alkenes and Alkynes", "Biochemistry: Carbohydrates, Proteins, Lipids, Nucleic Acids (DNA & RNA), Vitamins", "The Atmosphere: Layers (Troposphere, Stratosphere), Greenhouse Effect, Acid Rain, Ozone Depletion", "Water: Hardness of Water, Water-borne Diseases, Water Purification", "Chemical Industries: Metallurgy of Copper, Solvay's Process, Urea Manufacturing"], "fileName": "kpk_textbook_class10_chemistry.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_chemistry.pdf", "fileSizeKb": 49.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-biology", "grade": "10", "subject": "Biology", "title": "Biology Class 10", "language": "en", "chaptersCount": 9, "chapters": ["Gaseous Exchange: In Plants and Respiratory System in Humans", "Homeostasis: Osmoregulation, Thermoregulation, Excretory System in Humans, Kidney Stones & Dialysis", "Coordination and Control: Nervous System, Reflex Action, Endocrine System, Hormones", "Support and Movement: Human Skeleton, Joints, Muscles & Movement Disorders", "Reproduction: Asexual and Sexual Reproduction in Plants and Animals, Pollination, STDs", "Inheritance: Mendel's Laws, Chromosomes and Genes, DNA Replication, Variation", "Man and His Environment: Ecosystem, Food Web, Biogeochemical Cycles, Symbiosis, Environmental Conservation", "Biotechnology: Fermentation, Genetic Engineering, Insulin Production, Single Cell Protein", "Pharmacology: Medicinal Drugs, Antibiotics, Vaccines, Sedatives & Narcotics"], "fileName": "kpk_textbook_class10_biology.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_biology.pdf", "fileSizeKb": 55.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-computer_science", "grade": "10", "subject": "Computer Science", "title": "Computer Science Class 10", "language": "en", "chaptersCount": 7, "chapters": ["Problem Solving and Algorithm Design: Flowcharts and Pseudo-code", "Basics of Programming in C Language: Syntax, Data Types, Variables, Constants", "Input and Output Handling in C: printf, scanf, Escape Sequences, Format Specifiers", "Control Structures in C: if, if-else, switch, Conditional Operator", "Loop Structures in C: for loop, while loop, do-while loop, Nested Loops", "Functions in C: Built-in Functions, User-Defined Functions, Parameter Passing", "Working with Logic and Arrays in C Programming"], "fileName": "kpk_textbook_class10_computer_science.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_computer_science.pdf", "fileSizeKb": 44.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-pakistan_studies", "grade": "10", "subject": "Pakistan Studies", "title": "Pakistan Studies Class 10", "language": "en", "chaptersCount": 4, "chapters": ["History of Pakistan Part II: 1971 War, 1973 Constitution, Z.A. Bhutto, Zia Era, 1988-1999, Musharraf Era to Present", "Foreign Policy and International Relations: Pakistan's Relations with China, USA, Muslim World, SAARC & UN", "Economic Development of Pakistan: Agriculture, Major Crops, Industries, Energy Resources, Foreign Trade & CPEC", "Population, Society and Culture of Pakistan: Demographics, Languages (Pashto, Hindko, Urdu), Education & Health"], "fileName": "kpk_textbook_class10_pakistan_studies.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_pakistan_studies.pdf", "fileSizeKb": 27.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-islamiyat", "grade": "10", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت دہم", "language": "ur", "chaptersCount": 6, "chapters": ["سورۃ الاحزاب (آیات 1 تا 73 مع مکمل ترجمہ و تشریح)", "منتخب احادیث نبویہ (11 تا 20 مع تشریح)", "موضوعاتی مطالعہ: جہاد فی سبیل اللہ کی حکمت و احکام", "خاندانی زندگی اور معاشرتی آداب", "صحابہ کرام اور ائمہ مجتہدین کا تعارف", "اسلام کا نظام اخلاق اور عفت و حیا"], "fileName": "kpk_textbook_class10_islamiyat.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_islamiyat.pdf", "fileSizeKb": 37.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}];
+
     let currentTbGradeFilter = "all";
     let allKpkCatalogBooks = [];
 
     async function loadTextbookCatalog() {
       if (allKpkCatalogBooks.length > 0) return allKpkCatalogBooks;
+      if (typeof KPK_CATALOG_EMBEDDED !== 'undefined' && Array.isArray(KPK_CATALOG_EMBEDDED) && KPK_CATALOG_EMBEDDED.length > 0) {
+        allKpkCatalogBooks = KPK_CATALOG_EMBEDDED;
+        return allKpkCatalogBooks;
+      }
       try {
         const res = await fetch("./books/kpk_textbooks_catalog.json");
         if (res.ok) {
@@ -5911,8 +7351,194 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
     // =========================================================================
     // 10. WINDOW INITIALIZATION
     // =========================================================================
+
+    // =========================================================================
+    // 8.7 MARKS CUSTOMIZATION, STYLING & SHOWCASE CONTROLLERS
+    // =========================================================================
+    function applyMarksPreset(preset) {
+      document.querySelectorAll(".preset-mark-btn").forEach(btn => {
+        if (btn.innerText.includes(String(preset))) {
+          btn.className = "preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-orange-500 bg-orange-50 text-orange-800 font-black";
+        } else {
+          btn.className = "preset-mark-btn py-1 px-1.5 text-[10px] font-bold rounded-lg border border-slate-200 bg-white hover:border-orange-400 text-slate-700";
+        }
+      });
+
+      if (!currentPaper) return;
+      if (preset === 50) {
+        currentPaper.secAMarks = 10;
+        currentPaper.secBMarks = 24;
+        currentPaper.secCMarks = 16;
+        currentPaper.perShortMarks = 3;
+        currentPaper.perLongMarks = 8;
+      } else if (preset === 100) {
+        currentPaper.secAMarks = 20;
+        currentPaper.secBMarks = 48;
+        currentPaper.secCMarks = 32;
+        currentPaper.perShortMarks = 4;
+        currentPaper.perLongMarks = 8;
+      } else {
+        // Standard 75
+        currentPaper.secAMarks = 15;
+        currentPaper.secBMarks = 36;
+        currentPaper.secCMarks = 24;
+        currentPaper.perShortMarks = 4;
+        currentPaper.perLongMarks = 8;
+      }
+      recalculateMarks();
+      renderPaperDOM();
+    }
+
+    function toggleCustomMarksInputs() {
+      const currentTotal = (currentPaper ? (currentPaper.secAMarks + currentPaper.secBMarks + currentPaper.secCMarks) : 75);
+      const val = prompt("Enter total marks for the paper (e.g. 50, 75, 100, 80):", currentTotal);
+      if (val) {
+        const num = parseInt(val, 10);
+        if (num > 0) {
+          distributeTotalMarks(num);
+        }
+      }
+    }
+
+    function distributeTotalMarks(total) {
+      if (!currentPaper) return;
+      const a = Math.round(total * 0.20);
+      const b = Math.round(total * 0.48);
+      const c = total - a - b;
+      currentPaper.secAMarks = a;
+      currentPaper.secBMarks = b;
+      currentPaper.secCMarks = c;
+      recalculateMarks();
+      renderPaperDOM();
+    }
+
+    function changeMarksStyle(style) {
+      if (!currentPaper) return;
+      currentPaper.marksStyle = style;
+      const label = document.getElementById("toolbar-marks-style-label");
+      if (label) {
+        label.textContent = style === 'school-per-question' ? 'School' : (style === 'compact-score' ? 'Compact' : 'BISEP');
+      }
+      renderPaperDOM();
+    }
+
+    function cycleMarksStyle() {
+      if (!currentPaper) return;
+      const current = currentPaper.marksStyle || 'bisep-header-only';
+      const next = current === 'bisep-header-only' ? 'school-per-question' : (current === 'school-per-question' ? 'compact-score' : 'bisep-header-only');
+      changeMarksStyle(next);
+      const sel = document.getElementById("gen-marks-style");
+      if (sel) sel.value = next;
+    }
+
+    function promptEditTotalMarks() {
+      if (!currentPaper) return;
+      const currentTotal = (currentPaper.secAMarks || 15) + (currentPaper.secBMarks || 36) + (currentPaper.secCMarks || 24);
+      const val = prompt("Set custom total marks for this examination paper:", currentTotal);
+      if (val) {
+        const num = parseInt(val, 10);
+        if (num > 0) distributeTotalMarks(num);
+      }
+    }
+
+    function updateSpecificQuestionMarks(type, index, valueText) {
+      if (!currentPaper) return;
+      const cleanVal = parseInt(valueText.replace(/[^0-9]/g, ''), 10) || 4;
+      if (type === 'short' && currentPaper.shorts[index]) {
+        currentPaper.shorts[index].marks = cleanVal;
+      } else if (type === 'long' && currentPaper.longs[index]) {
+        currentPaper.longs[index].marks = cleanVal;
+      }
+      autoSaveCurrentPaper();
+    }
+
+    // =========================================================================
+    // 8.8 HOMEPAGE TEXTBOOK SHOWCASE CONTROLLER
+    // =========================================================================
+    let currentShowcaseSection = "primary";
+
+    function switchShowcaseSection(section) {
+      currentShowcaseSection = section;
+      const tabPrimary = document.getElementById("tab-showcase-primary");
+      const tabMiddle = document.getElementById("tab-showcase-middle");
+      const tabMatric = document.getElementById("tab-showcase-matric");
+      const infoText = document.getElementById("showcase-info-text");
+
+      const activeClass = "px-3 py-1.5 rounded-lg transition bg-white text-orange-700 shadow-xs font-black";
+      const inactiveClass = "px-3 py-1.5 rounded-lg transition text-slate-600 hover:text-slate-900 font-bold";
+
+      if (tabPrimary) tabPrimary.className = section === 'primary' ? activeClass : inactiveClass;
+      if (tabMiddle) tabMiddle.className = section === 'middle' ? activeClass : inactiveClass;
+      if (tabMatric) tabMatric.className = section === 'matric' ? activeClass : inactiveClass;
+
+      if (infoText) {
+        if (section === 'primary') {
+          infoText.textContent = "Showing Primary Section (Classes 1st, 2nd, 3rd, 4th, 5th) authentic KPK textbooks:";
+        } else if (section === 'middle') {
+          infoText.textContent = "Showing Middle Section (Classes 6th, 7th, 8th) authentic KPK textbooks:";
+        } else {
+          infoText.textContent = "Showing Matric / High Section (Classes 9th, 10th) authentic BISEP textbooks:";
+        }
+      }
+
+      renderShowcaseGrid();
+    }
+
+    function renderShowcaseGrid() {
+      const container = document.getElementById("showcase-books-grid");
+      if (!container) return;
+
+      const allBooks = (typeof KPK_CATALOG_EMBEDDED !== 'undefined' && Array.isArray(KPK_CATALOG_EMBEDDED))
+        ? KPK_CATALOG_EMBEDDED
+        : (allKpkCatalogBooks || []);
+
+      let filtered = [];
+      if (currentShowcaseSection === 'primary') {
+        filtered = allBooks.filter(b => ['1', '2', '3', '4', '5'].includes(String(b.grade)));
+      } else if (currentShowcaseSection === 'middle') {
+        filtered = allBooks.filter(b => ['6', '7', '8'].includes(String(b.grade)));
+      } else {
+        filtered = allBooks.filter(b => ['9', '10'].includes(String(b.grade)));
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400 font-bold">No books found in this section.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.slice(0, 12).map(b => {
+        const isUrdu = b.language === 'ur' || b.language === 'ps';
+        return `
+          <div class="clay-card-flat p-3.5 rounded-2xl bg-white border border-slate-200/90 hover:border-orange-300 transition space-y-2.5 flex flex-col justify-between shadow-xs">
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="clay-badge-orange text-[9px] font-black px-2 py-0.5 rounded-full">Class ${b.grade}th</span>
+                <span class="text-[9px] font-bold text-slate-400">${b.chapters ? b.chapters.length : 0} Units &bull; ${b.fileSizeKb || 45} KB</span>
+              </div>
+              <h5 class="text-xs font-black text-slate-900 ${isUrdu ? 'font-urdu text-right text-sm' : ''}" dir="${isUrdu ? 'rtl' : 'ltr'}">${b.title}</h5>
+              <p class="text-[10px] text-slate-500 font-medium">${b.subject} &bull; Peshawar Board</p>
+            </div>
+            
+            <div class="pt-2 border-t border-slate-100 flex items-center gap-1.5">
+              <a href="${b.pdfPath}" download="${b.title}.pdf" target="_blank" class="flex-1 clay-btn-secondary py-1 px-1.5 text-[10px] font-bold flex items-center justify-center space-x-1 text-slate-700 hover:text-orange-600" title="Download Real PDF">
+                <i data-lucide="download" class="w-3 h-3"></i>
+                <span>PDF</span>
+              </a>
+              <button onclick="selectTextbookForGeneration('${b.grade}', '${b.subject}')" class="flex-1 clay-btn-primary py-1 px-1.5 text-[10px] font-bold flex items-center justify-center space-x-1" title="Generate Paper from this book">
+                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                <span>Exam</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       initAppState();
+      if (typeof renderShowcaseGrid === 'function') renderShowcaseGrid();
       lucide.createIcons();
     });
   </script>
