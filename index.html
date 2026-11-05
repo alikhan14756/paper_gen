@@ -758,22 +758,24 @@
             <span id="answer-key-btn-text">View Answer Key</span>
           </button>
 
-          <!-- Download MS Word (.docx) Button -->
-          <button onclick="exportToWordDocx()" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center space-x-1.5 shadow-md">
+          <!-- Download MS Word (.docx) Button (PRO) -->
+          <button onclick="handleWordExportClick('docx')" class="clay-btn-primary px-4 py-2 text-xs font-extrabold flex items-center space-x-1.5 shadow-md" title="Download editable Microsoft Word document (Registered Schools)">
             <i data-lucide="file-down" class="w-4 h-4"></i>
             <span>Download MS Word (.docx)</span>
+            <span class="bg-amber-300 text-amber-950 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase ml-1">PRO</span>
           </button>
 
-          <!-- Download Word (.doc) Fallback -->
-          <button onclick="exportToWordDoc()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1">
+          <!-- Download Word (.doc) Fallback (PRO) -->
+          <button onclick="handleWordExportClick('doc')" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1" title="Download editable Word .doc (Registered Schools)">
             <i data-lucide="download" class="w-3.5 h-3.5 text-slate-600"></i>
             <span>Word (.doc)</span>
+            <span class="bg-amber-100 text-amber-900 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase ml-1">PRO</span>
           </button>
 
-          <!-- Print / PDF -->
-          <button onclick="window.print()" class="clay-btn-secondary px-3 py-2 text-xs font-bold flex items-center space-x-1">
-            <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-600"></i>
-            <span>Print</span>
+          <!-- Print / PDF (Free Hard PDF) -->
+          <button onclick="window.print()" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1 border-emerald-300 text-emerald-800 bg-emerald-50 hover:bg-emerald-100 shadow-2xs" title="Download locked print PDF (Free for all users)">
+            <i data-lucide="printer" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Download Locked PDF (Free)</span>
           </button>
         </div>
       </div>
@@ -802,21 +804,46 @@
         <!-- SHEET 1: PART I (OBJECTIVE TYPE - SECTION A) -->
         <div id="paper-sheet-a" class="paper-sheet paper-bisep-classic p-4 sm:p-8 md:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
           
-          <!-- Board / School Header -->
-          <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
-            <h3 id="paper-head-school-a" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
-              Board of Intermediate & Secondary Education Peshawar
-            </h3>
-            <h4 id="paper-head-exam-a" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-sm font-extrabold text-slate-800">
-              Class 9th Annual Examination 2026 — Mathematics
-            </h4>
-            <div class="pt-1">
-              <span class="inline-block bg-slate-900 text-white text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
-                Part — I (Objective Type)
-              </span>
+          <!-- Board / School Header (Left Logo, Center Info, Right Editable Teacher) -->
+          <div class="border-b-2 border-slate-900 pb-3 space-y-2">
+            <div class="flex items-center justify-between gap-2 sm:gap-4">
+              <!-- Top Left: School Logo / Monogram -->
+              <div class="w-16 sm:w-20 shrink-0 flex flex-col items-center">
+                <div class="cursor-pointer group relative" onclick="triggerLogoUpload()" title="Click to upload school logo / monogram">
+                  <img id="paper-logo-img-a" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23fff' stroke='%230f172a' stroke-width='4'/><polygon points='50,15 80,75 20,75' fill='%23ea580c'/><text x='50' y='65' font-size='22' font-weight='bold' text-anchor='middle' fill='%23fff'>SCH</text></svg>" class="w-14 h-14 sm:w-16 sm:h-16 object-contain border border-dashed border-slate-300 rounded-lg p-1 group-hover:border-orange-500 bg-white shadow-2xs" alt="Logo" />
+                  <span class="no-print text-[8px] text-slate-400 font-bold block text-center mt-0.5 group-hover:text-orange-600">Logo ✏️</span>
+                </div>
+              </div>
+
+              <!-- Top Center: School Name, Title, Part Indicator -->
+              <div class="flex-1 text-center space-y-1">
+                <h3 id="paper-head-school-a" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-xl font-black uppercase tracking-wider text-slate-900">
+                  Government Primary School Ganapur
+                </h3>
+                <h4 id="paper-head-exam-a" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-xs sm:text-sm font-extrabold text-slate-800">
+                  Class 9th Annual Examination 2026 — Mathematics
+                </h4>
+                <div class="pt-0.5">
+                  <span class="inline-block bg-slate-900 text-white text-[10px] sm:text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
+                    Part — I (Objective Type)
+                  </span>
+                </div>
+              </div>
+
+              <!-- Top Right: Editable Teacher / Examiner Info & Date -->
+              <div class="w-24 sm:w-32 shrink-0 text-right text-[11px] font-bold text-slate-700 border-l border-slate-300 pl-2 space-y-0.5">
+                <div class="text-[9px] uppercase text-slate-400 font-black">Teacher / Examiner:</div>
+                <div id="paper-teacher-name-a" contenteditable="true" onblur="syncTeacherName(this.innerText)" class="editable-text font-black text-slate-900 leading-tight text-xs" title="Click to edit teacher / examiner name">
+                  Prof. M. Tariq
+                </div>
+                <div id="paper-exam-date-a" contenteditable="true" onblur="syncExamDate(this.innerText)" class="editable-text text-[10px] text-slate-500 font-mono" title="Click to edit date">
+                  Date: 2026-11-05
+                </div>
+              </div>
             </div>
-            
-            <div class="flex flex-wrap justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2 gap-2">
+
+            <!-- Roll No, Time, Paper Code, Marks Bar -->
+            <div class="flex flex-wrap justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 gap-2">
               <div class="flex items-center space-x-1">
                 <span>Roll No:</span>
                 <div class="flex border border-slate-900 rounded overflow-hidden">
@@ -856,9 +883,19 @@
             </div>
           </div>
 
-          <!-- Footer on Sheet A -->
-          <div class="text-center text-[10px] text-slate-500 font-bold tracking-wider uppercase border-t border-slate-200 pt-2">
-            [ End of Objective Paper — Collect after 20 Minutes ]
+          <!-- Official Developer Footer / Advertisement on Sheet A -->
+          <div class="border-t-2 border-slate-900 pt-2.5 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-600 font-bold gap-1.5">
+            <div>
+              <span class="font-mono">[ ExamForge AI Paper System • Page 1 of 2 ]</span>
+            </div>
+            <div class="text-center font-extrabold text-slate-800">
+              <span>Developed by: Muhammad Ali (AliBuild) • Website: </span>
+              <a href="https://aivanolabs.site" target="_blank" class="underline text-orange-600 font-black">aivanolabs.site</a>
+              <span> | WhatsApp: +923215423874</span>
+            </div>
+            <div class="text-right text-[9px] text-slate-500 font-mono">
+              <span>BISEP Authentic Standard</span>
+            </div>
           </div>
         </div>
 
@@ -873,21 +910,46 @@
         <!-- SHEET 2: PART II (SUBJECTIVE TYPE - SECTIONS B & C COMBINED) -->
         <div id="paper-sheet-bc" class="paper-sheet paper-bisep-classic p-4 sm:p-8 md:p-12 rounded-xl text-slate-900 space-y-6 max-w-4xl mx-auto shadow-sm">
           
-          <!-- Board / School Header -->
-          <div class="text-center border-b-2 border-slate-900 pb-3 space-y-1">
-            <h3 id="paper-head-school-bc" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-lg font-black uppercase tracking-wider">
-              Board of Intermediate & Secondary Education Peshawar
-            </h3>
-            <h4 id="paper-head-exam-bc" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-sm font-extrabold text-slate-800">
-              Class 9th Annual Examination 2026 — Mathematics
-            </h4>
-            <div class="pt-1">
-              <span class="inline-block bg-slate-900 text-white text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
-                Part — II (Subjective Type)
-              </span>
+          <!-- Board / School Header (Left Logo, Center Info, Right Editable Teacher) -->
+          <div class="border-b-2 border-slate-900 pb-3 space-y-2">
+            <div class="flex items-center justify-between gap-2 sm:gap-4">
+              <!-- Top Left: School Logo / Monogram -->
+              <div class="w-16 sm:w-20 shrink-0 flex flex-col items-center">
+                <div class="cursor-pointer group relative" onclick="triggerLogoUpload()" title="Click to upload school logo / monogram">
+                  <img id="paper-logo-img-bc" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23fff' stroke='%230f172a' stroke-width='4'/><polygon points='50,15 80,75 20,75' fill='%23ea580c'/><text x='50' y='65' font-size='22' font-weight='bold' text-anchor='middle' fill='%23fff'>SCH</text></svg>" class="w-14 h-14 sm:w-16 sm:h-16 object-contain border border-dashed border-slate-300 rounded-lg p-1 group-hover:border-orange-500 bg-white shadow-2xs" alt="Logo" />
+                  <span class="no-print text-[8px] text-slate-400 font-bold block text-center mt-0.5 group-hover:text-orange-600">Logo ✏️</span>
+                </div>
+              </div>
+
+              <!-- Top Center: School Name, Title, Part Indicator -->
+              <div class="flex-1 text-center space-y-1">
+                <h3 id="paper-head-school-bc" contenteditable="true" onblur="syncSchoolName(this.innerText)" class="editable-text text-base sm:text-xl font-black uppercase tracking-wider text-slate-900">
+                  Government Primary School Ganapur
+                </h3>
+                <h4 id="paper-head-exam-bc" contenteditable="true" onblur="syncExamTitle(this.innerText)" class="editable-text text-xs sm:text-sm font-extrabold text-slate-800">
+                  Class 9th Annual Examination 2026 — Mathematics
+                </h4>
+                <div class="pt-0.5">
+                  <span class="inline-block bg-slate-900 text-white text-[10px] sm:text-[11px] font-black px-3 py-0.5 rounded uppercase tracking-wider">
+                    Part — II (Subjective Type)
+                  </span>
+                </div>
+              </div>
+
+              <!-- Top Right: Editable Teacher / Examiner Info & Date -->
+              <div class="w-24 sm:w-32 shrink-0 text-right text-[11px] font-bold text-slate-700 border-l border-slate-300 pl-2 space-y-0.5">
+                <div class="text-[9px] uppercase text-slate-400 font-black">Teacher / Examiner:</div>
+                <div id="paper-teacher-name-bc" contenteditable="true" onblur="syncTeacherName(this.innerText)" class="editable-text font-black text-slate-900 leading-tight text-xs" title="Click to edit teacher / examiner name">
+                  Prof. M. Tariq
+                </div>
+                <div id="paper-exam-date-bc" contenteditable="true" onblur="syncExamDate(this.innerText)" class="editable-text text-[10px] text-slate-500 font-mono" title="Click to edit date">
+                  Date: 2026-11-05
+                </div>
+              </div>
             </div>
-            
-            <div class="flex justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 mt-2">
+
+            <!-- Time Allowed, Paper Code, Total Marks Bar -->
+            <div class="flex justify-between items-center text-xs font-bold text-slate-800 pt-2 border-t border-slate-300 gap-2">
               <span>Time Allowed: <span id="paper-head-time-bc" contenteditable="true" onblur="currentPaper.timeAllowedBC=this.innerText" class="editable-text font-mono">2 Hours 40 Minutes</span></span>
               <span>Paper Code: <span class="font-mono">914-A</span></span>
               <span>Total Subjective Marks: <span id="paper-head-marks-bc" class="text-orange-600 font-mono font-black text-sm">60</span></span>
@@ -935,9 +997,19 @@
             </div>
           </div>
 
-          <!-- Footer on Sheet BC -->
-          <div class="text-center text-[10px] text-slate-500 font-bold tracking-wider uppercase border-t border-slate-200 pt-2">
-            [ End of Subjective Paper — Best of Luck ]
+          <!-- Official Developer Footer / Advertisement on Sheet BC -->
+          <div class="border-t-2 border-slate-900 pt-2.5 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-600 font-bold gap-1.5">
+            <div>
+              <span class="font-mono">[ ExamForge AI Paper System • Page 2 of 2 ]</span>
+            </div>
+            <div class="text-center font-extrabold text-slate-800">
+              <span>Developed by: Muhammad Ali (AliBuild) • Website: </span>
+              <a href="https://aivanolabs.site" target="_blank" class="underline text-orange-600 font-black">aivanolabs.site</a>
+              <span> | WhatsApp: +923215423874</span>
+            </div>
+            <div class="text-right text-[9px] text-slate-500 font-mono">
+              <span>BISEP Authentic Standard</span>
+            </div>
           </div>
         </div>
 
@@ -1204,6 +1276,56 @@
           <span>Protected site owner console &bull; ExamForge AI Peshawar</span>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Hidden Logo File Input -->
+  <input type="file" id="paper-logo-upload" accept="image/*" class="hidden" onchange="handlePaperLogoUpload(event)">
+
+  <!-- PRO WORD EXPORT MODAL (GUEST / FREE VS PREMIUM GATE) -->
+  <div id="pro-word-export-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
+    <div class="clay-card max-w-md w-full p-6 relative space-y-4 text-center">
+      <button onclick="closeProWordExportModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-inner">
+        <i data-lucide="lock" class="w-7 h-7"></i>
+      </div>
+
+      <div class="space-y-1">
+        <span class="clay-badge-orange text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">Premium Feature</span>
+        <h3 class="text-lg font-black text-slate-900">Editable Word (.docx) is for Schools</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Free users can download the <strong>Locked Hard PDF</strong>. Editable MS Word (.docx / .doc) export is exclusively reserved for registered school administrator accounts.
+        </p>
+      </div>
+
+      <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-left text-xs space-y-1.5 text-slate-700">
+        <p class="font-bold text-amber-950 flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+          <span><strong>Free Version:</strong> Hard Locked PDF (values cannot be altered)</span>
+        </p>
+        <p class="font-bold text-amber-950 flex items-center gap-1.5">
+          <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+          <span><strong>School Admin Accounts:</strong> Editable Word file, modify values & remove developer ad</span>
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-2 pt-2">
+        <button onclick="closeProWordExportModal(); openSchoolLoginModal('school')" class="w-full clay-btn-primary py-2.5 text-xs font-black flex items-center justify-center space-x-1.5 shadow-md">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          <span>Sign In with School Account (Ganapur, MIMS, PMS)</span>
+        </button>
+        <button onclick="closeProWordExportModal(); window.print()" class="w-full clay-btn-secondary py-2 text-xs font-bold text-emerald-700 border-emerald-300 hover:bg-emerald-50 flex items-center justify-center space-x-1.5">
+          <i data-lucide="printer" class="w-4 h-4 text-emerald-600"></i>
+          <span>Download Free Hard PDF Now</span>
+        </button>
+        <a href="https://api.whatsapp.com/send?phone=923215423874&text=Assalam-o-Alaikum%20Muhammad%20Ali!%20I%20want%20to%20register%20my%20school%20for%20ExamForge%20AI%20Word%20Export." target="_blank" class="text-[11px] font-bold text-slate-500 hover:text-emerald-600 flex items-center justify-center gap-1 pt-1">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span>Contact Muhammad Ali on WhatsApp (+923215423874)</span>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -4481,26 +4603,8 @@
       });
     }
 
-    // Registered School Directory Metadata (Passwords securely hashed with Bcrypt in backend DB)
+    // Registered School Directory Metadata (Exactly 3 Official Schools)
     const DEFAULT_SCHOOL_ACCOUNTS = [
-      {
-        name: "Peshawar Model School",
-        principal: "Director Academics",
-        username: "pms",
-        password: "123",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Islamia College School & College Peshawar",
-        principal: "Prof. Tariq Khan",
-        username: "ics",
-        password: "456",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
       {
         name: "Government Primary School Ganapur",
         principal: "Headmaster",
@@ -4509,12 +4613,30 @@
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "MIMS School and College",
+        principal: "Principal",
+        username: "mims",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
+      },
+      {
+        name: "Peshawar Model School",
+        principal: "Director Academics",
+        username: "pms",
+        password: "123",
+        quota: "Unlimited",
+        phone: "+923215423874",
+        createdAt: "2026-11-01T12:00:00.000Z"
       }
     ];
 
     const STALE_DEMO_USERNAMES = new Set([
-      "aps", "city", "beaconhouse", "bloomfield", "lgs", "frontier", "roots", 
-      "army", "alpha", "beta", "school-a", "school-b", "active", "suspended", "regen", "mims"
+      "ics", "aps", "city", "beaconhouse", "bloomfield", "lgs", "frontier", "roots", 
+      "army", "alpha", "beta", "school-a", "school-b", "active", "suspended", "regen"
     ]);
 
     function getSchoolAccounts() {
@@ -4547,11 +4669,11 @@
     }
 
     function resetToOnlyThreeSchools() {
-      if (!confirm("Are you sure you want to remove all other schools and keep ONLY the 3 official verified schools (PMS, ICS, Ganapur)?")) return;
+      if (!confirm("Are you sure you want to remove all other schools and keep ONLY the 3 official verified schools (Ganapur, MIMS, PMS)?")) return;
       localStorage.setItem("examforge_school_accounts", JSON.stringify(DEFAULT_SCHOOL_ACCOUNTS));
       renderOwnerSchoolsTable();
       if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
-      alert("✅ All demo schools removed! Exactly 3 official schools remain.");
+      alert("✅ All demo schools removed! Exactly 3 official schools remain: Ganapur, MIMS, and PMS.");
     }
 
     function saveSchoolAccounts(schools) {
@@ -5380,6 +5502,20 @@
       if (document.getElementById("paper-head-exam-bc")) document.getElementById("paper-head-exam-bc").innerText = examTitleFull;
       if (document.getElementById("paper-head-time-bc")) document.getElementById("paper-head-time-bc").innerText = currentPaper.timeAllowedBC || "2 Hours 40 Minutes";
 
+      // Restore custom school logo if saved
+      const savedLogo = localStorage.getItem("examforge_school_logo");
+      if (savedLogo) applyPaperLogo(savedLogo);
+
+      // Restore Teacher Name and Date if present
+      if (currentPaper.teacherName) {
+        if (document.getElementById("paper-teacher-name-a")) document.getElementById("paper-teacher-name-a").innerText = currentPaper.teacherName;
+        if (document.getElementById("paper-teacher-name-bc")) document.getElementById("paper-teacher-name-bc").innerText = currentPaper.teacherName;
+      }
+      if (currentPaper.examDate) {
+        if (document.getElementById("paper-exam-date-a")) document.getElementById("paper-exam-date-a").innerText = currentPaper.examDate;
+        if (document.getElementById("paper-exam-date-bc")) document.getElementById("paper-exam-date-bc").innerText = currentPaper.examDate;
+      }
+
       // Render Section A (MCQs) - With clickable marks badge on every question
       const secAContainer = document.getElementById("sec-a-container");
       const marksStyle = currentPaper.marksStyle || 'school-per-question';
@@ -5682,6 +5818,76 @@
     }
 
     // =========================================================================
+    // Paper Logo Management
+    function triggerLogoUpload() {
+      const inp = document.getElementById("paper-logo-upload");
+      if (inp) inp.click();
+    }
+
+    function handlePaperLogoUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target.result;
+        try {
+          localStorage.setItem("examforge_school_logo", dataUrl);
+        } catch (err) {}
+        applyPaperLogo(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applyPaperLogo(dataUrl) {
+      const logoA = document.getElementById("paper-logo-img-a");
+      const logoBC = document.getElementById("paper-logo-img-bc");
+      if (logoA) logoA.src = dataUrl;
+      if (logoBC) logoBC.src = dataUrl;
+    }
+
+    function syncTeacherName(val) {
+      if (!val) return;
+      const elA = document.getElementById("paper-teacher-name-a");
+      const elBC = document.getElementById("paper-teacher-name-bc");
+      if (elA && elA.innerText !== val) elA.innerText = val;
+      if (elBC && elBC.innerText !== val) elBC.innerText = val;
+      if (currentPaper) currentPaper.teacherName = val;
+    }
+
+    function syncExamDate(val) {
+      if (!val) return;
+      const elA = document.getElementById("paper-exam-date-a");
+      const elBC = document.getElementById("paper-exam-date-bc");
+      if (elA && elA.innerText !== val) elA.innerText = val;
+      if (elBC && elBC.innerText !== val) elBC.innerText = val;
+      if (currentPaper) currentPaper.examDate = val;
+    }
+
+    // Free vs Premium Word Export Gate
+    function handleWordExportClick(type = 'docx') {
+      const isSchool = currentUser && (currentUser.role === 'school' || currentUser.role === 'school_admin' || currentUser.role === 'super_admin');
+      if (!isSchool) {
+        openProWordExportModal();
+        return;
+      }
+      if (type === 'docx') {
+        exportToWordDocx();
+      } else {
+        exportToWordDoc();
+      }
+    }
+
+    function openProWordExportModal() {
+      const modal = document.getElementById("pro-word-export-modal");
+      if (modal) modal.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeProWordExportModal() {
+      const modal = document.getElementById("pro-word-export-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
     // 6. MICROSOFT WORD (.DOCX & .DOC) EXPORT ENGINE
     // =========================================================================
     async function exportToWordDocx() {
