@@ -27,7 +27,8 @@ class SchoolUpdate(BaseModel):
 class SchoolResponse(SchoolBase):
     id: str
     logo_url: Optional[str] = None
-    subscription_plan: str
+    subscription_plan: Optional[str] = "standard"
+    subscription_tier: Optional[str] = "standard"
     is_active: bool
     max_teachers: int
     max_monthly_papers: int

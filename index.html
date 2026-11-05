@@ -6162,7 +6162,8 @@
       }
       if (waBtn) {
         const cleanPhone = "923215423874";
-        const msg = encodeURIComponent(`Assalam-o-Alaikum!\n\nYour ExamForge AI Portal account for *${name}* is active:\n*Website:* https://aivanolabs.site\n*Username:* ${username}\n*Password:* ${password}\n*Quota:* Unlimited Papers\n\n👉 *Direct 1-Click Login Link (Any Phone or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).`);
+        const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.includes("aivanolabs.site")) ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
+        const msg = encodeURIComponent(`Assalam-o-Alaikum!\n\nYour ExamForge AI Portal account for *${name}* is active:\n*Website:* ${portalUrl}\n*Username:* ${username}\n*Password:* ${password}\n*Quota:* Unlimited Papers\n\n👉 *Direct 1-Click Login Link (Any Phone or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).`);
         waBtn.href = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`;
       }
       if (resBox) resBox.classList.remove("hidden");
@@ -6561,9 +6562,14 @@
     }
 
     function getDirectSchoolUrl(school) {
-      const origin = (window.location && window.location.origin && window.location.origin !== "null") ? window.location.origin : "https://aivanolabs.site";
-      const path = (window.location && window.location.pathname) ? window.location.pathname : "/";
-      return `${origin}${path}?auth=school&u=${encodeURIComponent(school.username)}&p=${encodeURIComponent(school.password)}&name=${encodeURIComponent(school.name)}`;
+      let baseUrl = "https://alikhan14756.github.io/paper_gen/";
+      if (typeof window !== "undefined" && window.location) {
+        if (window.location.origin && window.location.origin !== "null" && !window.location.origin.includes("aivanolabs.site")) {
+          const path = window.location.pathname || "/";
+          baseUrl = `${window.location.origin}${path}`;
+        }
+      }
+      return `${baseUrl.split("?")[0]}?auth=school&u=${encodeURIComponent(school.username)}&p=${encodeURIComponent(school.password)}&name=${encodeURIComponent(school.name)}`;
     }
 
     function copyDirectSchoolLink(username) {
@@ -6590,7 +6596,8 @@
 
       const directUrl = getDirectSchoolUrl(school);
       const cleanPhone = (school.phone || "923215423874").replace(/[^0-9]/g, "");
-      const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Examination Portal account for *${school.name}* is active:\n\n*Portal Website:* https://aivanolabs.site\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\n👉 *Direct 1-Click Login Link (Any Mobile or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
+      const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.includes("aivanolabs.site")) ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
+      const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Examination Portal account for *${school.name}* is active:\n\n*Portal Website:* ${portalUrl}\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\n👉 *Direct 1-Click Login Link (Any Mobile or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
 
       window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, "_blank");
     }

@@ -6,15 +6,25 @@ from pydantic import BaseModel, EmailStr, ConfigDict
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_super_admin, require_school_admin_or_super
+from app.core.security import hash_password, ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN
 from app.models.core_entities import School, User, SchoolMembership, Invitation, SchoolSubscription, SubscriptionPlan
 from app.models.paper_entities import AuditLog
 from app.schemas.school import SchoolCreate, SchoolUpdate, SchoolResponse
+from sqlalchemy import func
 
 router = APIRouter(prefix="/schools", tags=["Schools"])
 
 class InviteTeacherRequest(BaseModel):
     email: EmailStr
     role: str = "teacher"
+
+class RegisterSchoolWithAdminRequest(BaseModel):
+    name: str
+    username: str
+    password: str
+    principal_name: str = "Principal"
+    phone_number: str = "+923215423874"
+    quota: str = "Unlimited"
 
 class InvitationResponse(BaseModel):
     id: str
@@ -51,13 +61,97 @@ def create_school(
     db.refresh(school)
     return school
 
+@router.post("/register-with-admin")
+def register_school_with_admin(
+    data: RegisterSchoolWithAdminRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_super_admin)
+):
+    clean_username = data.username.strip().lower()
+    clean_name = data.name.strip()
+    clean_password = data.password.strip()
+
+    if not clean_username or not clean_password or not clean_name:
+        raise HTTPException(status_code=400, detail="Name, username, and password are required.")
+
+    if db.query(User).filter(func.lower(User.username) == clean_username).first():
+        raise HTTPException(status_code=400, detail=f"Username '{clean_username}' is already in use.")
+
+    base_slug = "".join(c for c in clean_name.lower().replace(" ", "-") if c.isalnum() or c == "-").strip("-") or clean_username
+    if db.query(School).filter(School.slug == base_slug).first():
+        base_slug = f"{base_slug}-{uuid.uuid4().hex[:4]}"
+
+    school = School(
+        name=clean_name,
+        slug=base_slug,
+        principal_name=data.principal_name,
+        phone_number=data.phone_number,
+        status="active",
+        is_active=True,
+        subscription_tier="paid" if data.quota == "Unlimited" else "standard",
+        is_paid=True,
+        free_papers_per_subject=1000,
+        max_teachers=50,
+        max_monthly_papers=5000 if data.quota == "Unlimited" else 100,
+        papers_generated_this_month=0,
+    )
+    db.add(school)
+    db.flush()
+
+    admin_user = User(
+        school_id=school.id,
+        username=clean_username,
+        email=f"{clean_username}@{base_slug}.examforge.edu.pk",
+        hashed_password=hash_password(clean_password),
+        full_name=f"{clean_name} Administrator",
+        principal_name=data.principal_name,
+        phone_number=data.phone_number,
+        role="school_admin",
+        is_active=True,
+        is_email_verified=True,
+        verification_method="manual",
+    )
+    db.add(admin_user)
+    db.flush()
+
+    membership = SchoolMembership(
+        school_id=school.id,
+        user_id=admin_user.id,
+        role="school_admin",
+        is_active=True,
+    )
+    db.add(membership)
+
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.slug == "premium").first() or db.query(SubscriptionPlan).first()
+    sub = SchoolSubscription(
+        school_id=school.id,
+        plan_id=plan.id if plan else None,
+        status="active",
+        current_period_start=datetime.now(timezone.utc),
+        current_period_end=datetime.now(timezone.utc) + timedelta(days=365 * 5),
+    )
+    db.add(sub)
+
+    db.commit()
+    db.refresh(school)
+    db.refresh(admin_user)
+
+    return {
+        "success": True,
+        "school_id": school.id,
+        "school_name": school.name,
+        "username": admin_user.username,
+        "role": admin_user.role,
+        "quota": data.quota,
+    }
+
 @router.get("/{school_id}", response_model=SchoolResponse)
 def get_school(
     school_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden: You cannot access other schools")
     
     school = db.query(School).filter(School.id == school_id).first()
@@ -72,7 +166,7 @@ def update_school(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_school_admin_or_super)
 ):
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     school = db.query(School).filter(School.id == school_id).first()
@@ -80,7 +174,7 @@ def update_school(
         raise HTTPException(status_code=404, detail="School not found")
 
     update_dict = data.model_dump(exclude_unset=True)
-    if current_user.role != "super_admin":
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER):
         # Disallow quota & subscription tampering by school admins
         protected_fields = ["max_teachers", "max_monthly_papers", "subscription_plan", "is_active", "status"]
         for pf in protected_fields:
@@ -100,7 +194,7 @@ def invite_teacher(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_school_admin_or_super)
 ):
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     school = db.query(School).filter(School.id == school_id).first()
@@ -137,7 +231,7 @@ def get_school_billing_analytics(
     current_user: User = Depends(require_school_admin_or_super),
 ):
     """Provides enterprise billing usage and quota analytics for the school."""
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     school = db.query(School).filter(School.id == school_id).first()
@@ -207,7 +301,7 @@ def get_school_audit_logs(
     current_user: User = Depends(require_school_admin_or_super),
 ):
     """Chronological audit trail of high-security actions for the school."""
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden")
 
     logs = (
@@ -241,7 +335,7 @@ def upgrade_school_subscription(
     Upgrades a school from free trial to paid subscription, allowing unlimited subject generation.
     Can be executed by Super Admin or the school administrator.
     """
-    if current_user.role != "super_admin" and current_user.school_id != school_id:
+    if current_user.role not in (ROLE_SUPER_ADMIN, ROLE_SUPER_OWNER) and current_user.school_id != school_id:
         raise HTTPException(status_code=403, detail="Forbidden: You cannot upgrade other schools' subscriptions")
 
     school = db.query(School).filter(School.id == school_id).first()

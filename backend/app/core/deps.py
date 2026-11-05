@@ -78,9 +78,9 @@ def require_super_owner_or_admin(current_user: User = Depends(get_current_user))
     return current_user
 
 def require_school_admin_or_super(current_user: User = Depends(get_current_user)) -> User:
-    if current_user.role not in [ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN]:
+    if current_user.role not in [ROLE_SUPER_OWNER, ROLE_SUPER_ADMIN, ROLE_SCHOOL_ADMIN]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="School Admin privileges required"
+            detail="School Admin or Owner privileges required"
         )
     return current_user

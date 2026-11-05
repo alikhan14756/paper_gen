@@ -180,10 +180,37 @@ export class ApiClient {
   }
 
   // Auth
-  static async login(email: string, password: string) {
+  static async login(identifier: string, password: string) {
     return this.request<{ access_token: string; user: User }>("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ 
+        username_or_email: identifier.trim(),
+        email: identifier.trim(),
+        password: password 
+      }),
+    });
+  }
+
+  static async ownerCreateSchool(data: {
+    school_name: string;
+    username: string;
+    password: string;
+    principal_name?: string;
+    phone_number?: string;
+    quota?: string;
+  }) {
+    return this.request<{
+      success: boolean;
+      message: string;
+      school_id: string;
+      school_name: string;
+      username: string;
+      role: string;
+      quota: string;
+      createdAt: string;
+    }>("/auth/owner/create-school", {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   }
 

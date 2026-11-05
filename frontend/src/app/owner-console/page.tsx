@@ -53,6 +53,7 @@ export default function OwnerConsolePage() {
 
   // Owner Quick Auth
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [ownerIdentifier, setOwnerIdentifier] = useState("alikhan");
   const [ownerPassword, setOwnerPassword] = useState("");
   const [authError, setAuthError] = useState<string | null>(null);
 
@@ -80,7 +81,7 @@ export default function OwnerConsolePage() {
     e.preventDefault();
     setAuthError(null);
     try {
-      const res = await ApiClient.login("alikhanwebdeveloper@gmail.com", ownerPassword);
+      const res = await ApiClient.login(ownerIdentifier.trim() || "alikhan", ownerPassword);
       localStorage.setItem("examforge_token", res.access_token);
       setIsAuthenticated(true);
       fetchVerifications();
@@ -193,12 +194,14 @@ export default function OwnerConsolePage() {
 
           <form onSubmit={handleOwnerLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Owner Email</label>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Owner Username or Email</label>
               <input
                 type="text"
-                disabled
-                value="alikhanwebdeveloper@gmail.com"
-                className="w-full clay-input p-2.5 text-xs font-bold text-slate-500 bg-slate-100"
+                required
+                value={ownerIdentifier}
+                onChange={(e) => setOwnerIdentifier(e.target.value)}
+                placeholder="e.g. alikhan or alikhanwebdeveloper@gmail.com"
+                className="w-full clay-input p-2.5 text-xs font-bold text-slate-800"
               />
             </div>
 

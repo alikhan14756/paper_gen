@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     
-    # Database
-    DATABASE_URL: str = "sqlite:///./examforge.db"
+    # Database - Default to canonical absolute path for SQLite to prevent path drift across cwd
+    DATABASE_URL: str = f"sqlite:///{BASE_DIR / 'examforge.db'}"
     
     # Security & Auth
     SECRET_KEY: str = "examforge-super-secret-key-change-in-production-2026"
@@ -32,12 +32,17 @@ class Settings(BaseSettings):
     EXPORT_DIR: str = str(BASE_DIR / "storage" / "exports")
     MAX_UPLOAD_SIZE_MB: int = 50
     
-    # CORS
+    # CORS - Include localhost, production domains, and GitHub Pages
     BACKEND_CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+        "https://alikhan14756.github.io",
+        "https://aivanolabs.site",
+        "http://aivanolabs.site",
     ]
 
     model_config = SettingsConfigDict(
@@ -47,7 +52,3 @@ class Settings(BaseSettings):
     )
 
 settings = Settings()
-
-# Ensure directories exist
-os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-os.makedirs(settings.EXPORT_DIR, exist_ok=True)

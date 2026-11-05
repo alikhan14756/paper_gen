@@ -1,7 +1,9 @@
 import secrets
+import uuid
 from typing import List, Optional
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import verify_password, hash_password, create_access_token
@@ -25,6 +27,8 @@ from app.schemas.auth import (
     ResendOTPResponse,
     OwnerVerificationItem,
     OwnerVerificationsResponse,
+    OwnerCreateSchoolRequest,
+    OwnerCreateSchoolResponse,
 )
 from app.services.email.mailer import EmailService
 from app.services.communication.otp_service import OTPService
@@ -283,24 +287,36 @@ def register_teacher(req: RegisterTeacherRequest, db: Session = Depends(get_db))
 
 @router.post("/login", response_model=Token)
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == request.email).first()
+    raw_id = (request.username_or_email or request.email or "").strip().lower()
+    if not raw_id or not request.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username or email and password are required.",
+        )
+
+    # 1. Lookup user case-insensitively by either username or email
+    user = db.query(User).filter(
+        (func.lower(User.email) == raw_id) | 
+        (func.lower(User.username) == raw_id)
+    ).first()
+
     if not user or not verify_password(request.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect username/email or password",
         )
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is deactivated. Contact your school administrator.",
         )
-    if not user.is_email_verified and user.role != "super_admin":
+    if not user.is_email_verified and user.role not in ("super_admin", "super_owner"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Email address not verified. Please enter the 6-digit verification code sent to your email to activate your account.",
             headers={"X-Error-Code": "EMAIL_NOT_VERIFIED"}
         )
-    if user.school and (user.school.status == "suspended" or not user.school.is_active) and user.role != "super_admin":
+    if user.school and (user.school.status == "suspended" or not user.school.is_active) and user.role not in ("super_admin", "super_owner"):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="School account has been suspended. Please contact platform administration.",
@@ -312,17 +328,23 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
         "school_id": user.school_id,
         "role": user.role,
         "email": user.email,
+        "username": user.username or "",
     }
     access_token = create_access_token(token_data)
 
     user_resp = UserResponse(
         id=user.id,
         email=user.email,
+        username=user.username,
         full_name=user.full_name,
         role=user.role,
         school_id=user.school_id,
         school_name=school_name,
+        phone_number=user.phone_number,
+        principal_name=user.principal_name,
         is_active=user.is_active,
+        is_email_verified=user.is_email_verified,
+        is_verified=user.is_verified,
     )
 
     return Token(access_token=access_token, token_type="bearer", user=user_resp)
@@ -706,3 +728,109 @@ def owner_resend_otp(
         school_id=record.school_id,
     )
     return {"message": f"OTP re-dispatched to {record.identifier} via {record.delivery_channel.capitalize()}."}
+
+@router.post("/owner/create-school", response_model=OwnerCreateSchoolResponse)
+def owner_create_school_with_credentials(
+    req: OwnerCreateSchoolRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_super_owner_or_admin),
+):
+    """
+    Owner Master Console endpoint: Registers a school and assigns an immediately active
+    school administrator username and password (hashed with bcrypt).
+    Works 100% reliably across all devices without requiring email OTP verification.
+    """
+    clean_name = req.school_name.strip()
+    clean_username = req.username.strip().lower()
+    clean_password = req.password.strip()
+
+    if not clean_name or not clean_username or not clean_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="School name, username, and password are required.",
+        )
+
+    # Check username uniqueness across all users
+    existing_user = db.query(User).filter(func.lower(User.username) == clean_username).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Username '{clean_username}' is already taken. Please choose a unique username.",
+        )
+
+    # Generate slug from school name
+    base_slug = clean_name.lower().replace(" ", "-")
+    clean_slug = "".join(c for c in base_slug if c.isalnum() or c == "-").strip("-") or clean_username
+    if db.query(School).filter(School.slug == clean_slug).first():
+        clean_slug = f"{clean_slug}-{uuid.uuid4().hex[:4]}"
+
+    # 1. Create School
+    school = School(
+        name=clean_name,
+        slug=clean_slug,
+        principal_name=req.principal_name or "Principal",
+        phone_number=req.phone_number or "+923215423874",
+        status="active",
+        is_active=True,
+        subscription_tier="paid" if req.quota == "Unlimited" else "standard",
+        is_paid=True,
+        free_papers_per_subject=1000,
+        max_teachers=50,
+        max_monthly_papers=5000 if req.quota == "Unlimited" else 100,
+        papers_generated_this_month=0,
+    )
+    db.add(school)
+    db.flush()
+
+    # 2. Create School Admin User with Bcrypt Password Hash
+    synthetic_email = f"{clean_username}@{clean_slug}.examforge.edu.pk"
+    admin_user = User(
+        school_id=school.id,
+        username=clean_username,
+        email=synthetic_email,
+        hashed_password=hash_password(clean_password),
+        full_name=f"{clean_name} Administrator",
+        principal_name=req.principal_name or "Principal",
+        phone_number=req.phone_number or "+923215423874",
+        role="school_admin",
+        is_active=True,
+        is_email_verified=True,  # Owner-authorized accounts are immediately verified
+        verification_method="manual",
+    )
+    db.add(admin_user)
+    db.flush()
+
+    # 3. Create School Membership
+    membership = SchoolMembership(
+        school_id=school.id,
+        user_id=admin_user.id,
+        role="school_admin",
+        is_active=True,
+    )
+    db.add(membership)
+
+    # 4. Create Active Subscription
+    plan = db.query(SubscriptionPlan).filter(SubscriptionPlan.slug == "premium").first() or db.query(SubscriptionPlan).first()
+    sub = SchoolSubscription(
+        school_id=school.id,
+        plan_id=plan.id if plan else None,
+        status="active",
+        current_period_start=datetime.now(timezone.utc),
+        current_period_end=datetime.now(timezone.utc) + timedelta(days=365 * 5),
+    )
+    db.add(sub)
+
+    db.commit()
+    db.refresh(school)
+    db.refresh(admin_user)
+
+    return OwnerCreateSchoolResponse(
+        success=True,
+        message=f"School '{clean_name}' created and activated successfully!",
+        school_id=school.id,
+        school_name=school.name,
+        username=clean_username,
+        role="school_admin",
+        quota=req.quota or "Unlimited",
+        createdAt=school.created_at.isoformat() if school.created_at else datetime.now(timezone.utc).isoformat(),
+    )

@@ -33,6 +33,8 @@ def init_db():
                     conn.exec_driver_sql("ALTER TABLE questions ADD COLUMN duplicate_risk FLOAT DEFAULT 0.03")
 
                 u_cols = [r[1] for r in conn.exec_driver_sql("PRAGMA table_info(users)").fetchall()]
+                if "username" not in u_cols:
+                    conn.exec_driver_sql("ALTER TABLE users ADD COLUMN username VARCHAR(100)")
                 if "is_email_verified" not in u_cols:
                     conn.exec_driver_sql("ALTER TABLE users ADD COLUMN is_email_verified BOOLEAN DEFAULT 1")
                 if "verification_code" not in u_cols:
@@ -68,7 +70,116 @@ def init_db():
     
     db: Session = SessionLocal()
     try:
-        # Check if already initialized
+        # Ensure existing seeded users have their usernames populated
+        existing_owner = db.query(User).filter(User.email == "alikhanwebdeveloper@gmail.com").first()
+        if not existing_owner:
+            existing_owner = User(
+                email="alikhanwebdeveloper@gmail.com",
+                username="alikhan",
+                hashed_password=hash_password("OwnerPass2026!"),
+                full_name="Muhammad Ali (AliBuild - Owner)",
+                principal_name="Muhammad Ali",
+                phone_number="+923215423874",
+                role=ROLE_SUPER_OWNER,
+                is_active=True,
+                is_email_verified=True,
+                verification_method="manual",
+                school_id=None,
+            )
+            db.add(existing_owner)
+            db.commit()
+        elif not existing_owner.username:
+            existing_owner.username = "alikhan"
+            db.commit()
+
+        existing_admin = db.query(User).filter(User.email == "superadmin@examforge.ai").first()
+        if existing_admin and not existing_admin.username:
+            existing_admin.username = "admin"
+            db.commit()
+
+        existing_school_admin = db.query(User).filter(User.email == "admin@lgs.edu.pk").first()
+        if existing_school_admin and not existing_school_admin.username:
+            existing_school_admin.username = "principal"
+            db.commit()
+
+        existing_teacher = db.query(User).filter(User.email == "teacher@lgs.edu.pk").first()
+        if existing_teacher and not existing_teacher.username:
+            existing_teacher.username = "teacher"
+            db.commit()
+
+        # Seed Peshawar Model School (PMS) with username 'pms' and password '123'
+        pms_user = db.query(User).filter(User.username == "pms").first()
+        if not pms_user:
+            pms_school = db.query(School).filter(School.slug == "pms").first()
+            if not pms_school:
+                pms_school = School(
+                    name="Peshawar Model School",
+                    slug="pms",
+                    principal_name="Dr. Ahmad Raza",
+                    phone_number="+923215423874",
+                    status="active",
+                    is_active=True,
+                    subscription_tier="paid",
+                    is_paid=True,
+                    free_papers_per_subject=1000,
+                    max_teachers=50,
+                    max_monthly_papers=5000,
+                )
+                db.add(pms_school)
+                db.flush()
+            pms_user = User(
+                school_id=pms_school.id,
+                username="pms",
+                email="admin@pms.edu.pk",
+                hashed_password=hash_password("123"),
+                full_name="Peshawar Model School Administrator",
+                principal_name="Dr. Ahmad Raza",
+                phone_number="+923215423874",
+                role=ROLE_SCHOOL_ADMIN,
+                is_active=True,
+                is_email_verified=True,
+                verification_method="manual",
+            )
+            db.add(pms_user)
+            db.commit()
+
+        # Seed Islamia College School (ICS) with username 'ics' and password '456'
+        ics_user = db.query(User).filter(User.username == "ics").first()
+        if not ics_user:
+            ics_school = db.query(School).filter(School.slug == "ics").first()
+            if not ics_school:
+                ics_school = School(
+                    name="Islamia College School",
+                    slug="ics",
+                    principal_name="Prof. Tariq Khan",
+                    phone_number="+923215423874",
+                    status="active",
+                    is_active=True,
+                    subscription_tier="paid",
+                    is_paid=True,
+                    free_papers_per_subject=1000,
+                    max_teachers=50,
+                    max_monthly_papers=5000,
+                )
+                db.add(ics_school)
+                db.flush()
+            ics_user = User(
+                school_id=ics_school.id,
+                username="ics",
+                email="admin@ics.edu.pk",
+                hashed_password=hash_password("456"),
+                full_name="Islamia College School Administrator",
+                principal_name="Prof. Tariq Khan",
+                phone_number="+923215423874",
+                role=ROLE_SCHOOL_ADMIN,
+                is_active=True,
+                is_email_verified=True,
+                verification_method="manual",
+            )
+            db.add(ics_user)
+            db.commit()
+
+        # Check if already initialized for initial plans & demo school
         existing_super = db.query(User).filter(User.role == ROLE_SUPER_ADMIN).first()
         if existing_super:
             return
