@@ -48,6 +48,7 @@ class OwnerCreateSchoolRequest(BaseModel):
     principal_name: Optional[str] = "Principal"
     phone_number: Optional[str] = "+923215423874"
     quota: Optional[str] = "Unlimited"
+    owner_key: Optional[str] = None
 
 class OwnerCreateSchoolResponse(BaseModel):
     success: bool

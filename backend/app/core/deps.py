@@ -8,6 +8,36 @@ from app.models.core_entities import User, School
 
 security = HTTPBearer(auto_error=False)
 
+def get_current_user_optional(
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    token: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+) -> Optional[User]:
+    raw_token = None
+    if credentials and credentials.credentials:
+        raw_token = credentials.credentials
+    elif token:
+        raw_token = token
+    elif "authorization" in request.headers:
+        auth_header = request.headers.get("authorization", "")
+        if auth_header.startswith("Bearer "):
+            raw_token = auth_header[7:].strip()
+
+    if not raw_token:
+        return None
+
+    payload = decode_access_token(raw_token)
+    if not payload:
+        return None
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user or not user.is_active:
+        return None
+    return user
+
 def get_current_user(
     request: Request,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),

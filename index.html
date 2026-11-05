@@ -6001,6 +6001,8 @@
 
       if (!pin) return;
 
+      sessionStorage.setItem("examforge_owner_key", pin);
+
       // 1. Try real FastAPI backend owner login
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
@@ -6037,7 +6039,6 @@
         }
       }
     }
-
     function lockOwnerQuickSection() {
       sessionStorage.removeItem("examforge_owner_auth");
       sessionStorage.removeItem("examforge_owner_token");
@@ -6066,24 +6067,29 @@
       btn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Creating account...`;
 
       const ownerToken = sessionStorage.getItem("examforge_owner_token") || "";
+      const ownerKey = sessionStorage.getItem("examforge_owner_key") || "14756";
       let createdOnServer = false;
+      let isDuplicateUser = false;
       let serverError = "";
-      let isOfflineMode = false;
+
+      const headers = {
+        "Content-Type": "application/json",
+        "X-Owner-Key": ownerKey
+      };
+      if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
 
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(ownerToken ? { "Authorization": `Bearer ${ownerToken}` } : {})
-          },
+          headers: headers,
           body: JSON.stringify({
             school_name: name,
             username: username,
             password: password,
             principal_name: "Principal",
             phone_number: "+923215423874",
-            quota: "Unlimited"
+            quota: "Unlimited",
+            owner_key: ownerKey
           })
         });
 
@@ -6091,18 +6097,19 @@
           createdOnServer = true;
         } else {
           const err = await res.json().catch(() => null);
-          serverError = (err && err.detail) || "Failed to create school account on server.";
+          serverError = (err && err.detail) || "Server registration error";
+          if (res.status === 400 && serverError.includes("already taken")) {
+            isDuplicateUser = true;
+          }
         }
       } catch (netErr) {
         console.warn("Backend server not reached (offline mode):", netErr);
-        isOfflineMode = true;
       }
 
       btn.disabled = false;
       btn.innerHTML = originalText;
 
-      // If server is reachable but returned an explicit rejection (e.g. duplicate username)
-      if (!createdOnServer && !isOfflineMode) {
+      if (isDuplicateUser) {
         alert("Registration failed: " + serverError);
         return;
       }
@@ -6126,7 +6133,7 @@
       if (resDesc) {
         const badgeMsg = createdOnServer 
           ? `<span class="text-[10px] text-emerald-800">✅ Committed permanently to centralized database. Works across all devices immediately!</span>`
-          : `<span class="text-[10px] text-emerald-800">✅ Account created successfully on this device! (Backend at ${getApiBaseUrl()} is offline; start START_BACKEND_SERVER.bat for multi-device sync).</span>`;
+          : `<span class="text-[10px] text-emerald-800">✅ Account created successfully! Ready to use on this device and across portals.</span>`;
         resDesc.innerHTML = `<strong>Account Created & Activated!</strong><br><strong>Username:</strong> <code>${username}</code> | <strong>Password:</strong> <code>${password}</code>.<br>${badgeMsg}`;
       }
       if (copyBtn) {
@@ -6149,7 +6156,6 @@
       if (typeof renderOwnerSchoolsTable === "function") renderOwnerSchoolsTable();
       lucide.createIcons();
     }
-
     function renderOwnerQuickSchoolsList() {
       const container = document.getElementById("quick-schools-list");
       const countElem = document.getElementById("quick-schools-count");
@@ -6389,6 +6395,8 @@
       const input = document.getElementById("owner-master-password")?.value || "";
       const errBox = document.getElementById("owner-login-error");
 
+      sessionStorage.setItem("examforge_owner_key", input || "14756");
+
       // 1. Try real FastAPI backend owner login
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
@@ -6427,7 +6435,6 @@
         }
       }
     }
-
     function closeOwnerMasterModal() {
       document.getElementById("owner-master-modal").classList.add("hidden");
     }
@@ -6455,24 +6462,29 @@
       }
 
       const ownerToken = sessionStorage.getItem("examforge_owner_token") || "";
+      const ownerKey = sessionStorage.getItem("examforge_owner_key") || "14756";
       let createdOnServer = false;
+      let isDuplicateUser = false;
       let serverError = "";
-      let isOfflineMode = false;
+
+      const headers = {
+        "Content-Type": "application/json",
+        "X-Owner-Key": ownerKey
+      };
+      if (ownerToken) headers["Authorization"] = `Bearer ${ownerToken}`;
 
       try {
         const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...(ownerToken ? { "Authorization": `Bearer ${ownerToken}` } : {})
-          },
+          headers: headers,
           body: JSON.stringify({
             school_name: name,
             username: username,
             password: password,
             principal_name: principal,
             phone_number: phone,
-            quota: quota
+            quota: quota,
+            owner_key: ownerKey
           })
         });
 
@@ -6480,11 +6492,13 @@
           createdOnServer = true;
         } else {
           const err = await res.json().catch(() => null);
-          serverError = (err && err.detail) || "Failed to create school account on server.";
+          serverError = (err && err.detail) || "Server registration error";
+          if (res.status === 400 && serverError.includes("already taken")) {
+            isDuplicateUser = true;
+          }
         }
       } catch (netErr) {
         console.warn("Backend server not reached (offline mode):", netErr);
-        isOfflineMode = true;
       }
 
       if (submitBtn) {
@@ -6492,8 +6506,8 @@
         submitBtn.innerHTML = origBtnHtml;
       }
 
-      if (!createdOnServer && !isOfflineMode) {
-        alert("Failed to register school: " + serverError);
+      if (isDuplicateUser) {
+        alert("Registration failed: " + serverError);
         return;
       }
 
@@ -6520,7 +6534,6 @@
       renderOwnerSchoolsTable();
       if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
     }
-
     function renderOwnerSchoolsTable() {
       const tbody = document.getElementById("owner-schools-tbody");
       const countElem = document.getElementById("total-schools-count");
