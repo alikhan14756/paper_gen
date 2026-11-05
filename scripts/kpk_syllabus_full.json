@@ -1,0 +1,1034 @@
+{
+  "1": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "Primary English Book 1",
+      "pdfPath": "books/class_1/kpk_textbook_class1_english.pdf",
+      "chapters": [
+        "Alphabet Fun & Phonics",
+        "Greetings and Manners",
+        "My Family & Home",
+        "Animals and Birds Around Us",
+        "Colors, Shapes & Numbers",
+        "Stories & Poems"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی برائے جماعت اول",
+      "pdfPath": "books/class_1/kpk_textbook_class1_urdu.pdf",
+      "chapters": [
+        "حروف تہجی اور صوتیات",
+        "آسان الفاظ سازی",
+        "میرا گھر اور پیارا خاندان",
+        "پھل اور سبزیاں",
+        "پیارے نبی صلی اللہ علیہ وآلہ وسلم",
+        "چھوٹی نظمیں اور کہانیاں"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 1",
+      "pdfPath": "books/class_1/kpk_textbook_class1_mathematics.pdf",
+      "chapters": [
+        "Counting Numbers 1 to 100",
+        "Addition within 20",
+        "Subtraction within 20",
+        "Shapes and Patterns",
+        "Measurement of Length & Weight",
+        "Pakistani Currency & Money"
+      ]
+    },
+    {
+      "subject": "General Knowledge",
+      "lang": "en",
+      "title": "General Knowledge Class 1",
+      "pdfPath": "books/class_1/kpk_textbook_class1_general_knowledge.pdf",
+      "chapters": [
+        "All About Myself",
+        "Our Senses & Body Parts",
+        "Good Habits & Cleanliness",
+        "Our Loving Earth & Plants",
+        "Weather & Seasons",
+        "Our Country Pakistan"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت اول",
+      "pdfPath": "books/class_1/kpk_textbook_class1_islamiyat.pdf",
+      "chapters": [
+        "کلمہ طیبہ اور اللہ تعالیٰ کی وحدانیت",
+        "اللہ تعالیٰ کی نعمتیں",
+        "پیارے نبی صلی اللہ علیہ وآلہ وسلم کا تعارف",
+        "قرآنی سورتیں (سورۃ الفاتحہ و اخلاص)",
+        "سچائی اور والدین کی خدمت",
+        "مسجد کے آداب"
+      ]
+    }
+  ],
+  "2": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "Primary English Book 2",
+      "pdfPath": "books/class_2/kpk_textbook_class2_english.pdf",
+      "chapters": [
+        "Everyday Greetings & Dialogues",
+        "My School & Friends",
+        "Cleanliness & Health",
+        "Wonderful Nature & Seasons",
+        "Helping Others & Community Helpers",
+        "Fun with Action Words & Verbs"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی برائے جماعت دوم",
+      "pdfPath": "books/class_2/kpk_textbook_class2_urdu.pdf",
+      "chapters": [
+        "حمد باری تعالیٰ",
+        "نعت رسول مقبول (ص)",
+        "محنت کا پھل",
+        "ہمارا خوبصورت سکول",
+        "وطن کی محبت",
+        "آؤ صفائی رکھیں"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 2",
+      "pdfPath": "books/class_2/kpk_textbook_class2_mathematics.pdf",
+      "chapters": [
+        "Numbers up to 1000",
+        "Addition with Regrouping",
+        "Subtraction with Borrowing",
+        "Introduction to Multiplication (Tables 2-5)",
+        "Division Concepts",
+        "Fractions: Halves & Quarters"
+      ]
+    },
+    {
+      "subject": "General Knowledge",
+      "lang": "en",
+      "title": "General Knowledge Class 2",
+      "pdfPath": "books/class_2/kpk_textbook_class2_general_knowledge.pdf",
+      "chapters": [
+        "Living Things & Non-Living Things",
+        "Plants and Their Seeds",
+        "Animal Habitats",
+        "Solar System & The Sun",
+        "Safety at Home & Road",
+        "Great Leader Quaid-e-Azam"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت دوم",
+      "pdfPath": "books/class_2/kpk_textbook_class2_islamiyat.pdf",
+      "chapters": [
+        "ارکان اسلام",
+        "نماز اور وضو کا طریقہ",
+        "سیرت طیبہ اور اخلاق حسنہ",
+        "قرآنی سورتیں (سورۃ الکوثر و الناس)",
+        "سچ بولنا اور امانت داری",
+        "ہمسایوں کے حقوق"
+      ]
+    }
+  ],
+  "3": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Class 3",
+      "pdfPath": "books/class_3/kpk_textbook_class3_english.pdf",
+      "chapters": [
+        "The Brave Boy",
+        "A Visit to the Zoo",
+        "Health is Wealth",
+        "The Clever Farmer",
+        "Our National Flag",
+        "Poems: The Wind and The Stars"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت سوم",
+      "pdfPath": "books/class_3/kpk_textbook_class3_urdu.pdf",
+      "chapters": [
+        "حمد و نعت",
+        "ہمارا پرچم",
+        "ایمانداری کا انعام",
+        "پشاور کا تاریخی شہر",
+        "تندرستی ہزار نعمت ہے",
+        "قائداعظم کی زندگی"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 3",
+      "pdfPath": "books/class_3/kpk_textbook_class3_general_science.pdf",
+      "chapters": [
+        "Structure and Functions of Living Things",
+        "Habitats and Ecosystems",
+        "Matter and Its States",
+        "Forces: Push and Pull",
+        "Sound and Heat Energy",
+        "Earth and Its Natural Resources"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 3",
+      "pdfPath": "books/class_3/kpk_textbook_class3_mathematics.pdf",
+      "chapters": [
+        "Four-Digit Whole Numbers",
+        "Multiplication up to 3 Digits",
+        "Long Division Methods",
+        "Proper & Improper Fractions",
+        "Perimeter and Area of Shapes",
+        "Data Handling and Bar Graphs"
+      ]
+    },
+    {
+      "subject": "Social Studies",
+      "lang": "en",
+      "title": "Social Studies Class 3",
+      "pdfPath": "books/class_3/kpk_textbook_class3_social_studies.pdf",
+      "chapters": [
+        "Maps and Directions",
+        "Villages and Cities of KP",
+        "Our Diverse Cultures & Festivals",
+        "Government and Public Services",
+        "Famous Historical Places of Pakistan",
+        "Being a Good Citizen"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت سوم",
+      "pdfPath": "books/class_3/kpk_textbook_class3_islamiyat.pdf",
+      "chapters": [
+        "ایمان بالرسالت",
+        "نماز کے اوقات اور فرائض",
+        "سیرت النبی (ص): سفر طائف",
+        "حفظ و ترجمہ دعائیں",
+        "بڑوں کا احترام اور چھوٹوں پر شفقت",
+        "دیانت داری اور رزق حلال"
+      ]
+    }
+  ],
+  "4": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Class 4",
+      "pdfPath": "books/class_4/kpk_textbook_class4_english.pdf",
+      "chapters": [
+        "An Inspiring Journey",
+        "Amazing Inventions of Science",
+        "Safety and First Aid",
+        "The Legend of Mount Everest",
+        "Our Beautiful Peshawar Valley",
+        "Poem: The Rainbow"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت چہارم",
+      "pdfPath": "books/class_4/kpk_textbook_class4_urdu.pdf",
+      "chapters": [
+        "حمد اور شکر گزاری",
+        "سیرت طیبہ: دیانت و امانت",
+        "خیبر پختونخوا کے حسین وادیاں",
+        "علم کی اہمیت",
+        "وقت کی پابندی",
+        "قومی ہیرو: نشان حیدر"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 4",
+      "pdfPath": "books/class_4/kpk_textbook_class4_general_science.pdf",
+      "chapters": [
+        "Human Body Systems & Organs",
+        "Animal and Plant Classification",
+        "Ecosystems and Food Chains",
+        "Matter and Kinetic Theory",
+        "Forms of Energy and Electricity",
+        "The Earth, Moon and Solar Eclipse"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 4",
+      "pdfPath": "books/class_4/kpk_textbook_class4_mathematics.pdf",
+      "chapters": [
+        "Whole Numbers up to 1,000,000",
+        "Factors and Multiples (HCF & LCM)",
+        "Operations on Fractions",
+        "Decimals and Percentages",
+        "Angles, Triangles & Quadrilaterals",
+        "Averages and Information Handling"
+      ]
+    },
+    {
+      "subject": "Social Studies",
+      "lang": "en",
+      "title": "Social Studies Class 4",
+      "pdfPath": "books/class_4/kpk_textbook_class4_social_studies.pdf",
+      "chapters": [
+        "Geography of Khyber Pakhtunkhwa",
+        "Climate and Natural Vegetation",
+        "Citizenship and Pakistani Laws",
+        "Economic Activities: Farming & Mining",
+        "Ancient Indus Valley Civilization",
+        "Communication and Transport"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت چہارم",
+      "pdfPath": "books/class_4/kpk_textbook_class4_islamiyat.pdf",
+      "chapters": [
+        "ایمان بالکتب (آسمانی کتابیں)",
+        "طہارت، پاکیزگی اور وضو",
+        "غزوہ بدر کے اہم اسباق",
+        "قرآنی سورتیں (سورۃ الفلق و العصر)",
+        "حسن اخلاق اور برداشت",
+        "ماحول کی حفاظت"
+      ]
+    }
+  ],
+  "5": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Compulsory Class 5",
+      "pdfPath": "books/class_5/kpk_textbook_class5_english.pdf",
+      "chapters": [
+        "Hazrat Umar Farooq (R.A) and Justice",
+        "The Power of Education",
+        "Environmental Conservation",
+        "A Trip to Swat Valley",
+        "The Digital Age & Internet",
+        "Poem: The Way Through the Woods"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت پنجم",
+      "pdfPath": "books/class_5/kpk_textbook_class5_urdu.pdf",
+      "chapters": [
+        "حمدِ الٰہی",
+        "نعتِ رسولِ آخر الزماں",
+        "علامہ اقبال کا پیغام نوجوانوں کے نام",
+        "خیبر پاس کی تاریخی اہمیت",
+        "کھیلوں کی اہمیت",
+        "احساسِ ذمہ داری"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 5",
+      "pdfPath": "books/class_5/kpk_textbook_class5_general_science.pdf",
+      "chapters": [
+        "Classification of Living Organisms (Vertebrates & Invertebrates)",
+        "Microorganisms: Bacteria and Viruses",
+        "Seed Structure and Germination",
+        "Pollution and Environmental Degradation",
+        "Physical and Chemical Changes of Matter",
+        "Light, Sound and Reflection",
+        "Earth in the Solar System"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 5",
+      "pdfPath": "books/class_5/kpk_textbook_class5_mathematics.pdf",
+      "chapters": [
+        "Numbers up to Billions & Operations",
+        "HCF and LCM by Prime Factorization",
+        "Fractional Equations & Word Problems",
+        "Decimals, Ratios and Percentages",
+        "Unitary Method and Distance-Speed",
+        "Geometry: Angles, Bisectors and Circles"
+      ]
+    },
+    {
+      "subject": "Social Studies",
+      "lang": "en",
+      "title": "Social Studies Class 5",
+      "pdfPath": "books/class_5/kpk_textbook_class5_social_studies.pdf",
+      "chapters": [
+        "World Map and Major Continents",
+        "Pakistan's Physical Features & Deserts",
+        "The 1973 Constitution Overview",
+        "Trade, Currency and Economy",
+        "History: Gandhara Civilization in Peshawar",
+        "Global Peace and Human Rights"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت پنجم",
+      "pdfPath": "books/class_5/kpk_textbook_class5_islamiyat.pdf",
+      "chapters": [
+        "ایمان بالآخرت اور عقیدہ توحید",
+        "روزہ اور زکوٰۃ کے معاشرتی فوائد",
+        "سیرت طیبہ: فتح مکہ اور عفو و درگزر",
+        "قرآنی سورتیں مع ترجمہ و تفسیر",
+        "اسلام میں خواتین کے حقوق",
+        "صلہ رحمی اور مہمان نوازی"
+      ]
+    }
+  ],
+  "6": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_english.pdf",
+      "chapters": [
+        "A Fair Deal (Islamic Ethics)",
+        "The Karakoram Highway",
+        "Dignity of Labor",
+        "Water Scarcity & Conservation",
+        "The Wonders of Space Exploration",
+        "Poem: Leisure by W.H. Davies"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت ششم",
+      "pdfPath": "books/class_6/kpk_textbook_class6_urdu.pdf",
+      "chapters": [
+        "حمد باری تعالیٰ (حفیظ جالندھری)",
+        "نعت رسول کریم صلی اللہ علیہ وآلہ وسلم",
+        "تحریکِ پاکستان اور خیبر پختونخوا",
+        "محنت میں عظمت ہے",
+        "کمپیوٹر اور جدید دور",
+        "قومی ترانہ اور اس کی عظمت"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_general_science.pdf",
+      "chapters": [
+        "Cellular Organization of Plants & Animals",
+        "Sense Organs & Nervous Coordination",
+        "Photosynthesis and Respiration",
+        "Air and Atmospheric Gases",
+        "Elements, Compounds and Mixtures",
+        "Energy Forms & Transfer",
+        "Force and Machines"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_mathematics.pdf",
+      "chapters": [
+        "Sets and Set Operations",
+        "Whole Numbers and Integers",
+        "Factors, Multiples & Prime Numbers",
+        "Ratio and Proportion",
+        "Financial Arithmetic (Profit, Loss, Zakat)",
+        "Introduction to Algebra & Expressions",
+        "Geometry: Angles, Polygons, Perimeter & Area"
+      ]
+    },
+    {
+      "subject": "History",
+      "lang": "en",
+      "title": "History Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_history.pdf",
+      "chapters": [
+        "Indus Valley Civilization (Mohenjo-daro & Harappa)",
+        "Aryan Civilization and Vedic Culture",
+        "Gandhara Civilization and Buddhist Heritage",
+        "Arrival of Muslims: Muhammad bin Qasim in Sindh"
+      ]
+    },
+    {
+      "subject": "Geography",
+      "lang": "en",
+      "title": "Geography Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_geography.pdf",
+      "chapters": [
+        "Earth as a Planet and Coordinates",
+        "Movements of Earth: Rotation and Revolution",
+        "Major Landforms: Mountains, Plateaus, Plains",
+        "Oceans, Seas and River Systems of the World"
+      ]
+    },
+    {
+      "subject": "Computer Education",
+      "lang": "en",
+      "title": "Computer Education Class 6",
+      "pdfPath": "books/class_6/kpk_textbook_class6_computer_education.pdf",
+      "chapters": [
+        "Introduction to Computers and Processing",
+        "Computer Hardware & Peripheral Devices",
+        "Operating Systems: Windows & File Management",
+        "Word Processing: Microsoft Word Basics",
+        "Internet & Web Browsing Safety"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت ششم",
+      "pdfPath": "books/class_6/kpk_textbook_class6_islamiyat.pdf",
+      "chapters": [
+        "قرآن مجید اور اس کے فضائل",
+        "عقیدہ رسالت اور ختم نبوت",
+        "حج کی فرضیت اور فلسفہ",
+        "سیرت طیبہ: مواخات مدینہ",
+        "اسلام کا نظام عدل",
+        "حقوق العباد اور معاشرتی ذمہ داریاں"
+      ]
+    }
+  ],
+  "7": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_english.pdf",
+      "chapters": [
+        "Kindness to Animals",
+        "The Historic Bala Hissar Fort",
+        "Disaster Preparedness",
+        "Renewable Energy for Green Pakistan",
+        "The Quaid on Youth Leadership",
+        "Poem: My Mother"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت ہفتم",
+      "pdfPath": "books/class_7/kpk_textbook_class7_urdu.pdf",
+      "chapters": [
+        "حمد اور معرفتِ الٰہی",
+        "نعتِ رسولِ مجتبیٰ",
+        "سر سید احمد خان اور علی گڑھ تحریک",
+        "پاکستان کے اہم قدرتی وسائل",
+        "صحت اور ماحولیاتی آلودگی",
+        "اردو محاورات اور قواعد"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_general_science.pdf",
+      "chapters": [
+        "Human Organ Systems (Digestive & Circulatory)",
+        "Transport in Plants and Transpiration",
+        "Reproduction in Plants (Pollination & Fertilization)",
+        "Atomic Structure and Periodic Table",
+        "Physical and Chemical Changes",
+        "Transmission of Heat (Conduction, Convection, Radiation)",
+        "Sound Waves"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_mathematics.pdf",
+      "chapters": [
+        "Sets and Venn Diagrams",
+        "Rational Numbers and Operations",
+        "Decimals and Square Roots",
+        "Financial Mathematics: Taxes, Zakat and Ushr",
+        "Algebraic Expressions, Identities & Factorization",
+        "Linear Equations in One Variable",
+        "Practical Geometry & Circles"
+      ]
+    },
+    {
+      "subject": "History",
+      "lang": "en",
+      "title": "History Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_history.pdf",
+      "chapters": [
+        "Establishment of Delhi Sultanate (Slave Dynasty to Lodhis)",
+        "Sultanate Administration and Architecture",
+        "Founding of the Mughal Empire (Babur and Humayun)",
+        "Reign of Akbar the Great and Religious Policies"
+      ]
+    },
+    {
+      "subject": "Geography",
+      "lang": "en",
+      "title": "Geography Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_geography.pdf",
+      "chapters": [
+        "Atmosphere: Composition and Layers",
+        "Atmospheric Temperature and Pressure Belts",
+        "Atmospheric Moisture: Humidity, Clouds, Rainfall",
+        "Settlements: Urbanization and Rural Patterns"
+      ]
+    },
+    {
+      "subject": "Computer Education",
+      "lang": "en",
+      "title": "Computer Education Class 7",
+      "pdfPath": "books/class_7/kpk_textbook_class7_computer_education.pdf",
+      "chapters": [
+        "Computer Software: System vs Application",
+        "Input and Output Technology Advances",
+        "Spreadsheets: Microsoft Excel Fundamentals",
+        "Multimedia, Graphics and Presentation Software",
+        "Cyber Security and Ethics"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت ہفتم",
+      "pdfPath": "books/class_7/kpk_textbook_class7_islamiyat.pdf",
+      "chapters": [
+        "قرآن مجید: فہم و تدبر",
+        "نماز باجماعت اور جمعہ کی اہمیت",
+        "سیرت طیبہ: صلح حدیبیہ اور اس کے دور رس نتائج",
+        "جہاد فی سبیل اللہ کا حقیقی تصور",
+        "حقوق اللہ اور حقوق العباد کا توازن",
+        "اسلامی ریاست اور اقلیتوں کے حقوق"
+      ]
+    }
+  ],
+  "8": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_english.pdf",
+      "chapters": [
+        "Tolerance of the Holy Prophet (PBUH)",
+        "The Wonder of Shogran & Kaghan",
+        "Clean Drinking Water",
+        "Artificial Intelligence and Future Jobs",
+        "Sir Syed's Educational Revolution",
+        "Poem: A Nation's Strength"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت ہشتم",
+      "pdfPath": "books/class_8/kpk_textbook_class8_urdu.pdf",
+      "chapters": [
+        "حمد (مولانا حالی)",
+        "نعت (امیر مینائی)",
+        "خیبر پختونخوا کے قابل فخر سپوت",
+        "محنت، جستجو اور کامیابی",
+        "پاکستان کا ایٹمی پروگرام",
+        "ڈراما: سچ کی جیت"
+      ]
+    },
+    {
+      "subject": "General Science",
+      "lang": "en",
+      "title": "General Science Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_general_science.pdf",
+      "chapters": [
+        "Human Nervous System & Brain Anatomy",
+        "Cell Division: Mitosis and Meiosis",
+        "Biotechnology and Genetic Engineering",
+        "Pollutants and Global Warming (Greenhouse Effect)",
+        "Chemical Reactions and Chemical Equations",
+        "Acids, Bases, Alkalis and Salts",
+        "Force, Pressure and Hydraulics"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_mathematics.pdf",
+      "chapters": [
+        "Real Numbers and Number System",
+        "Square Roots and Cube Roots",
+        "Number Systems: Base 2, Base 5, Base 8, Base 10",
+        "Financial Arithmetic: Banking, Compound Interest & Insurance",
+        "Polynomials: Division and Identities",
+        "Simultaneous Linear Equations",
+        "Surface Area and Volume of Cylinders & Cones"
+      ]
+    },
+    {
+      "subject": "History",
+      "lang": "en",
+      "title": "History Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_history.pdf",
+      "chapters": [
+        "Consolidation of the Mughal Empire under Jahangir and Shah Jahan",
+        "Aurangzeb Alamgir and Decline of Mughals",
+        "Arrival of European Traders & British East India Company",
+        "War of Independence 1857 & End of Mughal Rule"
+      ]
+    },
+    {
+      "subject": "Geography",
+      "lang": "en",
+      "title": "Geography Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_geography.pdf",
+      "chapters": [
+        "Internal Structure of the Earth and Plate Tectonics",
+        "Earthquakes and Volcanic Activity",
+        "Weathering, Mass Wasting and Erosion by Rivers & Wind",
+        "Major Ocean Currents of the World"
+      ]
+    },
+    {
+      "subject": "Computer Education",
+      "lang": "en",
+      "title": "Computer Education Class 8",
+      "pdfPath": "books/class_8/kpk_textbook_class8_computer_education.pdf",
+      "chapters": [
+        "Networks and Communications: LAN, WAN, Topologies",
+        "Data Transmission Media: Fiber Optics & Wireless",
+        "Computer Security: Viruses, Malware, Antivirus",
+        "Algorithms and Flowcharts",
+        "Introduction to Programming Concepts"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت ہشتم",
+      "pdfPath": "books/class_8/kpk_textbook_class8_islamiyat.pdf",
+      "chapters": [
+        "قرآن مجید کا تعارف اور اعجاز",
+        "عقائد: توحید، رسالت اور آخرت کے اثرات",
+        "سیرت طیبہ: غزوہ تبوک اور حجة الوداع",
+        "امربالمعروف اور نہی عن المنکر",
+        "اسلام کا معاشی عدل",
+        "اخوت و مساوات اور تکریم انسانیت"
+      ]
+    }
+  ],
+  "9": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Compulsory Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_english.pdf",
+      "chapters": [
+        "Hazrat Muhammad (PBUH) - An Embodiment of Justice",
+        "Daffodils by William Wordsworth",
+        "Media and Its Impact",
+        "Hazrat Asma (R.A)",
+        "Stopping by Woods on a Snowy Evening",
+        "The Quaid's Vision and Pakistan",
+        "Sultan Ahmad Mosque",
+        "Peace by Dr. Hartmann",
+        "All is Not Lost",
+        "Drug Addiction",
+        "Noise in the Environment"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت نہم",
+      "pdfPath": "books/class_9/kpk_textbook_class9_urdu.pdf",
+      "chapters": [
+        "ہجرت نبوی صلی اللہ علیہ وآلہ وسلم",
+        "کاہلی (سر سید احمد خان)",
+        "اخلاق نبوی صلی اللہ علیہ وآلہ وسلم",
+        "شاعروں کے لطیفے",
+        "نصوح اور سلیم کی گفتگو",
+        "پنچایت (منشی پریم چند)",
+        "آرام و سکون",
+        "امتحان",
+        "حمد و نعت"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Science Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_mathematics.pdf",
+      "chapters": [
+        "Matrices and Determinants",
+        "Real and Complex Numbers",
+        "Logarithms and Laws of Logs",
+        "Algebraic Expressions and Algebraic Formulas",
+        "Factorization and Remainder Theorem",
+        "Algebraic Manipulation (HCF & LCM)",
+        "Linear Equations and Inequalities",
+        "Linear Graphs and Applications",
+        "Introduction to Coordinate Geometry",
+        "Congruent Triangles & Parallelograms",
+        "Line Bisectors and Angle Bisectors",
+        "Practical Geometry - Triangles"
+      ]
+    },
+    {
+      "subject": "Physics",
+      "lang": "en",
+      "title": "Physics Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_physics.pdf",
+      "chapters": [
+        "Physical Quantities and Measurement (Vernier & Micrometer)",
+        "Kinematics: Velocity, Acceleration, Equations of Motion",
+        "Dynamics: Newton's Laws, Momentum, Friction",
+        "Turning Effect of Forces: Torque, Equilibrium & Center of Mass",
+        "Gravitation: Law of Universal Gravitation & Satellites",
+        "Work and Energy: Kinetic, Potential, Power, Efficiency",
+        "Properties of Matter: Elasticity, Density, Pressure, Pascal's Principle",
+        "Thermal Properties of Matter: Specific Heat, Latent Heat",
+        "Transfer of Heat: Conduction, Convection, Radiation, Greenhouse Effect"
+      ]
+    },
+    {
+      "subject": "Chemistry",
+      "lang": "en",
+      "title": "Chemistry Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_chemistry.pdf",
+      "chapters": [
+        "Fundamentals of Chemistry: Atomic Mass, Mole Concept, Avogadro's Number",
+        "Structure of Atoms: Rutherford, Bohr Model, Electronic Configuration",
+        "Periodic Table and Periodicity of Properties (Electronegativity, Ionization Energy)",
+        "Structure of Molecules: Ionic, Covalent, Coordinate & Hydrogen Bonding",
+        "Physical States of Matter: Boyle's Law, Charles's Law, Evaporation, Boiling Point",
+        "Solutions: Saturated Solutions, Molarity, Solubility",
+        "Electrochemistry: Oxidation, Reduction, Daniell Cell, Rusting",
+        "Chemical Reactivity: Metals and Non-Metals"
+      ]
+    },
+    {
+      "subject": "Biology",
+      "lang": "en",
+      "title": "Biology Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_biology.pdf",
+      "chapters": [
+        "Introduction to Biology & Divisions",
+        "Solving a Biological Problem (Scientific Method)",
+        "Biodiversity and Five Kingdom Classification",
+        "Cells and Tissues: Microscopy, Organelles, Plant vs Animal",
+        "Cell Cycle: Mitosis and Meiosis",
+        "Enzymes: Mechanism, Characteristics & Factors",
+        "Bioenergetics: Photosynthesis, Respiration & ATP",
+        "Nutrition in Plants and Humans",
+        "Transport in Plants and Humans (Blood & Heart)"
+      ]
+    },
+    {
+      "subject": "Computer Science",
+      "lang": "en",
+      "title": "Computer Science Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_computer_science.pdf",
+      "chapters": [
+        "Fundamentals of Computer: History, Generations, Hardware Architecture",
+        "Fundamentals of Operating System: Functions, Windows GUI & Process Management",
+        "Office Automation: Microsoft Word, Excel, PowerPoint Mastery",
+        "Data Communication and Networking: Transmission Media, Protocols, Topologies",
+        "Computer Security and Ethics: Threats, Viruses, Cyber Laws and Data Protection"
+      ]
+    },
+    {
+      "subject": "Pakistan Studies",
+      "lang": "en",
+      "title": "Pakistan Studies Class 9",
+      "pdfPath": "books/class_9/kpk_textbook_class9_pakistan_studies.pdf",
+      "chapters": [
+        "Ideological Basis of Pakistan: Two-Nation Theory & Quaid's Statements",
+        "Making of Pakistan (1906 to 1947, 1940 Lahore Resolution)",
+        "Land and Environment of Pakistan: Mountains, Plains, Climate, Deserts",
+        "History of Pakistan Part I: Early Problems & 1956/1962 Constitutions"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت نہم",
+      "pdfPath": "books/class_9/kpk_textbook_class9_islamiyat.pdf",
+      "chapters": [
+        "سورۃ الانفال (آیات 1 تا 75 مع مکمل ترجمہ و تفسیر)",
+        "منتخب احادیث نبویہ (1 تا 10 مع تشریح)",
+        "موضوعاتی مطالعہ: قرآن مجید کا تعارف و حفاظت",
+        "عقیدہ توحید، رسالت اور آخرت",
+        "اخلاق حسنہ: سچائی، عدل، عفو و درگزر"
+      ]
+    }
+  ],
+  "10": [
+    {
+      "subject": "English",
+      "lang": "en",
+      "title": "English Compulsory Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_english.pdf",
+      "chapters": [
+        "Hazrat Muhammad (PBUH) An Embodiment of Justice",
+        "Chinese New Year",
+        "Try Again by W.E. Hickson",
+        "First Aid: Cuts, Scrapes & Emergencies",
+        "The Rain by W.H. Davies",
+        "Television vs Newspapers",
+        "Little by Little One Walks Far",
+        "Peace (Poem)",
+        "Selecting the Right Career",
+        "A World Without Books",
+        "Great Expectations by Charles Dickens",
+        "Faithfulness"
+      ]
+    },
+    {
+      "subject": "Urdu",
+      "lang": "ur",
+      "title": "اردو لازمی جماعت دہم",
+      "pdfPath": "books/class_10/kpk_textbook_class10_urdu.pdf",
+      "chapters": [
+        "مرزا محمد سعید (شاہد احمد دہلوی)",
+        "نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)",
+        "پرستان کی شہزادی",
+        "اردو ادب میں عید الفطر",
+        "مجھے میرے دوستوں سے بچاؤ",
+        "ملمع (ہاجرہ مسرور)",
+        "میدانِ کربلا میں صبح کا منظر (میر انیس)",
+        "فاطمہ بنت عبداللہ (علامہ اقبال)",
+        "غزلیات حسرت موہانی، جگر و فراق"
+      ]
+    },
+    {
+      "subject": "Mathematics",
+      "lang": "en",
+      "title": "Mathematics Science Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_mathematics.pdf",
+      "chapters": [
+        "Quadratic Equations: Factorization, Completing Square, Quadratic Formula",
+        "Theory of Quadratic Equations: Discriminant, Nature of Roots, Cube Roots of Unity",
+        "Variations: Direct & Inverse Variations, Joint Variation, Theorem on Proportions",
+        "Partial Fractions: Proper, Improper, Linear & Quadratic Factors",
+        "Sets and Functions: Binary Relations, Functions, De Morgan's Laws",
+        "Basic Statistics: Frequency Distribution, Mean, Median, Mode, Variance, Standard Deviation",
+        "Introduction to Trigonometry: Measurement of Angles, Trigonometric Ratios, Fundamental Identities",
+        "Projection of a Side of a Triangle & Hero's Formula",
+        "Chords of a Circle & Theorems",
+        "Tangent to a Circle & Theorems",
+        "Chords and Arcs",
+        "Practical Geometry - Circles"
+      ]
+    },
+    {
+      "subject": "Physics",
+      "lang": "en",
+      "title": "Physics Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_physics.pdf",
+      "chapters": [
+        "Simple Harmonic Motion and Waves: Pendulum, Mass-Spring, Wave Equations",
+        "Sound: Propagation, Speed, Echo, Audible Frequency Range, Ultrasound",
+        "Geometrical Optics: Reflection, Refraction, Lenses, Total Internal Reflection, Optical Instruments",
+        "Electrostatics: Coulomb's Law, Electric Field, Potential, Capacitors",
+        "Current Electricity: Ohm's Law, Resistance, Series/Parallel, Electric Power, Joule's Law",
+        "Electromagnetism: Magnetic Effect of Current, Electromagnetic Induction, Transformer",
+        "Basic Electronics: Thermionic Emission, Logic Gates (AND, OR, NOT, NAND, NOR)",
+        "Information and Communication Technology (ICT): Components, Internet, Storage",
+        "Atomic and Nuclear Physics: Radioactivity, Half-life, Nuclear Fission and Fusion"
+      ]
+    },
+    {
+      "subject": "Chemistry",
+      "lang": "en",
+      "title": "Chemistry Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_chemistry.pdf",
+      "chapters": [
+        "Chemical Equilibrium: Dynamic Equilibrium, Law of Mass Action, Equilibrium Constant",
+        "Acids, Bases and Salts: Arrhenius, Bronsted-Lowry, Lewis Concepts, pH Scale, Buffer Solutions",
+        "Organic Chemistry: Classification, Functional Groups, Homologous Series, Alkanes, Alkenes, Alkynes",
+        "Hydrocarbons: Preparation and Chemical Reactions of Alkanes, Alkenes and Alkynes",
+        "Biochemistry: Carbohydrates, Proteins, Lipids, Nucleic Acids (DNA & RNA), Vitamins",
+        "The Atmosphere: Layers (Troposphere, Stratosphere), Greenhouse Effect, Acid Rain, Ozone Depletion",
+        "Water: Hardness of Water, Water-borne Diseases, Water Purification",
+        "Chemical Industries: Metallurgy of Copper, Solvay's Process, Urea Manufacturing"
+      ]
+    },
+    {
+      "subject": "Biology",
+      "lang": "en",
+      "title": "Biology Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_biology.pdf",
+      "chapters": [
+        "Gaseous Exchange: In Plants and Respiratory System in Humans",
+        "Homeostasis: Osmoregulation, Thermoregulation, Excretory System in Humans, Kidney Stones & Dialysis",
+        "Coordination and Control: Nervous System, Reflex Action, Endocrine System, Hormones",
+        "Support and Movement: Human Skeleton, Joints, Muscles & Movement Disorders",
+        "Reproduction: Asexual and Sexual Reproduction in Plants and Animals, Pollination, STDs",
+        "Inheritance: Mendel's Laws, Chromosomes and Genes, DNA Replication, Variation",
+        "Man and His Environment: Ecosystem, Food Web, Biogeochemical Cycles, Symbiosis, Environmental Conservation",
+        "Biotechnology: Fermentation, Genetic Engineering, Insulin Production, Single Cell Protein",
+        "Pharmacology: Medicinal Drugs, Antibiotics, Vaccines, Sedatives & Narcotics"
+      ]
+    },
+    {
+      "subject": "Computer Science",
+      "lang": "en",
+      "title": "Computer Science Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_computer_science.pdf",
+      "chapters": [
+        "Problem Solving and Algorithm Design: Flowcharts and Pseudo-code",
+        "Basics of Programming in C Language: Syntax, Data Types, Variables, Constants",
+        "Input and Output Handling in C: printf, scanf, Escape Sequences, Format Specifiers",
+        "Control Structures in C: if, if-else, switch, Conditional Operator",
+        "Loop Structures in C: for loop, while loop, do-while loop, Nested Loops",
+        "Functions in C: Built-in Functions, User-Defined Functions, Parameter Passing",
+        "Working with Logic and Arrays in C Programming"
+      ]
+    },
+    {
+      "subject": "Pakistan Studies",
+      "lang": "en",
+      "title": "Pakistan Studies Class 10",
+      "pdfPath": "books/class_10/kpk_textbook_class10_pakistan_studies.pdf",
+      "chapters": [
+        "History of Pakistan Part II: 1971 War, 1973 Constitution, Z.A. Bhutto, Zia Era, 1988-1999, Musharraf Era to Present",
+        "Foreign Policy and International Relations: Pakistan's Relations with China, USA, Muslim World, SAARC & UN",
+        "Economic Development of Pakistan: Agriculture, Major Crops, Industries, Energy Resources, Foreign Trade & CPEC",
+        "Population, Society and Culture of Pakistan: Demographics, Languages (Pashto, Hindko, Urdu), Education & Health"
+      ]
+    },
+    {
+      "subject": "Islamiyat",
+      "lang": "ur",
+      "title": "اسلامیات لازمی جماعت دہم",
+      "pdfPath": "books/class_10/kpk_textbook_class10_islamiyat.pdf",
+      "chapters": [
+        "سورۃ الاحزاب (آیات 1 تا 73 مع مکمل ترجمہ و تشریح)",
+        "منتخب احادیث نبویہ (11 تا 20 مع تشریح)",
+        "موضوعاتی مطالعہ: جہاد فی سبیل اللہ کی حکمت و احکام",
+        "خاندانی زندگی اور معاشرتی آداب",
+        "صحابہ کرام اور ائمہ مجتہدین کا تعارف",
+        "اسلام کا نظام اخلاق اور عفت و حیا"
+      ]
+    }
+  ]
+}

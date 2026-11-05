@@ -192,64 +192,75 @@
 
   <!-- TOP NAVBAR -->
   <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200/80 px-3 sm:px-8 py-2.5 sm:py-3 shadow-sm no-print">
-    <div class="max-w-7xl mx-auto flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
-      <div class="flex items-center space-x-2.5 sm:space-x-3">
-        <div class="h-9 w-9 sm:h-10 sm:w-10 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30 shrink-0">
-          <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 w-full">
+      <div class="flex items-center space-x-2 sm:space-x-2.5 shrink-0">
+        <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30 shrink-0">
+          <i data-lucide="sparkles" class="w-4 h-4 sm:w-4.5 sm:h-4.5"></i>
         </div>
         <div>
-          <div class="flex items-center space-x-1.5 sm:space-x-2">
-            <h1 class="text-base sm:text-lg font-black tracking-tight text-slate-900">ExamForge<span class="text-orange-600">.AI</span></h1>
-            <span class="clay-badge-mint text-[9px] sm:text-[10px] font-extrabold px-1.5 sm:px-2 py-0.5 rounded-full">BISEP 2026</span>
+          <div class="flex items-center space-x-1.5">
+            <h1 class="text-sm sm:text-base md:text-lg font-black tracking-tight text-slate-900 whitespace-nowrap">ExamForge<span class="text-orange-600">.AI</span></h1>
+            <span class="clay-badge-mint text-[9px] sm:text-[10px] font-extrabold px-1.5 py-0.5 rounded-full whitespace-nowrap">BISEP 2026</span>
           </div>
-          <p class="text-[10px] sm:text-[11px] font-medium text-slate-500 hidden md:block">KPK Textbook Board Class 9th & 10th Examination System</p>
+          <p class="text-[10px] text-slate-500 hidden xl:block whitespace-nowrap">KPK Peshawar Board Class 1st to 10th Real Textbooks</p>
         </div>
       </div>
 
-      <!-- Action buttons & Auth states -->
-      <div class="flex items-center space-x-1.5 sm:space-x-2.5 flex-wrap">
+      <!-- Action buttons & Auth states (Strictly single-line, flex-nowrap, no overflow onto second line) -->
+      <div class="flex items-center gap-1 sm:gap-2 flex-nowrap shrink-0 overflow-x-auto no-scrollbar py-0.5">
         <!-- Guest status indicator -->
-        <div id="nav-guest-status" class="flex items-center space-x-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] sm:text-xs font-bold text-emerald-800">
+        <div id="nav-guest-status" class="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 shrink-0 whitespace-nowrap">
           <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span id="guest-quota-badge" class="hidden sm:inline">Guest Free Access: Instant Paper Generation</span>
-          <span class="sm:hidden font-extrabold text-[10px]">Free Guest</span>
+          <span id="guest-quota-badge">Guest Free Access</span>
         </div>
 
-        <!-- Paper Generator Quick Navigation -->
-        <button onclick="scrollToSection('generator')" class="clay-btn-secondary bg-orange-50/80 border-orange-200 text-orange-800 hover:bg-orange-100 px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black flex items-center space-x-1 sm:space-x-1.5 shadow-sm" title="Jump to Class 9th & 10th Paper Generator">
-          <i data-lucide="file-text" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange-600"></i>
-          <span>Paper Generator</span>
+        <!-- KPK Textbooks Library Quick Button (Classes 1st to 10th) -->
+        <button onclick="openTextbookLibraryModal()" class="clay-btn-secondary bg-emerald-50/90 border-emerald-300 text-emerald-800 hover:bg-emerald-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Browse all 70 KPK Textbooks for Class 1st to 10th">
+          <i data-lucide="book-open" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span class="hidden md:inline">KPK Books (1-10)</span>
+          <span class="md:hidden">Books</span>
         </button>
 
-        <!-- Magic Tool Button (New!) -->
-        <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-black flex items-center space-x-1.5 shadow-sm" title="Upload picture of handwritten paper and convert to formatted Word document">
-          <i data-lucide="wand-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600"></i>
-          <span>Magic Tool</span>
-          <span class="bg-purple-600 text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider">OCR</span>
+        <!-- Paper Generator Quick Navigation -->
+        <button onclick="scrollToSection('generator')" class="clay-btn-secondary bg-orange-50/80 border-orange-200 text-orange-800 hover:bg-orange-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Jump to Paper Generator">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 text-orange-600"></i>
+          <span class="hidden sm:inline">Generator</span>
+          <span class="sm:hidden">Gen</span>
+        </button>
+
+        <!-- Magic Tool Button -->
+        <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Upload picture of handwritten paper and convert to Word">
+          <i data-lucide="wand-2" class="w-3.5 h-3.5 text-purple-600"></i>
+          <span>Magic</span>
+          <span class="bg-purple-600 text-white text-[8px] font-black px-1 py-0.5 rounded-full uppercase">OCR</span>
         </button>
 
         <!-- School Signed In Status (Hidden by default) -->
-        <div id="nav-school-status" class="hidden flex items-center space-x-1.5 sm:space-x-2">
-          <div class="clay-card-flat px-2 sm:px-3 py-1 rounded-xl flex items-center space-x-1.5 border border-orange-200 bg-orange-50/50">
+        <div id="nav-school-status" class="hidden flex items-center gap-1 sm:gap-1.5 shrink-0">
+          <div class="clay-card-flat px-2 py-1 rounded-xl flex items-center space-x-1.5 border border-orange-200 bg-orange-50/50 shrink-0">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[110px] sm:max-w-[150px] truncate">School Portal</span>
-            <span class="clay-badge-mint text-[9px] font-bold px-1.5 py-0.5 rounded-full hidden sm:inline">Pro School</span>
+            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[90px] sm:max-w-[130px] truncate">School Portal</span>
           </div>
-          <button onclick="handleSchoolLogout()" title="Sign Out" class="p-1.5 sm:p-2 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200">
-            <i data-lucide="log-out" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <!-- Change Password Button for Logged in School -->
+          <button onclick="openChangePasswordModal('school')" title="Change School Password" class="px-2 py-1.5 rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 transition border border-orange-200 shrink-0 flex items-center space-x-1 text-xs font-bold whitespace-nowrap">
+            <i data-lucide="key-round" class="w-3.5 h-3.5 text-orange-600"></i>
+            <span class="hidden lg:inline">Password</span>
+          </button>
+          <button onclick="handleSchoolLogout()" title="Sign Out" class="p-1.5 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200 shrink-0">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
           </button>
         </div>
 
         <!-- School Sign In Button -->
-        <button onclick="openSchoolLoginModal()" id="btn-nav-login" class="clay-btn-secondary px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold flex items-center space-x-1 sm:space-x-1.5">
-          <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700"></i>
+        <button onclick="openSchoolLoginModal('school')" id="btn-nav-login" class="clay-btn-secondary px-2 sm:px-2.5 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0 whitespace-nowrap">
+          <i data-lucide="log-in" class="w-3.5 h-3.5 text-slate-700"></i>
           <span class="hidden sm:inline">School Sign In</span>
           <span class="sm:hidden">Sign In</span>
         </button>
 
         <!-- Muhammad Ali Owner Portal Button -->
-        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold flex items-center space-x-1 sm:space-x-1.5 shadow-sm">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-2.5 sm:px-3 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0 whitespace-nowrap shadow-sm">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
           <span class="hidden sm:inline">Owner Portal</span>
           <span class="sm:hidden">Owner</span>
         </button>
@@ -358,7 +369,15 @@
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1">Target Class</label>
               <select id="gen-grade" onchange="handleGradeChange()" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800">
-                <option value="9">Class 9th (Matric-I)</option>
+                <option value="1">Class 1st (Primary)</option>
+                <option value="2">Class 2nd (Primary)</option>
+                <option value="3">Class 3rd (Primary)</option>
+                <option value="4">Class 4th (Primary)</option>
+                <option value="5">Class 5th (Primary)</option>
+                <option value="6">Class 6th (Middle)</option>
+                <option value="7">Class 7th (Middle)</option>
+                <option value="8">Class 8th (Middle)</option>
+                <option value="9" selected>Class 9th (Matric-I)</option>
                 <option value="10">Class 10th (Matric-II)</option>
               </select>
             </div>
@@ -989,9 +1008,6 @@
       </form>
     </div>
   </div>
-      </form>
-    </div>
-  </div>
 
   <!-- MUHAMMAD ALI OWNER MASTER PORTAL (CREATE & MANAGE SCHOOL ACCOUNTS) -->
   <div id="owner-master-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
@@ -1021,6 +1037,23 @@
       <div id="owner-toast" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center space-x-2">
         <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
         <span id="owner-toast-text">School account created successfully!</span>
+      </div>
+
+      <!-- CHANGE OWNER MASTER PASSWORD CARD -->
+      <div class="clay-card-flat p-4 rounded-2xl border border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h5 class="text-xs font-black text-slate-900">Owner Master Password</h5>
+            <p class="text-[11px] text-slate-500">Update the master password used to unlock this Owner Section on all devices.</p>
+          </div>
+        </div>
+        <button type="button" onclick="openChangePasswordModal('owner')" class="clay-btn-secondary px-3.5 py-2 text-xs font-bold flex items-center space-x-1.5 shrink-0 whitespace-nowrap">
+          <i data-lucide="shield-check" class="w-4 h-4 text-orange-600"></i>
+          <span>Change Master Password</span>
+        </button>
       </div>
 
       <!-- CREATE NEW SCHOOL ACCOUNT FORM -->
@@ -1398,7 +1431,7 @@
         <span>&bull;</span>
         <span>Developer: <a href="https://alibuild.site" target="_blank" class="font-extrabold text-orange-600 hover:underline">Muhammad Ali (AliBuild)</a></span>
         <span>&bull;</span>
-        <a href="https://github.com/alikhan14756/prompt" target="_blank" class="hover:text-slate-900 flex items-center space-x-1">
+        <a href="https://github.com/alikhan14756/paper_gen" target="_blank" class="hover:text-slate-900 flex items-center space-x-1">
           <i data-lucide="github" class="w-3.5 h-3.5"></i>
           <span>GitHub</span>
         </a>
@@ -1406,194 +1439,1181 @@
     </div>
   </footer>
 
+  <!-- CHANGE PASSWORD MODAL (UNIVERSAL FOR SCHOOL & OWNER) -->
+  <div id="change-password-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
+    <div class="clay-card max-w-md w-full p-6 sm:p-8 relative space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      <button onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center space-y-2">
+        <div class="inline-flex h-12 w-12 rounded-2xl bg-orange-100 items-center justify-center text-orange-600 mb-1">
+          <i data-lucide="key-round" class="w-6 h-6"></i>
+        </div>
+        <h4 class="text-xl font-black text-slate-900">Change Account Password</h4>
+        <p class="text-xs text-slate-500" id="change-pwd-subtitle">Update your secure login password. Synchronizes across all devices.</p>
+        <div id="change-pwd-account-badge" class="inline-block clay-badge-orange text-[11px] font-bold px-3 py-1 rounded-full">
+          Active Account: School Portal
+        </div>
+      </div>
+
+      <div id="change-pwd-error" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-semibold text-red-700"></div>
+      <div id="change-pwd-success" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800"></div>
+
+      <form id="change-password-form" onsubmit="handleChangePasswordSubmit(event)" class="space-y-4">
+        <input type="hidden" id="change-pwd-role" value="school" />
+
+        <!-- For unauthenticated users choosing who they are -->
+        <div id="change-pwd-role-selector" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">Select Account Type</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="setChangePasswordRole('school')" id="role-btn-school" class="py-2 px-3 text-xs font-bold rounded-xl border border-orange-500 bg-orange-50 text-orange-800">🏫 School</button>
+            <button type="button" onclick="setChangePasswordRole('owner')" id="role-btn-owner" class="py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700">👑 Owner</button>
+          </div>
+        </div>
+
+        <div id="change-pwd-school-username-group" class="hidden">
+          <label class="block text-xs font-bold text-slate-700 mb-1">School Username *</label>
+          <input type="text" id="change-pwd-username" placeholder="e.g. peshawarmodel" class="w-full clay-input p-2.5 text-xs font-bold text-slate-800" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Current Password *</label>
+          <div class="relative">
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="password" required id="change-pwd-current" placeholder="Enter current password" class="w-full clay-input pl-9 pr-10 p-2.5 text-xs font-bold text-slate-800" />
+            <button type="button" onclick="togglePasswordVisibility('change-pwd-current', 'change-pwd-current-eye')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-0.5">
+              <i data-lucide="eye" id="change-pwd-current-eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">New Password *</label>
+          <div class="relative">
+            <i data-lucide="key" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="password" required id="change-pwd-new" minlength="4" placeholder="Enter new strong password" class="w-full clay-input pl-9 pr-10 p-2.5 text-xs font-bold text-slate-800" />
+            <button type="button" onclick="togglePasswordVisibility('change-pwd-new', 'change-pwd-new-eye')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-0.5">
+              <i data-lucide="eye" id="change-pwd-new-eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Confirm New Password *</label>
+          <div class="relative">
+            <i data-lucide="check" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+            <input type="password" required id="change-pwd-confirm" minlength="4" placeholder="Re-enter new password" class="w-full clay-input pl-9 pr-10 p-2.5 text-xs font-bold text-slate-800" />
+            <button type="button" onclick="togglePasswordVisibility('change-pwd-confirm', 'change-pwd-confirm-eye')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-0.5">
+              <i data-lucide="eye" id="change-pwd-confirm-eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit-change-pwd" class="w-full clay-btn-primary py-3 px-4 text-xs font-black flex items-center justify-center space-x-2 shadow-md">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Update Password & Sync Devices</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- KPK TEXTBOOK BOARD (BISEP) COMPLETE TEXTBOOK LIBRARY MODAL (CLASSES 1ST TO 10TH) -->
+  <div id="textbook-library-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
+    <div class="clay-card max-w-5xl w-full p-5 sm:p-7 relative space-y-5 max-h-[92vh] flex flex-col">
+      <button onclick="closeTextbookLibraryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Library Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4 shrink-0">
+        <div>
+          <div class="inline-flex items-center space-x-1.5 clay-badge-mint px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-emerald-700"></i>
+            <span>Official Khyber Pakhtunkhwa Curriculum</span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">KPK Peshawar Board Complete Textbooks (Class 1st - 10th)</h3>
+          <p class="text-xs text-slate-500">70 Official authentic textbooks ready to download as PDF or generate examination papers directly.</p>
+        </div>
+        <div class="flex items-center space-x-2 shrink-0">
+          <span class="text-xs font-extrabold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+            70 Real KPK Books Installed
+          </span>
+        </div>
+      </div>
+
+      <!-- Filters & Search Controls -->
+      <div class="flex flex-wrap items-center justify-between gap-2.5 shrink-0 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+        <!-- Grade Filter Pills -->
+        <div class="flex items-center space-x-1 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+          <button type="button" onclick="filterTextbookByGrade('all')" class="tb-grade-pill px-2.5 py-1 text-xs font-black rounded-lg transition bg-orange-600 text-white shadow-xs" data-grade="all">All</button>
+          <button type="button" onclick="filterTextbookByGrade('1')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="1">Class 1</button>
+          <button type="button" onclick="filterTextbookByGrade('2')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="2">Class 2</button>
+          <button type="button" onclick="filterTextbookByGrade('3')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="3">Class 3</button>
+          <button type="button" onclick="filterTextbookByGrade('4')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="4">Class 4</button>
+          <button type="button" onclick="filterTextbookByGrade('5')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="5">Class 5</button>
+          <button type="button" onclick="filterTextbookByGrade('6')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="6">Class 6</button>
+          <button type="button" onclick="filterTextbookByGrade('7')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="7">Class 7</button>
+          <button type="button" onclick="filterTextbookByGrade('8')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="8">Class 8</button>
+          <button type="button" onclick="filterTextbookByGrade('9')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="9">Class 9</button>
+          <button type="button" onclick="filterTextbookByGrade('10')" class="tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100" data-grade="10">Class 10</button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+          <input type="text" id="tb-search-input" oninput="filterTextbooksBySearch()" placeholder="Search book or subject..." class="w-full clay-input pl-8 pr-3 py-1.5 text-xs font-medium text-slate-800" />
+        </div>
+      </div>
+
+      <!-- Textbook Cards Grid (Scrollable) -->
+      <div id="textbook-grid-container" class="overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 flex-1 min-h-[360px]">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+
   <!-- SCRIPT DATA & APP CONTROLLER -->
   <script>
     // =========================================================================
     // 1. AUTHENTIC KPK TEXTBOOK BOARD SYLLABUS & BOOKS (CLASS 9TH & 10TH)
     // =========================================================================
     const KPK_SYLLABUS = {
+      "1": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "Primary English Book 1",
+                  "pdfPath": "books/class_1/kpk_textbook_class1_english.pdf",
+                  "chapters": [
+                        "Alphabet Fun & Phonics",
+                        "Greetings and Manners",
+                        "My Family & Home",
+                        "Animals and Birds Around Us",
+                        "Colors, Shapes & Numbers",
+                        "Stories & Poems"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی برائے جماعت اول",
+                  "pdfPath": "books/class_1/kpk_textbook_class1_urdu.pdf",
+                  "chapters": [
+                        "حروف تہجی اور صوتیات",
+                        "آسان الفاظ سازی",
+                        "میرا گھر اور پیارا خاندان",
+                        "پھل اور سبزیاں",
+                        "پیارے نبی صلی اللہ علیہ وآلہ وسلم",
+                        "چھوٹی نظمیں اور کہانیاں"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 1",
+                  "pdfPath": "books/class_1/kpk_textbook_class1_mathematics.pdf",
+                  "chapters": [
+                        "Counting Numbers 1 to 100",
+                        "Addition within 20",
+                        "Subtraction within 20",
+                        "Shapes and Patterns",
+                        "Measurement of Length & Weight",
+                        "Pakistani Currency & Money"
+                  ]
+            },
+            {
+                  "subject": "General Knowledge",
+                  "lang": "en",
+                  "title": "General Knowledge Class 1",
+                  "pdfPath": "books/class_1/kpk_textbook_class1_general_knowledge.pdf",
+                  "chapters": [
+                        "All About Myself",
+                        "Our Senses & Body Parts",
+                        "Good Habits & Cleanliness",
+                        "Our Loving Earth & Plants",
+                        "Weather & Seasons",
+                        "Our Country Pakistan"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت اول",
+                  "pdfPath": "books/class_1/kpk_textbook_class1_islamiyat.pdf",
+                  "chapters": [
+                        "کلمہ طیبہ اور اللہ تعالیٰ کی وحدانیت",
+                        "اللہ تعالیٰ کی نعمتیں",
+                        "پیارے نبی صلی اللہ علیہ وآلہ وسلم کا تعارف",
+                        "قرآنی سورتیں (سورۃ الفاتحہ و اخلاص)",
+                        "سچائی اور والدین کی خدمت",
+                        "مسجد کے آداب"
+                  ]
+            }
+      ],
+      "2": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "Primary English Book 2",
+                  "pdfPath": "books/class_2/kpk_textbook_class2_english.pdf",
+                  "chapters": [
+                        "Everyday Greetings & Dialogues",
+                        "My School & Friends",
+                        "Cleanliness & Health",
+                        "Wonderful Nature & Seasons",
+                        "Helping Others & Community Helpers",
+                        "Fun with Action Words & Verbs"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی برائے جماعت دوم",
+                  "pdfPath": "books/class_2/kpk_textbook_class2_urdu.pdf",
+                  "chapters": [
+                        "حمد باری تعالیٰ",
+                        "نعت رسول مقبول (ص)",
+                        "محنت کا پھل",
+                        "ہمارا خوبصورت سکول",
+                        "وطن کی محبت",
+                        "آؤ صفائی رکھیں"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 2",
+                  "pdfPath": "books/class_2/kpk_textbook_class2_mathematics.pdf",
+                  "chapters": [
+                        "Numbers up to 1000",
+                        "Addition with Regrouping",
+                        "Subtraction with Borrowing",
+                        "Introduction to Multiplication (Tables 2-5)",
+                        "Division Concepts",
+                        "Fractions: Halves & Quarters"
+                  ]
+            },
+            {
+                  "subject": "General Knowledge",
+                  "lang": "en",
+                  "title": "General Knowledge Class 2",
+                  "pdfPath": "books/class_2/kpk_textbook_class2_general_knowledge.pdf",
+                  "chapters": [
+                        "Living Things & Non-Living Things",
+                        "Plants and Their Seeds",
+                        "Animal Habitats",
+                        "Solar System & The Sun",
+                        "Safety at Home & Road",
+                        "Great Leader Quaid-e-Azam"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت دوم",
+                  "pdfPath": "books/class_2/kpk_textbook_class2_islamiyat.pdf",
+                  "chapters": [
+                        "ارکان اسلام",
+                        "نماز اور وضو کا طریقہ",
+                        "سیرت طیبہ اور اخلاق حسنہ",
+                        "قرآنی سورتیں (سورۃ الکوثر و الناس)",
+                        "سچ بولنا اور امانت داری",
+                        "ہمسایوں کے حقوق"
+                  ]
+            }
+      ],
+      "3": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Class 3",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_english.pdf",
+                  "chapters": [
+                        "The Brave Boy",
+                        "A Visit to the Zoo",
+                        "Health is Wealth",
+                        "The Clever Farmer",
+                        "Our National Flag",
+                        "Poems: The Wind and The Stars"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت سوم",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_urdu.pdf",
+                  "chapters": [
+                        "حمد و نعت",
+                        "ہمارا پرچم",
+                        "ایمانداری کا انعام",
+                        "پشاور کا تاریخی شہر",
+                        "تندرستی ہزار نعمت ہے",
+                        "قائداعظم کی زندگی"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 3",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_general_science.pdf",
+                  "chapters": [
+                        "Structure and Functions of Living Things",
+                        "Habitats and Ecosystems",
+                        "Matter and Its States",
+                        "Forces: Push and Pull",
+                        "Sound and Heat Energy",
+                        "Earth and Its Natural Resources"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 3",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_mathematics.pdf",
+                  "chapters": [
+                        "Four-Digit Whole Numbers",
+                        "Multiplication up to 3 Digits",
+                        "Long Division Methods",
+                        "Proper & Improper Fractions",
+                        "Perimeter and Area of Shapes",
+                        "Data Handling and Bar Graphs"
+                  ]
+            },
+            {
+                  "subject": "Social Studies",
+                  "lang": "en",
+                  "title": "Social Studies Class 3",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_social_studies.pdf",
+                  "chapters": [
+                        "Maps and Directions",
+                        "Villages and Cities of KP",
+                        "Our Diverse Cultures & Festivals",
+                        "Government and Public Services",
+                        "Famous Historical Places of Pakistan",
+                        "Being a Good Citizen"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت سوم",
+                  "pdfPath": "books/class_3/kpk_textbook_class3_islamiyat.pdf",
+                  "chapters": [
+                        "ایمان بالرسالت",
+                        "نماز کے اوقات اور فرائض",
+                        "سیرت النبی (ص): سفر طائف",
+                        "حفظ و ترجمہ دعائیں",
+                        "بڑوں کا احترام اور چھوٹوں پر شفقت",
+                        "دیانت داری اور رزق حلال"
+                  ]
+            }
+      ],
+      "4": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Class 4",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_english.pdf",
+                  "chapters": [
+                        "An Inspiring Journey",
+                        "Amazing Inventions of Science",
+                        "Safety and First Aid",
+                        "The Legend of Mount Everest",
+                        "Our Beautiful Peshawar Valley",
+                        "Poem: The Rainbow"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت چہارم",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_urdu.pdf",
+                  "chapters": [
+                        "حمد اور شکر گزاری",
+                        "سیرت طیبہ: دیانت و امانت",
+                        "خیبر پختونخوا کے حسین وادیاں",
+                        "علم کی اہمیت",
+                        "وقت کی پابندی",
+                        "قومی ہیرو: نشان حیدر"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 4",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_general_science.pdf",
+                  "chapters": [
+                        "Human Body Systems & Organs",
+                        "Animal and Plant Classification",
+                        "Ecosystems and Food Chains",
+                        "Matter and Kinetic Theory",
+                        "Forms of Energy and Electricity",
+                        "The Earth, Moon and Solar Eclipse"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 4",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_mathematics.pdf",
+                  "chapters": [
+                        "Whole Numbers up to 1,000,000",
+                        "Factors and Multiples (HCF & LCM)",
+                        "Operations on Fractions",
+                        "Decimals and Percentages",
+                        "Angles, Triangles & Quadrilaterals",
+                        "Averages and Information Handling"
+                  ]
+            },
+            {
+                  "subject": "Social Studies",
+                  "lang": "en",
+                  "title": "Social Studies Class 4",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_social_studies.pdf",
+                  "chapters": [
+                        "Geography of Khyber Pakhtunkhwa",
+                        "Climate and Natural Vegetation",
+                        "Citizenship and Pakistani Laws",
+                        "Economic Activities: Farming & Mining",
+                        "Ancient Indus Valley Civilization",
+                        "Communication and Transport"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت چہارم",
+                  "pdfPath": "books/class_4/kpk_textbook_class4_islamiyat.pdf",
+                  "chapters": [
+                        "ایمان بالکتب (آسمانی کتابیں)",
+                        "طہارت، پاکیزگی اور وضو",
+                        "غزوہ بدر کے اہم اسباق",
+                        "قرآنی سورتیں (سورۃ الفلق و العصر)",
+                        "حسن اخلاق اور برداشت",
+                        "ماحول کی حفاظت"
+                  ]
+            }
+      ],
+      "5": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Compulsory Class 5",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_english.pdf",
+                  "chapters": [
+                        "Hazrat Umar Farooq (R.A) and Justice",
+                        "The Power of Education",
+                        "Environmental Conservation",
+                        "A Trip to Swat Valley",
+                        "The Digital Age & Internet",
+                        "Poem: The Way Through the Woods"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت پنجم",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_urdu.pdf",
+                  "chapters": [
+                        "حمدِ الٰہی",
+                        "نعتِ رسولِ آخر الزماں",
+                        "علامہ اقبال کا پیغام نوجوانوں کے نام",
+                        "خیبر پاس کی تاریخی اہمیت",
+                        "کھیلوں کی اہمیت",
+                        "احساسِ ذمہ داری"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 5",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_general_science.pdf",
+                  "chapters": [
+                        "Classification of Living Organisms (Vertebrates & Invertebrates)",
+                        "Microorganisms: Bacteria and Viruses",
+                        "Seed Structure and Germination",
+                        "Pollution and Environmental Degradation",
+                        "Physical and Chemical Changes of Matter",
+                        "Light, Sound and Reflection",
+                        "Earth in the Solar System"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 5",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_mathematics.pdf",
+                  "chapters": [
+                        "Numbers up to Billions & Operations",
+                        "HCF and LCM by Prime Factorization",
+                        "Fractional Equations & Word Problems",
+                        "Decimals, Ratios and Percentages",
+                        "Unitary Method and Distance-Speed",
+                        "Geometry: Angles, Bisectors and Circles"
+                  ]
+            },
+            {
+                  "subject": "Social Studies",
+                  "lang": "en",
+                  "title": "Social Studies Class 5",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_social_studies.pdf",
+                  "chapters": [
+                        "World Map and Major Continents",
+                        "Pakistan's Physical Features & Deserts",
+                        "The 1973 Constitution Overview",
+                        "Trade, Currency and Economy",
+                        "History: Gandhara Civilization in Peshawar",
+                        "Global Peace and Human Rights"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت پنجم",
+                  "pdfPath": "books/class_5/kpk_textbook_class5_islamiyat.pdf",
+                  "chapters": [
+                        "ایمان بالآخرت اور عقیدہ توحید",
+                        "روزہ اور زکوٰۃ کے معاشرتی فوائد",
+                        "سیرت طیبہ: فتح مکہ اور عفو و درگزر",
+                        "قرآنی سورتیں مع ترجمہ و تفسیر",
+                        "اسلام میں خواتین کے حقوق",
+                        "صلہ رحمی اور مہمان نوازی"
+                  ]
+            }
+      ],
+      "6": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_english.pdf",
+                  "chapters": [
+                        "A Fair Deal (Islamic Ethics)",
+                        "The Karakoram Highway",
+                        "Dignity of Labor",
+                        "Water Scarcity & Conservation",
+                        "The Wonders of Space Exploration",
+                        "Poem: Leisure by W.H. Davies"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت ششم",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_urdu.pdf",
+                  "chapters": [
+                        "حمد باری تعالیٰ (حفیظ جالندھری)",
+                        "نعت رسول کریم صلی اللہ علیہ وآلہ وسلم",
+                        "تحریکِ پاکستان اور خیبر پختونخوا",
+                        "محنت میں عظمت ہے",
+                        "کمپیوٹر اور جدید دور",
+                        "قومی ترانہ اور اس کی عظمت"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_general_science.pdf",
+                  "chapters": [
+                        "Cellular Organization of Plants & Animals",
+                        "Sense Organs & Nervous Coordination",
+                        "Photosynthesis and Respiration",
+                        "Air and Atmospheric Gases",
+                        "Elements, Compounds and Mixtures",
+                        "Energy Forms & Transfer",
+                        "Force and Machines"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_mathematics.pdf",
+                  "chapters": [
+                        "Sets and Set Operations",
+                        "Whole Numbers and Integers",
+                        "Factors, Multiples & Prime Numbers",
+                        "Ratio and Proportion",
+                        "Financial Arithmetic (Profit, Loss, Zakat)",
+                        "Introduction to Algebra & Expressions",
+                        "Geometry: Angles, Polygons, Perimeter & Area"
+                  ]
+            },
+            {
+                  "subject": "History",
+                  "lang": "en",
+                  "title": "History Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_history.pdf",
+                  "chapters": [
+                        "Indus Valley Civilization (Mohenjo-daro & Harappa)",
+                        "Aryan Civilization and Vedic Culture",
+                        "Gandhara Civilization and Buddhist Heritage",
+                        "Arrival of Muslims: Muhammad bin Qasim in Sindh"
+                  ]
+            },
+            {
+                  "subject": "Geography",
+                  "lang": "en",
+                  "title": "Geography Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_geography.pdf",
+                  "chapters": [
+                        "Earth as a Planet and Coordinates",
+                        "Movements of Earth: Rotation and Revolution",
+                        "Major Landforms: Mountains, Plateaus, Plains",
+                        "Oceans, Seas and River Systems of the World"
+                  ]
+            },
+            {
+                  "subject": "Computer Education",
+                  "lang": "en",
+                  "title": "Computer Education Class 6",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_computer_education.pdf",
+                  "chapters": [
+                        "Introduction to Computers and Processing",
+                        "Computer Hardware & Peripheral Devices",
+                        "Operating Systems: Windows & File Management",
+                        "Word Processing: Microsoft Word Basics",
+                        "Internet & Web Browsing Safety"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت ششم",
+                  "pdfPath": "books/class_6/kpk_textbook_class6_islamiyat.pdf",
+                  "chapters": [
+                        "قرآن مجید اور اس کے فضائل",
+                        "عقیدہ رسالت اور ختم نبوت",
+                        "حج کی فرضیت اور فلسفہ",
+                        "سیرت طیبہ: مواخات مدینہ",
+                        "اسلام کا نظام عدل",
+                        "حقوق العباد اور معاشرتی ذمہ داریاں"
+                  ]
+            }
+      ],
+      "7": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_english.pdf",
+                  "chapters": [
+                        "Kindness to Animals",
+                        "The Historic Bala Hissar Fort",
+                        "Disaster Preparedness",
+                        "Renewable Energy for Green Pakistan",
+                        "The Quaid on Youth Leadership",
+                        "Poem: My Mother"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت ہفتم",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_urdu.pdf",
+                  "chapters": [
+                        "حمد اور معرفتِ الٰہی",
+                        "نعتِ رسولِ مجتبیٰ",
+                        "سر سید احمد خان اور علی گڑھ تحریک",
+                        "پاکستان کے اہم قدرتی وسائل",
+                        "صحت اور ماحولیاتی آلودگی",
+                        "اردو محاورات اور قواعد"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_general_science.pdf",
+                  "chapters": [
+                        "Human Organ Systems (Digestive & Circulatory)",
+                        "Transport in Plants and Transpiration",
+                        "Reproduction in Plants (Pollination & Fertilization)",
+                        "Atomic Structure and Periodic Table",
+                        "Physical and Chemical Changes",
+                        "Transmission of Heat (Conduction, Convection, Radiation)",
+                        "Sound Waves"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_mathematics.pdf",
+                  "chapters": [
+                        "Sets and Venn Diagrams",
+                        "Rational Numbers and Operations",
+                        "Decimals and Square Roots",
+                        "Financial Mathematics: Taxes, Zakat and Ushr",
+                        "Algebraic Expressions, Identities & Factorization",
+                        "Linear Equations in One Variable",
+                        "Practical Geometry & Circles"
+                  ]
+            },
+            {
+                  "subject": "History",
+                  "lang": "en",
+                  "title": "History Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_history.pdf",
+                  "chapters": [
+                        "Establishment of Delhi Sultanate (Slave Dynasty to Lodhis)",
+                        "Sultanate Administration and Architecture",
+                        "Founding of the Mughal Empire (Babur and Humayun)",
+                        "Reign of Akbar the Great and Religious Policies"
+                  ]
+            },
+            {
+                  "subject": "Geography",
+                  "lang": "en",
+                  "title": "Geography Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_geography.pdf",
+                  "chapters": [
+                        "Atmosphere: Composition and Layers",
+                        "Atmospheric Temperature and Pressure Belts",
+                        "Atmospheric Moisture: Humidity, Clouds, Rainfall",
+                        "Settlements: Urbanization and Rural Patterns"
+                  ]
+            },
+            {
+                  "subject": "Computer Education",
+                  "lang": "en",
+                  "title": "Computer Education Class 7",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_computer_education.pdf",
+                  "chapters": [
+                        "Computer Software: System vs Application",
+                        "Input and Output Technology Advances",
+                        "Spreadsheets: Microsoft Excel Fundamentals",
+                        "Multimedia, Graphics and Presentation Software",
+                        "Cyber Security and Ethics"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت ہفتم",
+                  "pdfPath": "books/class_7/kpk_textbook_class7_islamiyat.pdf",
+                  "chapters": [
+                        "قرآن مجید: فہم و تدبر",
+                        "نماز باجماعت اور جمعہ کی اہمیت",
+                        "سیرت طیبہ: صلح حدیبیہ اور اس کے دور رس نتائج",
+                        "جہاد فی سبیل اللہ کا حقیقی تصور",
+                        "حقوق اللہ اور حقوق العباد کا توازن",
+                        "اسلامی ریاست اور اقلیتوں کے حقوق"
+                  ]
+            }
+      ],
+      "8": [
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_english.pdf",
+                  "chapters": [
+                        "Tolerance of the Holy Prophet (PBUH)",
+                        "The Wonder of Shogran & Kaghan",
+                        "Clean Drinking Water",
+                        "Artificial Intelligence and Future Jobs",
+                        "Sir Syed's Educational Revolution",
+                        "Poem: A Nation's Strength"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت ہشتم",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_urdu.pdf",
+                  "chapters": [
+                        "حمد (مولانا حالی)",
+                        "نعت (امیر مینائی)",
+                        "خیبر پختونخوا کے قابل فخر سپوت",
+                        "محنت، جستجو اور کامیابی",
+                        "پاکستان کا ایٹمی پروگرام",
+                        "ڈراما: سچ کی جیت"
+                  ]
+            },
+            {
+                  "subject": "General Science",
+                  "lang": "en",
+                  "title": "General Science Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_general_science.pdf",
+                  "chapters": [
+                        "Human Nervous System & Brain Anatomy",
+                        "Cell Division: Mitosis and Meiosis",
+                        "Biotechnology and Genetic Engineering",
+                        "Pollutants and Global Warming (Greenhouse Effect)",
+                        "Chemical Reactions and Chemical Equations",
+                        "Acids, Bases, Alkalis and Salts",
+                        "Force, Pressure and Hydraulics"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_mathematics.pdf",
+                  "chapters": [
+                        "Real Numbers and Number System",
+                        "Square Roots and Cube Roots",
+                        "Number Systems: Base 2, Base 5, Base 8, Base 10",
+                        "Financial Arithmetic: Banking, Compound Interest & Insurance",
+                        "Polynomials: Division and Identities",
+                        "Simultaneous Linear Equations",
+                        "Surface Area and Volume of Cylinders & Cones"
+                  ]
+            },
+            {
+                  "subject": "History",
+                  "lang": "en",
+                  "title": "History Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_history.pdf",
+                  "chapters": [
+                        "Consolidation of the Mughal Empire under Jahangir and Shah Jahan",
+                        "Aurangzeb Alamgir and Decline of Mughals",
+                        "Arrival of European Traders & British East India Company",
+                        "War of Independence 1857 & End of Mughal Rule"
+                  ]
+            },
+            {
+                  "subject": "Geography",
+                  "lang": "en",
+                  "title": "Geography Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_geography.pdf",
+                  "chapters": [
+                        "Internal Structure of the Earth and Plate Tectonics",
+                        "Earthquakes and Volcanic Activity",
+                        "Weathering, Mass Wasting and Erosion by Rivers & Wind",
+                        "Major Ocean Currents of the World"
+                  ]
+            },
+            {
+                  "subject": "Computer Education",
+                  "lang": "en",
+                  "title": "Computer Education Class 8",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_computer_education.pdf",
+                  "chapters": [
+                        "Networks and Communications: LAN, WAN, Topologies",
+                        "Data Transmission Media: Fiber Optics & Wireless",
+                        "Computer Security: Viruses, Malware, Antivirus",
+                        "Algorithms and Flowcharts",
+                        "Introduction to Programming Concepts"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت ہشتم",
+                  "pdfPath": "books/class_8/kpk_textbook_class8_islamiyat.pdf",
+                  "chapters": [
+                        "قرآن مجید کا تعارف اور اعجاز",
+                        "عقائد: توحید، رسالت اور آخرت کے اثرات",
+                        "سیرت طیبہ: غزوہ تبوک اور حجة الوداع",
+                        "امربالمعروف اور نہی عن المنکر",
+                        "اسلام کا معاشی عدل",
+                        "اخوت و مساوات اور تکریم انسانیت"
+                  ]
+            }
+      ],
       "9": [
-        {
-          subject: "Mathematics",
-          chapters: [
-            "1. Matrices and Determinants", "2. Real and Complex Numbers", "3. Logarithms",
-            "4. Algebraic Expressions & Formulas", "5. Factorization", "6. Algebraic Manipulation",
-            "7. Linear Equations & Inequalities", "8. Linear Graphs & Their Application",
-            "9. Introduction to Coordinate Geometry", "10. Congruent Triangles", "11. Parallelograms & Triangles",
-            "12. Line Bisectors & Angle Bisectors", "13. Sides & Angles of a Triangle",
-            "14. Ratio and Proportion", "15. Pythagoras' Theorem", "16. Theorems Related with Area",
-            "17. Practical Geometry - Triangles"
-          ]
-        },
-        {
-          subject: "Physics",
-          chapters: [
-            "1. Physical Quantities and Measurement", "2. Kinematics (Motion, Speed, Acceleration)",
-            "3. Dynamics (Newton's Laws, Friction, Momentum)", "4. Turning Effect of Forces (Torque, Equilibrium)",
-            "5. Gravitation (Law of Universal Gravitation, Satellites)", "6. Work, Power and Energy",
-            "7. Properties of Matter (Density, Pressure, Elasticity)", "8. Thermal Properties of Matter",
-            "9. Transfer of Heat (Conduction, Convection, Radiation)"
-          ]
-        },
-        {
-          subject: "Chemistry",
-          chapters: [
-            "1. Fundamentals of Chemistry (Mole, Avogadro, Formula)", "2. Structure of Atoms (Bohr, Rutherford, Isotopes)",
-            "3. Periodic Table and Periodicity of Properties", "4. Structure of Molecules (Chemical Bonding)",
-            "5. Physical States of Matter (Gases, Liquids, Solids)", "6. Solutions (Concentration, Solubility)",
-            "7. Electrochemistry (Redox Reactions, Electrolysis)", "8. Chemical Reactivity (Metals and Non-metals)"
-          ]
-        },
-        {
-          subject: "Biology",
-          chapters: [
-            "1. Introduction to Biology (Branches and Levels of Organization)", "2. Solving a Biological Problem",
-            "3. Biodiversity (Classification and Five Kingdoms)", "4. Cells and Tissues (Microscopy, Organelles)",
-            "5. Cell Cycle (Mitosis and Meiosis)", "6. Enzymes (Mechanism and Factors)",
-            "7. Bioenergetics (Photosynthesis and Respiration)", "8. Nutrition (Human Digestive System)",
-            "9. Transport (Transport in Plants and Blood Circulation)"
-          ]
-        },
-        {
-          subject: "Computer Science",
-          chapters: [
-            "1. Fundamentals of Computer (Generations, Hardware, Software)", "2. Fundamentals of Operating System",
-            "3. Office Automation (Word Processing, Spreadsheets)", "4. Data Communication & Computer Networks",
-            "5. Computer Security, Cyber Crime and Ethics"
-          ]
-        },
-        {
-          subject: "English",
-          chapters: [
-            "Unit 1: The Holy Prophet (PBUH) - Embodiment of Justice", "Unit 2: Daffodils (William Wordsworth)",
-            "Unit 3: Media and Its Impact", "Unit 4: Hazrat Asma (R.A)", "Unit 5: Stopping by Woods on a Snowy Evening",
-            "Unit 6: The Quaid's Vision and Pakistan", "Unit 7: Sultan Ahmad Mosque (Blue Mosque)",
-            "Unit 8: Peace (Dr. Hartmann)", "Unit 9: All is Not Lost", "Unit 10: Drug Addiction in Youth",
-            "Unit 11: Noise Pollution", "Unit 12: Three Days to See (Helen Keller)"
-          ]
-        },
-        {
-          subject: "Urdu",
-          lang: "ur",
-          chapters: [
-            "سبق 1: ہجرت نبوی صلی اللہ علیہ وآلہ وسلم", "سبق 2: کاہلی (سر سید احمد خان)",
-            "سبق 3: اخلاق نبوی صلی اللہ علیہ وآلہ وسلم", "سبق 4: شاعروں کے لطیفے",
-            "سبق 5: نصوح اور سلیم کی گفتگو", "سبق 6: پنچایت (منشی پریم چند)",
-            "سبق 7: آرام و سکون (امتیاز علی تاج)", "سبق 8: امتحان (مرزا فرحت اللہ بیگ)",
-            "نظم 1: حمد (مولانا الطاف حسین حالی)", "نظم 2: نعت (احسان دانش)",
-            "غزل 1: ہستی اپنی حباب کی سی ہے (میر تقی میر)", "غزل 2: دل ناداں تجھے ہوا کیا ہے (مرزا غالب)"
-          ]
-        },
-        {
-          subject: "Islamiyat",
-          lang: "ur",
-          chapters: [
-            "باب اول: قرآن مجید و احادیث نبوی (سورۃ الانفال آیات 1 تا 75)",
-            "باب دوم: ایمانیات و عبادات (توحید، رسالت، ملائکہ، آخرت، نماز، زکوۃ)",
-            "باب سوم: سیرت النبی صلی اللہ علیہ وآلہ وسلم و اسوہ حسنہ",
-            "باب چہارم: اخلاق و آداب (صدق و دیانت، صبر و شکر، ایفائے عہد، والدین کے حقوق)"
-          ]
-        },
-        {
-          subject: "Pakistan Studies",
-          chapters: [
-            "Chapter 1: Ideological Basis of Pakistan (Two-Nation Theory)", "Chapter 2: Making of Pakistan (1940-1947)",
-            "Chapter 3: Land and Environment of Pakistan (Geography, Climate, Resources)",
-            "Chapter 4: History of Pakistan (Early Problems and Constitution Making)"
-          ]
-        }
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Compulsory Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_english.pdf",
+                  "chapters": [
+                        "Hazrat Muhammad (PBUH) - An Embodiment of Justice",
+                        "Daffodils by William Wordsworth",
+                        "Media and Its Impact",
+                        "Hazrat Asma (R.A)",
+                        "Stopping by Woods on a Snowy Evening",
+                        "The Quaid's Vision and Pakistan",
+                        "Sultan Ahmad Mosque",
+                        "Peace by Dr. Hartmann",
+                        "All is Not Lost",
+                        "Drug Addiction",
+                        "Noise in the Environment"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت نہم",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_urdu.pdf",
+                  "chapters": [
+                        "ہجرت نبوی صلی اللہ علیہ وآلہ وسلم",
+                        "کاہلی (سر سید احمد خان)",
+                        "اخلاق نبوی صلی اللہ علیہ وآلہ وسلم",
+                        "شاعروں کے لطیفے",
+                        "نصوح اور سلیم کی گفتگو",
+                        "پنچایت (منشی پریم چند)",
+                        "آرام و سکون",
+                        "امتحان",
+                        "حمد و نعت"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Science Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_mathematics.pdf",
+                  "chapters": [
+                        "Matrices and Determinants",
+                        "Real and Complex Numbers",
+                        "Logarithms and Laws of Logs",
+                        "Algebraic Expressions and Algebraic Formulas",
+                        "Factorization and Remainder Theorem",
+                        "Algebraic Manipulation (HCF & LCM)",
+                        "Linear Equations and Inequalities",
+                        "Linear Graphs and Applications",
+                        "Introduction to Coordinate Geometry",
+                        "Congruent Triangles & Parallelograms",
+                        "Line Bisectors and Angle Bisectors",
+                        "Practical Geometry - Triangles"
+                  ]
+            },
+            {
+                  "subject": "Physics",
+                  "lang": "en",
+                  "title": "Physics Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_physics.pdf",
+                  "chapters": [
+                        "Physical Quantities and Measurement (Vernier & Micrometer)",
+                        "Kinematics: Velocity, Acceleration, Equations of Motion",
+                        "Dynamics: Newton's Laws, Momentum, Friction",
+                        "Turning Effect of Forces: Torque, Equilibrium & Center of Mass",
+                        "Gravitation: Law of Universal Gravitation & Satellites",
+                        "Work and Energy: Kinetic, Potential, Power, Efficiency",
+                        "Properties of Matter: Elasticity, Density, Pressure, Pascal's Principle",
+                        "Thermal Properties of Matter: Specific Heat, Latent Heat",
+                        "Transfer of Heat: Conduction, Convection, Radiation, Greenhouse Effect"
+                  ]
+            },
+            {
+                  "subject": "Chemistry",
+                  "lang": "en",
+                  "title": "Chemistry Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_chemistry.pdf",
+                  "chapters": [
+                        "Fundamentals of Chemistry: Atomic Mass, Mole Concept, Avogadro's Number",
+                        "Structure of Atoms: Rutherford, Bohr Model, Electronic Configuration",
+                        "Periodic Table and Periodicity of Properties (Electronegativity, Ionization Energy)",
+                        "Structure of Molecules: Ionic, Covalent, Coordinate & Hydrogen Bonding",
+                        "Physical States of Matter: Boyle's Law, Charles's Law, Evaporation, Boiling Point",
+                        "Solutions: Saturated Solutions, Molarity, Solubility",
+                        "Electrochemistry: Oxidation, Reduction, Daniell Cell, Rusting",
+                        "Chemical Reactivity: Metals and Non-Metals"
+                  ]
+            },
+            {
+                  "subject": "Biology",
+                  "lang": "en",
+                  "title": "Biology Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_biology.pdf",
+                  "chapters": [
+                        "Introduction to Biology & Divisions",
+                        "Solving a Biological Problem (Scientific Method)",
+                        "Biodiversity and Five Kingdom Classification",
+                        "Cells and Tissues: Microscopy, Organelles, Plant vs Animal",
+                        "Cell Cycle: Mitosis and Meiosis",
+                        "Enzymes: Mechanism, Characteristics & Factors",
+                        "Bioenergetics: Photosynthesis, Respiration & ATP",
+                        "Nutrition in Plants and Humans",
+                        "Transport in Plants and Humans (Blood & Heart)"
+                  ]
+            },
+            {
+                  "subject": "Computer Science",
+                  "lang": "en",
+                  "title": "Computer Science Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_computer_science.pdf",
+                  "chapters": [
+                        "Fundamentals of Computer: History, Generations, Hardware Architecture",
+                        "Fundamentals of Operating System: Functions, Windows GUI & Process Management",
+                        "Office Automation: Microsoft Word, Excel, PowerPoint Mastery",
+                        "Data Communication and Networking: Transmission Media, Protocols, Topologies",
+                        "Computer Security and Ethics: Threats, Viruses, Cyber Laws and Data Protection"
+                  ]
+            },
+            {
+                  "subject": "Pakistan Studies",
+                  "lang": "en",
+                  "title": "Pakistan Studies Class 9",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_pakistan_studies.pdf",
+                  "chapters": [
+                        "Ideological Basis of Pakistan: Two-Nation Theory & Quaid's Statements",
+                        "Making of Pakistan (1906 to 1947, 1940 Lahore Resolution)",
+                        "Land and Environment of Pakistan: Mountains, Plains, Climate, Deserts",
+                        "History of Pakistan Part I: Early Problems & 1956/1962 Constitutions"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت نہم",
+                  "pdfPath": "books/class_9/kpk_textbook_class9_islamiyat.pdf",
+                  "chapters": [
+                        "سورۃ الانفال (آیات 1 تا 75 مع مکمل ترجمہ و تفسیر)",
+                        "منتخب احادیث نبویہ (1 تا 10 مع تشریح)",
+                        "موضوعاتی مطالعہ: قرآن مجید کا تعارف و حفاظت",
+                        "عقیدہ توحید، رسالت اور آخرت",
+                        "اخلاق حسنہ: سچائی، عدل، عفو و درگزر"
+                  ]
+            }
       ],
       "10": [
-        {
-          subject: "Mathematics",
-          chapters: [
-            "1. Quadratic Equations (Standard Form, Factorization, Formula)", "2. Theory of Quadratic Equations (Discriminant)",
-            "3. Variations (Direct, Inverse, Joint Variation)", "4. Partial Fractions",
-            "5. Sets and Functions (De Morgan's Laws, Binary Relations)", "6. Basic Statistics (Mean, Median, Standard Deviation)",
-            "7. Introduction to Trigonometry (Angles, Identities)", "8. Projection of a Side of a Triangle",
-            "9. Chords of a Circle", "10. Tangent to a Circle", "11. Chords and Arcs", "12. Angle in a Segment of a Circle",
-            "13. Practical Geometry - Circles"
-          ]
-        },
-        {
-          subject: "Physics",
-          chapters: [
-            "10. Simple Harmonic Motion and Waves", "11. Sound (Speed of Sound, Ultrasound)",
-            "12. Geometrical Optics (Reflection, Refraction, Lenses)", "13. Electrostatics (Coulomb's Law, Capacitors)",
-            "14. Current Electricity (Ohm's Law, Resistance, Power)", "15. Electromagnetism (Electromagnetic Induction, Transformers)",
-            "16. Basic Electronics (Logic Gates, Cathode Ray Oscilloscope)", "17. Information and Communication Technology (ICT)",
-            "18. Atomic and Nuclear Physics (Radioactivity, Half-life, Fission)"
-          ]
-        },
-        {
-          subject: "Chemistry",
-          chapters: [
-            "9. Chemical Equilibrium (Law of Mass Action, Kc)", "10. Acids, Bases and Salts (pH, Neutralization)",
-            "11. Organic Chemistry (Functional Groups, Homologous Series)", "12. Hydrocarbons (Alkanes, Alkenes, Alkynes)",
-            "13. Biochemistry (Carbohydrates, Proteins, Lipids, Vitamins)", "14. Environmental Chemistry I: The Atmosphere (Greenhouse Effect, Acid Rain)",
-            "15. Environmental Chemistry II: Water (Hardness, Water Pollution)", "16. Chemical Industries (Metallurgy, Solvay Process, Urea)"
-          ]
-        },
-        {
-          subject: "Biology",
-          chapters: [
-            "10. Gaseous Exchange (Respiratory System, Disorders)", "11. Homeostasis (Urinary System, Kidney Failure)",
-            "12. Coordination and Control (Nervous System, Endocrine Glands)", "13. Support and Movement (Human Skeleton, Joints)",
-            "14. Reproduction (Asexual and Sexual Reproduction, Pollination)", "15. Inheritance (Mendel's Laws, DNA, Genes)",
-            "16. Man and His Environment (Ecosystems, Food Chains, Conservation)", "17. Biotechnology (Fermentation, Genetic Engineering)",
-            "18. Pharmacology (Medicinal Drugs, Antibiotics, Vaccine)"
-          ]
-        },
-        {
-          subject: "Computer Science",
-          chapters: [
-            "1. Problem Solving (Algorithms, Flowcharts)", "2. Data Types, Input and Output in C Language",
-            "3. Control Structures (If-Else, Switch Statements)", "4. Loop Structures (For, While, Do-While Loops)",
-            "5. Functions and Modular Programming in C", "6. Working with Logic and Arrays"
-          ]
-        },
-        {
-          subject: "English",
-          chapters: [
-            "Unit 1: Hazrat Muhammad (PBUH) - An Embodiment of Justice", "Unit 2: Chinese New Year Celebrations",
-            "Unit 3: Try Again (Poem by W.E. Hickson)", "Unit 4: First Aid (Cuts, Scrapes, Fractures)",
-            "Unit 5: The Rain (Poem by W.H. Davies)", "Unit 6: Television vs. Newspapers",
-            "Unit 7: Little by Little One Walks Far", "Unit 8: Peace (Poem)", "Unit 9: Selecting the Right Career",
-            "Unit 10: A World Without Books", "Unit 11: Great Expectations (Charles Dickens)", "Unit 12: Faithfulness"
-          ]
-        },
-        {
-          subject: "Urdu",
-          lang: "ur",
-          chapters: [
-            "سبق 1: مرزا محمد سعید", "سبق 2: نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)",
-            "سبق 3: پرستان کی شہزادی", "سبق 4: اردو ادب میں عید الفطر",
-            "سبق 5: مجھے میرے دوستوں سے بچاؤ", "سبق 6: ملمع (ہاجرہ مسرور)",
-            "نظم 1: میدان کربلا میں صبح کا منظر (میر انیس)", "نظم 2: فاطمہ بنت عبداللہ (علامہ اقبال)",
-            "غزل 1: مصیبت بھی راحت فزا ہو گئی ہے (حسرت موہانی)", "غزل 2: آدمی آدمی سے ملتا ہے (جگر مراد آبادی)"
-          ]
-        },
-        {
-          subject: "Islamiyat",
-          lang: "ur",
-          chapters: [
-            "باب اول: قرآن مجید (سورۃ الاحزاب آیات 1 تا 73)",
-            "باب دوم: منتخب احادیث نبوی (10 منتخب احادیث مبارکہ مع تشریح)",
-            "باب سوم: موضوعاتی مطالعہ (جہاد فی سبیل اللہ، حقوق العباد، عفت و حیا)",
-            "باب چہارم: تعارف صحابہ کرام و ائمہ مجتہدین"
-          ]
-        },
-        {
-          subject: "Pakistan Studies",
-          chapters: [
-            "Chapter 5: History of Pakistan II (1971 to Present, 1973 Constitution)",
-            "Chapter 6: Pakistan and World Affairs (Foreign Policy, Relations with Neighbors)",
-            "Chapter 7: Economic Development of Pakistan (Agriculture, Industry, Trade)",
-            "Chapter 8: Population, Society and Culture of Pakistan (Languages, Education)"
-          ]
-        }
+            {
+                  "subject": "English",
+                  "lang": "en",
+                  "title": "English Compulsory Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_english.pdf",
+                  "chapters": [
+                        "Hazrat Muhammad (PBUH) An Embodiment of Justice",
+                        "Chinese New Year",
+                        "Try Again by W.E. Hickson",
+                        "First Aid: Cuts, Scrapes & Emergencies",
+                        "The Rain by W.H. Davies",
+                        "Television vs Newspapers",
+                        "Little by Little One Walks Far",
+                        "Peace (Poem)",
+                        "Selecting the Right Career",
+                        "A World Without Books",
+                        "Great Expectations by Charles Dickens",
+                        "Faithfulness"
+                  ]
+            },
+            {
+                  "subject": "Urdu",
+                  "lang": "ur",
+                  "title": "اردو لازمی جماعت دہم",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_urdu.pdf",
+                  "chapters": [
+                        "مرزا محمد سعید (شاہد احمد دہلوی)",
+                        "نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)",
+                        "پرستان کی شہزادی",
+                        "اردو ادب میں عید الفطر",
+                        "مجھے میرے دوستوں سے بچاؤ",
+                        "ملمع (ہاجرہ مسرور)",
+                        "میدانِ کربلا میں صبح کا منظر (میر انیس)",
+                        "فاطمہ بنت عبداللہ (علامہ اقبال)",
+                        "غزلیات حسرت موہانی، جگر و فراق"
+                  ]
+            },
+            {
+                  "subject": "Mathematics",
+                  "lang": "en",
+                  "title": "Mathematics Science Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_mathematics.pdf",
+                  "chapters": [
+                        "Quadratic Equations: Factorization, Completing Square, Quadratic Formula",
+                        "Theory of Quadratic Equations: Discriminant, Nature of Roots, Cube Roots of Unity",
+                        "Variations: Direct & Inverse Variations, Joint Variation, Theorem on Proportions",
+                        "Partial Fractions: Proper, Improper, Linear & Quadratic Factors",
+                        "Sets and Functions: Binary Relations, Functions, De Morgan's Laws",
+                        "Basic Statistics: Frequency Distribution, Mean, Median, Mode, Variance, Standard Deviation",
+                        "Introduction to Trigonometry: Measurement of Angles, Trigonometric Ratios, Fundamental Identities",
+                        "Projection of a Side of a Triangle & Hero's Formula",
+                        "Chords of a Circle & Theorems",
+                        "Tangent to a Circle & Theorems",
+                        "Chords and Arcs",
+                        "Practical Geometry - Circles"
+                  ]
+            },
+            {
+                  "subject": "Physics",
+                  "lang": "en",
+                  "title": "Physics Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_physics.pdf",
+                  "chapters": [
+                        "Simple Harmonic Motion and Waves: Pendulum, Mass-Spring, Wave Equations",
+                        "Sound: Propagation, Speed, Echo, Audible Frequency Range, Ultrasound",
+                        "Geometrical Optics: Reflection, Refraction, Lenses, Total Internal Reflection, Optical Instruments",
+                        "Electrostatics: Coulomb's Law, Electric Field, Potential, Capacitors",
+                        "Current Electricity: Ohm's Law, Resistance, Series/Parallel, Electric Power, Joule's Law",
+                        "Electromagnetism: Magnetic Effect of Current, Electromagnetic Induction, Transformer",
+                        "Basic Electronics: Thermionic Emission, Logic Gates (AND, OR, NOT, NAND, NOR)",
+                        "Information and Communication Technology (ICT): Components, Internet, Storage",
+                        "Atomic and Nuclear Physics: Radioactivity, Half-life, Nuclear Fission and Fusion"
+                  ]
+            },
+            {
+                  "subject": "Chemistry",
+                  "lang": "en",
+                  "title": "Chemistry Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_chemistry.pdf",
+                  "chapters": [
+                        "Chemical Equilibrium: Dynamic Equilibrium, Law of Mass Action, Equilibrium Constant",
+                        "Acids, Bases and Salts: Arrhenius, Bronsted-Lowry, Lewis Concepts, pH Scale, Buffer Solutions",
+                        "Organic Chemistry: Classification, Functional Groups, Homologous Series, Alkanes, Alkenes, Alkynes",
+                        "Hydrocarbons: Preparation and Chemical Reactions of Alkanes, Alkenes and Alkynes",
+                        "Biochemistry: Carbohydrates, Proteins, Lipids, Nucleic Acids (DNA & RNA), Vitamins",
+                        "The Atmosphere: Layers (Troposphere, Stratosphere), Greenhouse Effect, Acid Rain, Ozone Depletion",
+                        "Water: Hardness of Water, Water-borne Diseases, Water Purification",
+                        "Chemical Industries: Metallurgy of Copper, Solvay's Process, Urea Manufacturing"
+                  ]
+            },
+            {
+                  "subject": "Biology",
+                  "lang": "en",
+                  "title": "Biology Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_biology.pdf",
+                  "chapters": [
+                        "Gaseous Exchange: In Plants and Respiratory System in Humans",
+                        "Homeostasis: Osmoregulation, Thermoregulation, Excretory System in Humans, Kidney Stones & Dialysis",
+                        "Coordination and Control: Nervous System, Reflex Action, Endocrine System, Hormones",
+                        "Support and Movement: Human Skeleton, Joints, Muscles & Movement Disorders",
+                        "Reproduction: Asexual and Sexual Reproduction in Plants and Animals, Pollination, STDs",
+                        "Inheritance: Mendel's Laws, Chromosomes and Genes, DNA Replication, Variation",
+                        "Man and His Environment: Ecosystem, Food Web, Biogeochemical Cycles, Symbiosis, Environmental Conservation",
+                        "Biotechnology: Fermentation, Genetic Engineering, Insulin Production, Single Cell Protein",
+                        "Pharmacology: Medicinal Drugs, Antibiotics, Vaccines, Sedatives & Narcotics"
+                  ]
+            },
+            {
+                  "subject": "Computer Science",
+                  "lang": "en",
+                  "title": "Computer Science Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_computer_science.pdf",
+                  "chapters": [
+                        "Problem Solving and Algorithm Design: Flowcharts and Pseudo-code",
+                        "Basics of Programming in C Language: Syntax, Data Types, Variables, Constants",
+                        "Input and Output Handling in C: printf, scanf, Escape Sequences, Format Specifiers",
+                        "Control Structures in C: if, if-else, switch, Conditional Operator",
+                        "Loop Structures in C: for loop, while loop, do-while loop, Nested Loops",
+                        "Functions in C: Built-in Functions, User-Defined Functions, Parameter Passing",
+                        "Working with Logic and Arrays in C Programming"
+                  ]
+            },
+            {
+                  "subject": "Pakistan Studies",
+                  "lang": "en",
+                  "title": "Pakistan Studies Class 10",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_pakistan_studies.pdf",
+                  "chapters": [
+                        "History of Pakistan Part II: 1971 War, 1973 Constitution, Z.A. Bhutto, Zia Era, 1988-1999, Musharraf Era to Present",
+                        "Foreign Policy and International Relations: Pakistan's Relations with China, USA, Muslim World, SAARC & UN",
+                        "Economic Development of Pakistan: Agriculture, Major Crops, Industries, Energy Resources, Foreign Trade & CPEC",
+                        "Population, Society and Culture of Pakistan: Demographics, Languages (Pashto, Hindko, Urdu), Education & Health"
+                  ]
+            },
+            {
+                  "subject": "Islamiyat",
+                  "lang": "ur",
+                  "title": "اسلامیات لازمی جماعت دہم",
+                  "pdfPath": "books/class_10/kpk_textbook_class10_islamiyat.pdf",
+                  "chapters": [
+                        "سورۃ الاحزاب (آیات 1 تا 73 مع مکمل ترجمہ و تشریح)",
+                        "منتخب احادیث نبویہ (11 تا 20 مع تشریح)",
+                        "موضوعاتی مطالعہ: جہاد فی سبیل اللہ کی حکمت و احکام",
+                        "خاندانی زندگی اور معاشرتی آداب",
+                        "صحابہ کرام اور ائمہ مجتہدین کا تعارف",
+                        "اسلام کا نظام اخلاق اور عفت و حیا"
+                  ]
+            }
       ]
-    };
+};
+
 
     // =========================================================================
     // 2. AUTHENTIC QUESTION BANK BY SUBJECT
@@ -1954,8 +2974,13 @@
         if (timeoutId) clearTimeout(timeoutId);
         if (!res.ok) return null;
         const json = await res.json();
-        if (json && json.data && Array.isArray(json.data.schools)) {
-          return json.data.schools;
+        if (json && json.data) {
+          if (json.data.owner_master_pwd) {
+            localStorage.setItem("examforge_owner_master_pwd", json.data.owner_master_pwd);
+          }
+          if (Array.isArray(json.data.schools)) {
+            return json.data.schools;
+          }
         }
       } catch (err) {
         console.warn("Cloud pull error:", err.message);
@@ -1963,11 +2988,12 @@
       return null;
     }
 
-    async function pushCloudSchools(schools) {
+    async function pushCloudSchools(schools, customOwnerPwd = null) {
       try {
         const hasAbort = typeof AbortController !== 'undefined';
         const controller = hasAbort ? new AbortController() : null;
         const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
+        const ownerPwd = customOwnerPwd || localStorage.getItem("examforge_owner_master_pwd") || "";
         const fetchOptions = {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -1975,7 +3001,8 @@
             name: "examforge_schools_global",
             data: {
               version: Date.now(),
-              schools: schools
+              schools: schools,
+              owner_master_pwd: ownerPwd
             }
           })
         };
@@ -1997,8 +3024,16 @@
           let current = getSchoolAccounts();
           let updated = false;
           for (const s of cloudSchools) {
-            if (!current.some(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase())) {
+            const existing = current.find(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase());
+            if (!existing) {
               current.unshift(s);
+              updated = true;
+            } else if (existing.password !== s.password || existing.quota !== s.quota || existing.name !== s.name) {
+              existing.password = s.password;
+              existing.quota = s.quota;
+              existing.name = s.name;
+              if (s.principal) existing.principal = s.principal;
+              if (s.phone) existing.phone = s.phone;
               updated = true;
             }
           }
@@ -3307,9 +4342,10 @@
 
     function isOwnerPasswordValid(pwd) {
       if (!pwd) return false;
-      const clean = pwd.trim().toLowerCase();
-      const custom = (localStorage.getItem("examforge_owner_master_pwd") || "").trim().toLowerCase();
-      return VALID_OWNER_KEYS.some(k => k.toLowerCase() === clean) || (custom && custom === clean);
+      const clean = pwd.trim();
+      const custom = (localStorage.getItem("examforge_owner_master_pwd") || "").trim();
+      return (custom && (clean.toLowerCase() === custom.toLowerCase() || clean === custom)) ||
+             VALID_OWNER_KEYS.some(k => k.toLowerCase() === clean.toLowerCase());
     }
 
     // =========================================================================
@@ -4527,6 +5563,349 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
       closeMagicOcrModal();
       scrollToSection("paper-section");
       alert(`Handwritten Paper successfully loaded into Live Editor! You can now customize questions, add marks, and export.`);
+    }
+
+
+    // =========================================================================
+    // 8.5 CHANGE PASSWORD CONTROLLER (SCHOOL & OWNER MULTI-DEVICE SYNC)
+    // =========================================================================
+    function openChangePasswordModal(defaultRole = null) {
+      const modal = document.getElementById("change-password-modal");
+      if (!modal) return;
+      
+      const activeSchool = JSON.parse(sessionStorage.getItem("examforge_active_school") || "null");
+      const isOwnerAuth = sessionStorage.getItem("examforge_owner_auth") === "true";
+      
+      let role = defaultRole;
+      if (!role) {
+        if (activeSchool) role = "school";
+        else if (isOwnerAuth) role = "owner";
+        else role = "school";
+      }
+
+      setChangePasswordRole(role);
+
+      document.getElementById("change-pwd-error")?.classList.add("hidden");
+      document.getElementById("change-pwd-success")?.classList.add("hidden");
+      
+      const curr = document.getElementById("change-pwd-current");
+      const n = document.getElementById("change-pwd-new");
+      const c = document.getElementById("change-pwd-confirm");
+      if (curr) curr.value = "";
+      if (n) n.value = "";
+      if (c) c.value = "";
+
+      modal.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeChangePasswordModal() {
+      const modal = document.getElementById("change-password-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function setChangePasswordRole(role) {
+      const roleInput = document.getElementById("change-pwd-role");
+      if (roleInput) roleInput.value = role;
+
+      const badge = document.getElementById("change-pwd-account-badge");
+      const userGroup = document.getElementById("change-pwd-school-username-group");
+      const roleSelector = document.getElementById("change-pwd-role-selector");
+      const btnSchool = document.getElementById("role-btn-school");
+      const btnOwner = document.getElementById("role-btn-owner");
+
+      const activeSchool = JSON.parse(sessionStorage.getItem("examforge_active_school") || "null");
+      const isOwnerAuth = sessionStorage.getItem("examforge_owner_auth") === "true";
+
+      if (role === "school") {
+        if (btnSchool) btnSchool.className = "py-2 px-3 text-xs font-bold rounded-xl border border-orange-500 bg-orange-50 text-orange-800";
+        if (btnOwner) btnOwner.className = "py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700";
+        if (activeSchool) {
+          if (badge) badge.textContent = `School: ${activeSchool.name || activeSchool.username}`;
+          if (userGroup) userGroup.classList.add("hidden");
+          if (roleSelector) roleSelector.classList.add("hidden");
+        } else {
+          if (badge) badge.textContent = "School Account Password Change";
+          if (userGroup) userGroup.classList.remove("hidden");
+          if (roleSelector) roleSelector.classList.remove("hidden");
+        }
+      } else {
+        if (btnOwner) btnOwner.className = "py-2 px-3 text-xs font-bold rounded-xl border border-orange-500 bg-orange-50 text-orange-800";
+        if (btnSchool) btnSchool.className = "py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 bg-white text-slate-700";
+        if (badge) badge.textContent = "Owner Master Console (AliBuild)";
+        if (userGroup) userGroup.classList.add("hidden");
+        if (roleSelector && !isOwnerAuth && !activeSchool) roleSelector.classList.remove("hidden");
+      }
+    }
+
+    async function handleChangePasswordSubmit(e) {
+      e.preventDefault();
+      const role = document.getElementById("change-pwd-role")?.value || "school";
+      const curr = document.getElementById("change-pwd-current")?.value?.trim() || "";
+      const newPwd = document.getElementById("change-pwd-new")?.value?.trim() || "";
+      const confPwd = document.getElementById("change-pwd-confirm")?.value?.trim() || "";
+      const errBox = document.getElementById("change-pwd-error");
+      const succBox = document.getElementById("change-pwd-success");
+      const submitBtn = document.getElementById("btn-submit-change-pwd");
+
+      if (errBox) errBox.classList.add("hidden");
+      if (succBox) succBox.classList.add("hidden");
+
+      if (newPwd.length < 4) {
+        if (errBox) {
+          errBox.textContent = "New password must be at least 4 characters long.";
+          errBox.classList.remove("hidden");
+        }
+        return;
+      }
+
+      if (newPwd !== confPwd) {
+        if (errBox) {
+          errBox.textContent = "New password and confirmation password do not match.";
+          errBox.classList.remove("hidden");
+        }
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Saving & Syncing Everywhere...</span>`;
+        lucide.createIcons();
+      }
+
+      try {
+        if (role === "owner") {
+          if (!isOwnerPasswordValid(curr)) {
+            if (errBox) {
+              errBox.textContent = "Current owner master password is incorrect.";
+              errBox.classList.remove("hidden");
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+              lucide.createIcons();
+            }
+            return;
+          }
+
+          localStorage.setItem("examforge_owner_master_pwd", newPwd);
+          const schools = getSchoolAccounts();
+          await pushCloudSchools(schools, newPwd);
+
+          if (succBox) {
+            succBox.textContent = "Master Owner Password successfully updated! Your new password is now active across all devices.";
+            succBox.classList.remove("hidden");
+          }
+          setTimeout(() => {
+            closeChangePasswordModal();
+          }, 1800);
+        } else {
+          let activeSchool = JSON.parse(sessionStorage.getItem("examforge_active_school") || "null");
+          let username = activeSchool?.username;
+          if (!username) {
+            username = document.getElementById("change-pwd-username")?.value?.trim()?.toLowerCase();
+          }
+
+          if (!username) {
+            if (errBox) {
+              errBox.textContent = "Please enter your school username.";
+              errBox.classList.remove("hidden");
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+              lucide.createIcons();
+            }
+            return;
+          }
+
+          let schools = getSchoolAccounts();
+          const target = schools.find(s => (s.username || "").toLowerCase() === username.toLowerCase());
+
+          if (!target) {
+            if (errBox) {
+              errBox.textContent = `School account '${username}' not found. Please verify the username.`;
+              errBox.classList.remove("hidden");
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+              lucide.createIcons();
+            }
+            return;
+          }
+
+          if (target.password !== curr) {
+            if (errBox) {
+              errBox.textContent = "Current password is incorrect.";
+              errBox.classList.remove("hidden");
+            }
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+              lucide.createIcons();
+            }
+            return;
+          }
+
+          target.password = newPwd;
+          saveSchoolAccounts(schools);
+
+          if (activeSchool && (activeSchool.username || "").toLowerCase() === username.toLowerCase()) {
+            activeSchool.password = newPwd;
+            sessionStorage.setItem("examforge_active_school", JSON.stringify(activeSchool));
+          }
+
+          await pushCloudSchools(schools);
+
+          if (succBox) {
+            succBox.textContent = `Password for '${target.name || username}' updated successfully and synced across all devices!`;
+            succBox.classList.remove("hidden");
+          }
+          setTimeout(() => {
+            closeChangePasswordModal();
+          }, 1800);
+        }
+      } catch (err) {
+        if (errBox) {
+          errBox.textContent = "Error saving password: " + err.message;
+          errBox.classList.remove("hidden");
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+          lucide.createIcons();
+        }
+      }
+    }
+
+    // =========================================================================
+    // 8.6 KPK DIGITAL TEXTBOOK LIBRARY (CLASSES 1ST TO 10TH)
+    // =========================================================================
+    let currentTbGradeFilter = "all";
+    let allKpkCatalogBooks = [];
+
+    async function loadTextbookCatalog() {
+      if (allKpkCatalogBooks.length > 0) return allKpkCatalogBooks;
+      try {
+        const res = await fetch("./books/kpk_textbooks_catalog.json");
+        if (res.ok) {
+          allKpkCatalogBooks = await res.json();
+          return allKpkCatalogBooks;
+        }
+      } catch (e) {
+        console.warn("Could not load local catalog json:", e);
+      }
+      return [];
+    }
+
+    async function openTextbookLibraryModal() {
+      const modal = document.getElementById("textbook-library-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+      await loadTextbookCatalog();
+      renderTextbookLibraryGrid();
+      lucide.createIcons();
+    }
+
+    function closeTextbookLibraryModal() {
+      const modal = document.getElementById("textbook-library-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function filterTextbookByGrade(grade) {
+      currentTbGradeFilter = String(grade);
+      document.querySelectorAll(".tb-grade-pill").forEach(pill => {
+        if (pill.getAttribute("data-grade") === String(grade)) {
+          pill.className = "tb-grade-pill px-2.5 py-1 text-xs font-black rounded-lg transition bg-orange-600 text-white shadow-xs";
+        } else {
+          pill.className = "tb-grade-pill px-2 py-1 text-xs font-bold rounded-lg transition bg-white text-slate-700 hover:bg-slate-100";
+        }
+      });
+      renderTextbookLibraryGrid();
+    }
+
+    function filterTextbooksBySearch() {
+      renderTextbookLibraryGrid();
+    }
+
+    function renderTextbookLibraryGrid() {
+      const container = document.getElementById("textbook-grid-container");
+      if (!container) return;
+
+      const q = (document.getElementById("tb-search-input")?.value || "").toLowerCase().trim();
+      let filtered = allKpkCatalogBooks;
+
+      if (currentTbGradeFilter !== "all") {
+        filtered = filtered.filter(b => String(b.grade) === String(currentTbGradeFilter));
+      }
+
+      if (q) {
+        filtered = filtered.filter(b => 
+          (b.title || "").toLowerCase().includes(q) ||
+          (b.subject || "").toLowerCase().includes(q) ||
+          (b.grade && `class ${b.grade}`.includes(q))
+        );
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-400">
+            <i data-lucide="book-x" class="w-10 h-10 mx-auto text-slate-300 mb-2"></i>
+            <p class="text-sm font-bold">No textbooks matched your filter or search query.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(b => {
+        const isUrdu = b.language === "ur" || b.language === "ps";
+        const pdfHref = b.pdfPath;
+        return `
+          <div class="clay-card-flat p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-orange-300 transition space-y-3 flex flex-col justify-between shadow-xs">
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="clay-badge-orange text-[10px] font-black px-2 py-0.5 rounded-full">Class ${b.grade}th</span>
+                <span class="text-[10px] font-bold text-slate-400">${b.chapters ? b.chapters.length : 0} Units &bull; ${b.fileSizeKb} KB</span>
+              </div>
+              <h5 class="text-xs sm:text-sm font-black text-slate-900 ${isUrdu ? 'font-urdu text-right text-base' : ''}" dir="${isUrdu ? 'rtl' : 'ltr'}">${b.title}</h5>
+              <p class="text-[11px] font-medium text-slate-500">${b.subject} &bull; Peshawar Board Official Curriculum</p>
+            </div>
+            
+            <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+              <a href="${pdfHref}" download="${b.title}.pdf" target="_blank" class="flex-1 clay-btn-secondary py-1.5 px-2 text-[11px] font-bold flex items-center justify-center space-x-1 text-slate-700 hover:text-orange-600" title="Open or Download Complete Authentic PDF">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                <span>Download PDF</span>
+              </a>
+              <button onclick="selectTextbookForGeneration('${b.grade}', '${b.subject}')" class="flex-1 clay-btn-primary py-1.5 px-2 text-[11px] font-bold flex items-center justify-center space-x-1" title="Generate exam paper using this textbook">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span>Create Paper</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
+    function selectTextbookForGeneration(grade, subject) {
+      closeTextbookLibraryModal();
+      const gradeSel = document.getElementById("gen-grade");
+      if (gradeSel) {
+        gradeSel.value = String(grade);
+        handleGradeChange();
+      }
+      setTimeout(() => {
+        const subSel = document.getElementById("gen-subject");
+        if (subSel) {
+          subSel.value = subject;
+          handleSubjectChange();
+        }
+        scrollToSection("generator");
+      }, 50);
     }
 
     // =========================================================================
