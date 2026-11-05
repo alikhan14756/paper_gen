@@ -321,6 +321,9 @@ class DocxGenerator:
         # -------------------------------------------------------------
         sections = paper_data.get("sections", [])
         for s_idx, sec in enumerate(sections):
+            if s_idx == 1:
+                # Force Page Break between Objective (Section A) and Subjective (Section B & C)
+                doc.add_page_break()
             sec_type = sec.get("section_type", "mcq")
             total_sec_m = sec.get("total_section_marks", 0)
             attempt = sec.get("questions_to_attempt", sec.get("total_questions", 0))

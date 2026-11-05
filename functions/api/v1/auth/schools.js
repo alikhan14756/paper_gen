@@ -1,7 +1,6 @@
 const DEFAULT_SCHOOLS = [
   { id: "sch-nomankhan-001", name: "Government Primary School Ganapur", username: "nomankhan", principal: "Headmaster", quota: "Unlimited", phone: "+923215423874" },
-  { id: "sch-mims-002", name: "MIMS School and College", username: "mims", principal: "Principal", quota: "Unlimited", phone: "+923215423874" },
-  { id: "sch-pms-003", name: "Peshawar Model School", username: "pms", principal: "Director Academics", quota: "Unlimited", phone: "+923215423874" }
+  { id: "sch-mims-002", name: "MIMS School and College", username: "mims", principal: "Principal", quota: "Unlimited", phone: "+923215423874" }
 ];
 
 export async function onRequest(context) {

@@ -87,13 +87,13 @@ def test_scenario_c_incognito_pure_credentials():
     """
     incognito_client = TestClient(app)
     res = incognito_client.post("/api/auth/login", json={
-        "username_or_email": "pms",
+        "username_or_email": "nomankhan",
         "password": "123"
     })
     assert res.status_code == 200
     data = res.json()
-    assert data["user"]["username"] == "pms"
-    assert data["user"]["school_name"] == "Peshawar Model School"
+    assert data["user"]["username"] == "nomankhan"
+    assert data["user"]["school_name"] == "Government Primary School Ganapur"
 
 def test_scenario_d_multi_school_tenant_isolation(db_session):
     """
@@ -152,7 +152,7 @@ def test_scenario_e_invalid_credentials_and_expired_tokens():
     assert "Incorrect username/email or password" in res1.json()["detail"]
 
     # 2. Correct username, wrong password
-    res2 = test_client.post("/api/auth/login", json={"username_or_email": "pms", "password": "WrongPassword!"})
+    res2 = test_client.post("/api/auth/login", json={"username_or_email": "nomankhan", "password": "WrongPassword!"})
     assert res2.status_code == 401
     assert "Incorrect username/email or password" in res2.json()["detail"]
 
@@ -166,7 +166,7 @@ def test_scenario_f_role_boundaries_school_admin_cannot_access_owner_console():
     """
     Test F: School administrators cannot access Owner/Super Admin management endpoints.
     """
-    school_login = client.post("/api/auth/login", json={"username_or_email": "pms", "password": "123"})
+    school_login = client.post("/api/auth/login", json={"username_or_email": "nomankhan", "password": "123"})
     school_token = school_login.json()["access_token"]
 
     # School admin tries to call owner create-school endpoint

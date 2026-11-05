@@ -1,7 +1,6 @@
 const DEFAULT_SCHOOLS = [
   { id: "sch-nomankhan-001", name: "Government Primary School Ganapur", username: "nomankhan", password: "123", principal: "Headmaster", quota: "Unlimited", phone: "+923215423874" },
-  { id: "sch-mims-002", name: "MIMS School and College", username: "mims", password: "123", principal: "Principal", quota: "Unlimited", phone: "+923215423874" },
-  { id: "sch-pms-003", name: "Peshawar Model School", username: "pms", password: "123", principal: "Director Academics", quota: "Unlimited", phone: "+923215423874" }
+  { id: "sch-mims-002", name: "MIMS School and College", username: "mims", password: "123", principal: "Principal", quota: "Unlimited", phone: "+923215423874" }
 ];
 
 const VALID_OWNER_KEYS = ["14756", "alikhan14756", "alikhan", "ownerpass2026!", "03215423874", "+923215423874"];

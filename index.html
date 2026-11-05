@@ -192,6 +192,17 @@
     }
 
     @media print {
+      @page {
+        size: A4 portrait;
+        margin: 6mm 8mm;
+      }
+      html, body {
+        background: #ffffff !important;
+        font-size: 10pt;
+        line-height: 1.25;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
       body * {
         visibility: hidden;
       }
@@ -207,21 +218,65 @@
         padding: 0;
       }
       .paper-sheet {
-        page-break-after: always;
-        break-after: page;
         box-shadow: none !important;
-        border: 3px double #0f172a !important;
-        padding: 10mm 14mm !important;
-        margin: 0 0 15mm 0 !important;
+        border: 2.5px double #0f172a !important;
+        padding: 5mm 8mm !important;
+        margin: 0 !important;
         background: #ffffff !important;
       }
-      #paper-sheet-bc {
-        page-break-before: always;
-        break-before: page;
+      /* PAGE 1: Strictly Section A (Objective MCQs) */
+      #paper-sheet-a {
+        page-break-before: avoid !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        page-break-inside: avoid !important;
+        min-height: 275mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
+      /* PAGE 2: Strictly Sections B & C (Subjective) */
+      #paper-sheet-bc {
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+        min-height: 275mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      /* PAGE 3: Answer Key */
       #paper-answer-key {
-        page-break-before: always;
-        break-before: page;
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      /* Compact styling so 15 MCQs stay strictly on Page 1 */
+      #paper-sheet-a .space-y-4 {
+        margin-top: 0.15rem !important;
+        margin-bottom: 0.15rem !important;
+      }
+      #sec-a-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2px !important;
+      }
+      #sec-a-container .mcq-item {
+        padding: 2px 4px !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
+        font-size: 9pt !important;
+      }
+      #sec-a-container .options-grid {
+        gap: 2px 6px !important;
+        font-size: 8.5pt !important;
+      }
+      /* Compact styling for Sections B & C on Page 2 */
+      #sec-b-container > div, #sec-c-container > div {
+        padding: 2px 4px !important;
+        margin-bottom: 3px !important;
+        line-height: 1.25 !important;
+        font-size: 9.5pt !important;
       }
       .no-print {
         display: none !important;
@@ -885,9 +940,10 @@
           <div class="space-y-4">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — A (Objective Multiple Choice Questions)</span>
-              <button type="button" onclick="openEditMarksModal('A')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section A Marks">
-                <span>Marks:</span> <span id="sec-a-marks">15</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
-              </button>
+              <div class="inline-flex items-center space-x-1.5">
+                <span class="text-amber-300 font-bold">Marks:</span>
+                <span id="sec-a-marks" contenteditable="true" onblur="handleInlineSectionMarks('A', this.innerText)" class="editable-text bg-amber-400/20 text-amber-300 font-mono font-black px-2.5 py-0.5 rounded border border-amber-400/50 cursor-text" title="Click or type to edit Section A Marks">15</span>
+              </div>
             </div>
 
             <div id="sec-a-container" class="space-y-4 text-xs">
@@ -979,9 +1035,10 @@
           <div class="space-y-3 pt-2">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — B (Short Conceptual Questions)</span>
-              <button type="button" onclick="openEditMarksModal('B')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section B Marks">
-                <span>Marks:</span> <span id="sec-b-marks">36</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
-              </button>
+              <div class="inline-flex items-center space-x-1.5">
+                <span class="text-amber-300 font-bold">Marks:</span>
+                <span id="sec-b-marks" contenteditable="true" onblur="handleInlineSectionMarks('B', this.innerText)" class="editable-text bg-amber-400/20 text-amber-300 font-mono font-black px-2.5 py-0.5 rounded border border-amber-400/50 cursor-text" title="Click or type to edit Section B Marks">36</span>
+              </div>
             </div>
             <p id="sec-b-note" class="text-[11px] font-bold text-slate-700 italic px-1">
               Note: Attempt any 9 questions. All questions carry equal marks (4 Marks each).
@@ -996,9 +1053,10 @@
           <div class="space-y-3 pt-3">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — C (Descriptive Long Questions)</span>
-              <button type="button" onclick="openEditMarksModal('C')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section C Marks">
-                <span>Marks:</span> <span id="sec-c-marks">24</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
-              </button>
+              <div class="inline-flex items-center space-x-1.5">
+                <span class="text-amber-300 font-bold">Marks:</span>
+                <span id="sec-c-marks" contenteditable="true" onblur="handleInlineSectionMarks('C', this.innerText)" class="editable-text bg-amber-400/20 text-amber-300 font-mono font-black px-2.5 py-0.5 rounded border border-amber-400/50 cursor-text" title="Click or type to edit Section C Marks">24</span>
+              </div>
             </div>
             <p id="sec-c-note" class="text-[11px] font-bold text-slate-700 italic px-1">
               Note: Attempt any 3 questions. All questions carry equal marks (8 Marks each).
@@ -1327,7 +1385,7 @@
       <div class="flex flex-col gap-2 pt-2">
         <button onclick="closeProWordExportModal(); openSchoolLoginModal('school')" class="w-full clay-btn-primary py-2.5 text-xs font-black flex items-center justify-center space-x-1.5 shadow-md">
           <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>Sign In with School Account (Ganapur, MIMS, PMS)</span>
+          <span>Sign In with School Account (Ganapur & MIMS)</span>
         </button>
         <button onclick="closeProWordExportModal(); window.print()" class="w-full clay-btn-secondary py-2 text-xs font-bold text-emerald-700 border-emerald-300 hover:bg-emerald-50 flex items-center justify-center space-x-1.5">
           <i data-lucide="printer" class="w-4 h-4 text-emerald-600"></i>
@@ -4644,20 +4702,11 @@
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Peshawar Model School",
-        principal: "Director Academics",
-        username: "pms",
-        password: "123",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
       }
     ];
 
     const STALE_DEMO_USERNAMES = new Set([
-      "ics", "aps", "city", "beaconhouse", "bloomfield", "lgs", "frontier", "roots", 
+      "pms", "ics", "aps", "city", "beaconhouse", "bloomfield", "lgs", "frontier", "roots", 
       "army", "alpha", "beta", "school-a", "school-b", "active", "suspended", "regen"
     ]);
 
@@ -4691,11 +4740,11 @@
     }
 
     function resetToOnlyThreeSchools() {
-      if (!confirm("Are you sure you want to remove all other schools and keep ONLY the 3 official verified schools (Ganapur, MIMS, PMS)?")) return;
+      if (!confirm("Are you sure you want to remove all other schools and keep ONLY the 3 official verified schools (Ganapur & MIMS)?")) return;
       localStorage.setItem("examforge_school_accounts", JSON.stringify(DEFAULT_SCHOOL_ACCOUNTS));
       renderOwnerSchoolsTable();
       if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
-      alert("✅ All demo schools removed! Exactly 3 official schools remain: Ganapur, MIMS, and PMS.");
+      alert("✅ All demo schools removed! Exactly 3 official schools remain: Ganapur and MIMS.");
     }
 
     function saveSchoolAccounts(schools) {
@@ -5538,7 +5587,19 @@
         if (document.getElementById("paper-exam-date-bc")) document.getElementById("paper-exam-date-bc").innerText = currentPaper.examDate;
       }
 
-      // Render Section A (MCQs) - With clickable marks badge on every question
+      // Synchronize Section Marks in Section Headers and Top Header
+      const marksA = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : currentPaper.mcqs.length;
+      const marksB = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
+      const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      const totalSubjective = marksB + marksC;
+
+      if (document.getElementById("sec-a-marks")) document.getElementById("sec-a-marks").innerText = marksA;
+      if (document.getElementById("sec-b-marks")) document.getElementById("sec-b-marks").innerText = marksB;
+      if (document.getElementById("sec-c-marks")) document.getElementById("sec-c-marks").innerText = marksC;
+      if (document.getElementById("paper-head-marks-a")) document.getElementById("paper-head-marks-a").innerText = marksA;
+      if (document.getElementById("paper-head-marks-bc")) document.getElementById("paper-head-marks-bc").innerText = totalSubjective;
+
+      // Render Section A (MCQs)
       const secAContainer = document.getElementById("sec-a-container");
       const marksStyle = currentPaper.marksStyle || 'school-per-question';
       const perShortMarks = currentPaper.perShortMarks || 4;
@@ -5546,29 +5607,22 @@
 
       if (secAContainer) {
         secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => {
-          const qMarks = q.marks !== undefined ? q.marks : 1;
           return `
-          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-2">
+          <div class="p-1.5 sm:p-2 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-1.5 mcq-item">
             <div class="flex items-start justify-between gap-2">
               <div class="flex-1 flex items-start space-x-2">
-                <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
-                <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
+                <span class="font-black text-slate-900 pt-0.5 shrink-0 text-xs sm:text-sm">Q${idx + 1}.</span>
+                <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed text-xs sm:text-sm">
                   ${escapeHtml(q.text)}
                 </div>
-                <button type="button" onclick="quickEditQuestionMarks('mcq', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-800 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-1.5 shadow-2xs" title="Click to change marks for MCQ ${idx + 1}">
-                  [${qMarks} M ✏️]
-                </button>
               </div>
               <div class="flex items-center space-x-1 shrink-0 no-print">
-                <button onclick="quickEditQuestionMarks('mcq', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
-                  <i data-lucide="award" class="w-3.5 h-3.5"></i>
-                </button>
                 <button onclick="removeQuestion('mcq', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2 pl-2 sm:pl-6 text-slate-700 break-words">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-2 pl-2 sm:pl-5 text-slate-700 break-words options-grid">
               ${q.options.map((opt, optIdx) => `
                 <div class="flex items-center space-x-1.5">
                   <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
@@ -5585,22 +5639,15 @@
       const secBContainer = document.getElementById("sec-b-container");
       if (secBContainer) {
         secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => {
-          const qMarks = q.marks !== undefined ? q.marks : perShortMarks;
           return `
-          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
+          <div class="p-2 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
-              <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
-              <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
+              <span class="font-black text-slate-900 pt-0.5 shrink-0 text-xs sm:text-sm">Q${idx + 1}.</span>
+              <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed text-xs sm:text-sm">
                 ${escapeHtml(q.text)}
               </div>
-              <button type="button" onclick="quickEditQuestionMarks('short', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Short Question ${idx + 1}">
-                [${qMarks} Marks ✏️]
-              </button>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
-              <button onclick="quickEditQuestionMarks('short', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
-                <i data-lucide="award" class="w-3.5 h-3.5"></i>
-              </button>
               <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
@@ -5614,22 +5661,15 @@
       const secCContainer = document.getElementById("sec-c-container");
       if (secCContainer) {
         secCContainer.innerHTML = currentPaper.longs.map((q, idx) => {
-          const qMarks = q.marks !== undefined ? q.marks : perLongMarks;
           return `
-          <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
+          <div class="p-2 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
-              <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
-              <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
+              <span class="font-black text-slate-900 pt-0.5 shrink-0 text-xs sm:text-sm">Q${idx + 1}.</span>
+              <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed text-xs sm:text-sm">
                 ${escapeHtml(q.text)}
               </div>
-              <button type="button" onclick="quickEditQuestionMarks('long', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Long Question ${idx + 1}">
-                [${qMarks} Marks ✏️]
-              </button>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
-              <button onclick="quickEditQuestionMarks('long', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
-                <i data-lucide="award" class="w-3.5 h-3.5"></i>
-              </button>
               <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
@@ -5923,244 +5963,221 @@
       const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
       const marksBC = marksB + marksC;
 
-      // Check if docx library is loaded
       if (typeof docx !== "undefined") {
         try {
-          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, PageBreak } = docx;
+          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } = docx;
 
-          const docChildren = [];
+          const noneBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
+          const noBorders = { top: noneBorder, bottom: noneBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder };
 
           // ==========================================
-          // SHEET 1: PART I (OBJECTIVE TYPE - SECTION A)
+          // SECTION 1: SHEET 1 - OBJECTIVE TYPE (PAGE 1)
           // ==========================================
-          docChildren.push(
+          const sheet1Children = [
             new Paragraph({
-              text: currentPaper.schoolName.toUpperCase(),
-              heading: HeadingLevel.HEADING_1,
+              children: [new TextRun({ text: currentPaper.schoolName.toUpperCase(), bold: true, size: 28 })],
               alignment: AlignmentType.CENTER,
+              spacing: { after: 80 }
             }),
             new Paragraph({
-              text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`,
-              heading: HeadingLevel.HEADING_2,
+              children: [new TextRun({ text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`, bold: true, size: 22 })],
               alignment: AlignmentType.CENTER,
+              spacing: { after: 80 }
             }),
             new Paragraph({
-              text: "PART — I (OBJECTIVE TYPE)",
-              heading: HeadingLevel.HEADING_3,
+              children: [new TextRun({ text: "PART — I (OBJECTIVE TYPE)", bold: true, size: 20 })],
               alignment: AlignmentType.CENTER,
+              spacing: { after: 120 }
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: `Roll No: [    ][    ][    ][    ][    ][    ]               `, bold: true }),
-                new TextRun({ text: `Time: ${currentPaper.timeAllowedA || "20 Minutes"}               `, bold: true }),
-                new TextRun({ text: `Code: 914-A               `, bold: true }),
-                new TextRun({ text: `Marks: ${marksA}`, bold: true }),
+                new TextRun({ text: "Roll No: [    ][    ][    ][    ][    ][    ]          ", bold: true, size: 19 }),
+                new TextRun({ text: `Time: ${currentPaper.timeAllowedA || "20 Minutes"}          `, bold: true, size: 19 }),
+                new TextRun({ text: "Paper Code: 914-A          ", bold: true, size: 19 }),
+                new TextRun({ text: `Total Marks: ${marksA}`, bold: true, size: 19 }),
               ],
               alignment: AlignmentType.CENTER,
+              spacing: { after: 120 }
             }),
-            new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
             new Paragraph({
-              children: [
-                new TextRun({ text: `SECTION — A (Objective Multiple Choice Questions)   [Marks: ${marksA}]`, bold: true }),
-              ],
+              children: [new TextRun({ text: `SECTION — A (Objective Multiple Choice Questions)   [Marks: ${marksA}]`, bold: true, size: 21 })],
               heading: HeadingLevel.HEADING_3,
+              spacing: { after: 60 }
             }),
-            new Paragraph({ text: "Note: Attempt all questions. All questions carry equal marks (1 Mark each). Overwriting, cutting or double-filling circles will receive zero credit. Hand over this sheet to the Invigilator after 20 minutes." }),
-            new Paragraph({ text: "" })
-          );
+            new Paragraph({
+              children: [new TextRun({ text: "Note: Attempt all questions. All questions carry equal marks. Choose one correct option. Cutting, overwriting or multiple choices receive zero credit. Hand over after 20 minutes.", italics: true, size: 18 })],
+              spacing: { after: 120 }
+            })
+          ];
 
-          // MCQs (No individual question marks)
+          // 15 MCQs with clean 2-column borderless options table (NO per-question marks)
           currentPaper.mcqs.forEach((q, idx) => {
-            docChildren.push(
+            sheet1Children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
-                  new TextRun({ text: q.text }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 20 }),
+                  new TextRun({ text: q.text, size: 20 }),
                 ],
-              }),
-              new Paragraph({
-                children: [
-                  new TextRun({ text: `     ${q.options[0]}          ${q.options[1]}          ${q.options[2]}          ${q.options[3]}` })
-                ]
-              }),
-              new Paragraph({ text: "" })
+                spacing: { before: 60, after: 30 }
+              })
             );
+
+            // Clean 2x2 options grid in Word
+            const optTable = new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              borders: noBorders,
+              rows: [
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      width: { size: 50, type: WidthType.PERCENTAGE },
+                      borders: noBorders,
+                      children: [new Paragraph({ children: [new TextRun({ text: `(A) ${q.options[0] || ""}`, size: 19 })], spacing: { after: 20 } })]
+                    }),
+                    new TableCell({
+                      width: { size: 50, type: WidthType.PERCENTAGE },
+                      borders: noBorders,
+                      children: [new Paragraph({ children: [new TextRun({ text: `(B) ${q.options[1] || ""}`, size: 19 })], spacing: { after: 20 } })]
+                    })
+                  ]
+                }),
+                new TableRow({
+                  children: [
+                    new TableCell({
+                      width: { size: 50, type: WidthType.PERCENTAGE },
+                      borders: noBorders,
+                      children: [new Paragraph({ children: [new TextRun({ text: `(C) ${q.options[2] || ""}`, size: 19 })], spacing: { after: 20 } })]
+                    }),
+                    new TableCell({
+                      width: { size: 50, type: WidthType.PERCENTAGE },
+                      borders: noBorders,
+                      children: [new Paragraph({ children: [new TextRun({ text: `(D) ${q.options[3] || ""}`, size: 19 })], spacing: { after: 20 } })]
+                    })
+                  ]
+                })
+              ]
+            });
+            sheet1Children.push(optTable);
           });
 
-          docChildren.push(
+          sheet1Children.push(
             new Paragraph({
-              text: "[ End of Objective Paper — Collect after 20 Minutes ]",
+              children: [new TextRun({ text: "[ End of Objective Paper • Collect after 20 Minutes ]", italics: true, size: 18 })],
               alignment: AlignmentType.CENTER,
-            }),
-            // PAGE BREAK BETWEEN OBJECTIVE AND SUBJECTIVE PAPERS
-            new Paragraph({ children: [new PageBreak()] })
+              spacing: { before: 120 }
+            })
           );
 
           // ==========================================
-          // SHEET 2: PART II (SUBJECTIVE TYPE - SECTIONS B & C)
+          // SECTION 2: SHEET 2 - SUBJECTIVE TYPE (PAGE 2)
           // ==========================================
-          docChildren.push(
-            new Paragraph({
-              text: currentPaper.schoolName.toUpperCase(),
-              heading: HeadingLevel.HEADING_1,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`,
-              heading: HeadingLevel.HEADING_2,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: "PART — II (SUBJECTIVE TYPE)",
-              heading: HeadingLevel.HEADING_3,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: `Time Allowed: ${currentPaper.timeAllowedBC || "2 Hours 40 Minutes"}            `, bold: true }),
-                new TextRun({ text: `Paper Code: 914-A            `, bold: true }),
-                new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true }),
-              ],
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({ text: "—".repeat(60), alignment: AlignmentType.CENTER }),
-            new Paragraph({ text: "Note: Answer the questions in neat handwriting with proper scientific reasons, headings, formulas, and neat labeled diagrams where applicable on the provided answer book." }),
-            new Paragraph({ text: "" })
-          );
-
-          // SECTION B: Short Questions (Numbering restarts from Q1! No individual marks!)
           const totalShorts = currentPaper.shorts.length;
           const attemptShorts = Math.min(currentPaper.attemptShorts || 9, totalShorts);
-          const leaveShorts = Math.max(0, totalShorts - attemptShorts);
-          const perShortMarks = attemptShorts > 0 ? Math.round(marksB / attemptShorts) : 4;
-          const choiceTextB = leaveShorts > 0 ? ` (Choice: Leave any ${leaveShorts} questions)` : "";
-          docChildren.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Marks: ${marksB}]`, bold: true }),
-              ],
-              heading: HeadingLevel.HEADING_3,
-            }),
-            new Paragraph({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts} questions${choiceTextB}. All questions carry equal marks (${perShortMarks} Marks each).` }),
-            new Paragraph({ text: "" })
-          );
-
-          const marksStyleDocx = currentPaper.marksStyle || 'bisep-header-only';
-
-          currentPaper.shorts.forEach((q, idx) => {
-            const qMarks = q.marks || perShortMarks;
-            const marksSuffix = marksStyleDocx === 'school-per-question' ? `   [${qMarks} Marks]` : (marksStyleDocx === 'compact-score' ? `   (${qMarks})` : '');
-            docChildren.push(
-              new Paragraph({
-                children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
-                  new TextRun({ text: q.text }),
-                  ...(marksSuffix ? [new TextRun({ text: marksSuffix, bold: true })] : [])
-                ],
-              }),
-              new Paragraph({ text: "" })
-            );
-          });
-
-          // SECTION C: Long Questions
           const totalLongs = currentPaper.longs.length;
           const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
-          const leaveLongs = Math.max(0, totalLongs - attemptLongs);
-          const perLongMarks = attemptLongs > 0 ? Math.round(marksC / attemptLongs) : 8;
-          const choiceTextC = leaveLongs > 0 ? ` (Choice: Leave any ${leaveLongs} questions)` : "";
-          docChildren.push(
-            new Paragraph({ text: "" }),
+
+          const sheet2Children = [
+            new Paragraph({
+              children: [new TextRun({ text: currentPaper.schoolName.toUpperCase(), bold: true, size: 28 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 80 }
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`, bold: true, size: 22 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 80 }
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "PART — II (SUBJECTIVE TYPE)", bold: true, size: 20 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 120 }
+            }),
             new Paragraph({
               children: [
-                new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Marks: ${marksC}]`, bold: true }),
+                new TextRun({ text: `Time: ${currentPaper.timeAllowedBC || "2 Hours 40 Minutes"}          `, bold: true, size: 19 }),
+                new TextRun({ text: `Paper Code: 914-A          `, bold: true, size: 19 }),
+                new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true, size: 19 }),
               ],
-              heading: HeadingLevel.HEADING_3,
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 120 }
             }),
-            new Paragraph({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs} questions${choiceTextC}. All questions carry equal marks (${perLongMarks} Marks each). Show complete derivations & steps.` }),
-            new Paragraph({ text: "" })
-          );
+            new Paragraph({
+              children: [new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Marks: ${marksB}]`, bold: true, size: 22 })],
+              heading: HeadingLevel.HEADING_3,
+              spacing: { before: 100, after: 60 }
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts}. All questions carry equal marks. Answer concisely.`, italics: true, size: 18 })],
+              spacing: { after: 80 }
+            })
+          ];
 
-          currentPaper.longs.forEach((q, idx) => {
-            const qMarks = q.marks || perLongMarks;
-            const marksSuffix = marksStyleDocx === 'school-per-question' ? `   [${qMarks} Marks]` : (marksStyleDocx === 'compact-score' ? `   (${qMarks})` : '');
-            docChildren.push(
+          // Short Questions (NO per-question marks)
+          currentPaper.shorts.forEach((q, idx) => {
+            sheet2Children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true }),
-                  new TextRun({ text: q.text }),
-                  ...(marksSuffix ? [new TextRun({ text: marksSuffix, bold: true })] : [])
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 21 }),
+                  new TextRun({ text: q.text, size: 21 }),
                 ],
-              }),
-              new Paragraph({ text: "" })
-            );
-          });
-
-          docChildren.push(
-            new Paragraph({
-              text: "[ End of Subjective Paper — Best of Luck ]",
-              alignment: AlignmentType.CENTER,
-            }),
-            // PAGE BREAK TO TEACHER ANSWER KEY
-            new Paragraph({ children: [new PageBreak()] })
-          );
-
-          // ==========================================
-          // CONFIDENTIAL TEACHER ANSWER KEY PAGE
-          // ==========================================
-          docChildren.push(
-            new Paragraph({
-              children: [
-                new TextRun({ text: "CONFIDENTIAL TEACHER ANSWER KEY & MARKING SCHEME", bold: true, color: "CC0000" }),
-              ],
-              heading: HeadingLevel.HEADING_2,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({ text: "For internal examiner and teacher use only. Do not distribute to candidates." }),
-            new Paragraph({ text: "" }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: "SECTION A: MCQs ANSWER KEY", bold: true }),
-              ],
-              heading: HeadingLevel.HEADING_3,
-            })
-          );
-
-          currentPaper.mcqs.forEach((q, idx) => {
-            docChildren.push(
-              new Paragraph({
-                text: `Q${idx + 1}: ${q.options[q.answer] || q.options[0]}`,
+                spacing: { before: 60, after: 40 }
               })
             );
           });
 
-          docChildren.push(
-            new Paragraph({ text: "" }),
+          sheet2Children.push(
             new Paragraph({
-              children: [
-                new TextRun({ text: "SECTION B & C: MARKING CRITERIA", bold: true }),
-              ],
+              children: [new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Marks: ${marksC}]`, bold: true, size: 22 })],
               heading: HeadingLevel.HEADING_3,
+              spacing: { before: 140, after: 60 }
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs}. All questions carry equal marks. Show diagrams and complete steps.`, italics: true, size: 18 })],
+              spacing: { after: 80 }
             })
           );
 
-          currentPaper.shorts.forEach((q, idx) => {
-            docChildren.push(
-              new Paragraph({
-                text: `Section B - Q${idx + 1}: ${q.solution || "Complete conceptual definition & steps."}`,
-              })
-            );
-          });
-
+          // Long Questions (NO per-question marks)
           currentPaper.longs.forEach((q, idx) => {
-            docChildren.push(
+            sheet2Children.push(
               new Paragraph({
-                text: `Section C - Q${idx + 1}: ${q.solution || "Detailed proof, formulas, diagrams & calculations."}`,
+                children: [
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 21 }),
+                  new TextRun({ text: q.text, size: 21 }),
+                ],
+                spacing: { before: 60, after: 40 }
               })
             );
           });
 
+          sheet2Children.push(
+            new Paragraph({
+              children: [new TextRun({ text: "[ End of Subjective Paper • ExamForge AI • Developed by Muhammad Ali (alibuild.site) ]", italics: true, size: 17 })],
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 160 }
+            })
+          );
+
+          // Build Document with Distinct Sections -> Sheet 1 is Page 1, Sheet 2 is Page 2
           const doc = new Document({
-            sections: [{ properties: {}, children: docChildren }],
+            sections: [
+              {
+                properties: {
+                  page: {
+                    margin: { top: 720, right: 720, bottom: 720, left: 720 }
+                  }
+                },
+                children: sheet1Children
+              },
+              {
+                properties: {
+                  page: {
+                    margin: { top: 720, right: 720, bottom: 720, left: 720 }
+                  }
+                },
+                children: sheet2Children
+              }
+            ]
           });
 
           const blob = await Packer.toBlob(doc);
@@ -6172,7 +6189,6 @@
         }
       }
 
-      // Fallback: Real Word HTML Blob (.doc)
       exportToWordDoc();
     }
 
@@ -8207,6 +8223,25 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
           renderPaperDOM();
         }
       }
+    }
+
+    // Direct Editable Section Marks Handler
+    function handleInlineSectionMarks(section, value) {
+      if (!currentPaper) return;
+      const clean = parseInt(String(value).replace(/[^0-9]/g, ""), 10);
+      if (isNaN(clean) || clean < 0) {
+        renderPaperDOM();
+        return;
+      }
+      if (section === 'A') {
+        currentPaper.secAMarks = clean;
+      } else if (section === 'B') {
+        currentPaper.secBMarks = clean;
+      } else if (section === 'C') {
+        currentPaper.secCMarks = clean;
+      }
+      autoSaveCurrentPaper();
+      renderPaperDOM();
     }
 
     function quickEditSectionMarks(section) {

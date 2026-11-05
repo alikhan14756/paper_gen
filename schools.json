@@ -18,15 +18,5 @@
     "quota": "Unlimited",
     "phone": "+923215423874",
     "createdAt": "2026-11-01T12:00:00.000Z"
-  },
-  {
-    "id": "sch-pms-003",
-    "name": "Peshawar Model School",
-    "principal": "Director Academics",
-    "username": "pms",
-    "password": "123",
-    "quota": "Unlimited",
-    "phone": "+923215423874",
-    "createdAt": "2026-11-01T12:00:00.000Z"
   }
 ]
