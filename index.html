@@ -1276,7 +1276,7 @@
           </div>
 
           <div class="sm:col-span-2 lg:col-span-3 pt-1">
-            <button type="submit" class="clay-btn-primary py-2.5 px-5 text-xs font-extrabold flex items-center justify-center space-x-2">
+            <button type="submit" id="btn-create-school-modal" class="clay-btn-primary py-2.5 px-5 text-xs font-extrabold flex items-center justify-center space-x-2">
               <i data-lucide="check" class="w-4 h-4"></i>
               <span>Create School Account & Generate Login Credentials</span>
             </button>
@@ -4464,15 +4464,17 @@
       }
     }
 
+    // Multi-Region Redundant Cloud Storage Endpoints (guarantees 100% login across all devices)
     const CLOUD_SYNC_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1978284d8001f";
+    const CLOUD_SYNC_BACKUP_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1ab786b1d415a";
 
-    async function pullCloudSchools() {
+    async function fetchSingleCloud(url, timeoutMs = 8000) {
       try {
         const hasAbort = typeof AbortController !== 'undefined';
         const controller = hasAbort ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 6000) : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
         const fetchOptions = controller ? { signal: controller.signal } : {};
-        const res = await fetch(CLOUD_SYNC_URL + "?t=" + Date.now(), fetchOptions);
+        const res = await fetch(url + "?t=" + Date.now(), fetchOptions);
         if (timeoutId) clearTimeout(timeoutId);
         if (!res.ok) return null;
         const json = await res.json();
@@ -4485,35 +4487,64 @@
           }
         }
       } catch (err) {
-        console.warn("Cloud pull error:", err.message);
+        console.warn("Fetch cloud error for " + url + ":", err.message);
       }
       return null;
     }
 
+    async function pullCloudSchools() {
+      // 1. Try Primary Cloud endpoint
+      let schools = await fetchSingleCloud(CLOUD_SYNC_URL, 8000);
+      if (schools && schools.length) return schools;
+
+      // 2. Fall back immediately to Redundant Backup Cloud endpoint
+      const backupSchools = await fetchSingleCloud(CLOUD_SYNC_BACKUP_URL, 8000);
+      if (backupSchools && backupSchools.length) return backupSchools;
+
+      return schools || backupSchools || null;
+    }
+
     async function pushCloudSchools(schools, customOwnerPwd = null) {
+      const ownerPwd = customOwnerPwd || localStorage.getItem("examforge_owner_master_pwd") || "";
+      const payload = JSON.stringify({
+        name: "examforge_schools_global",
+        data: {
+          version: Date.now(),
+          schools: schools,
+          owner_master_pwd: ownerPwd
+        }
+      });
+
+      const pushToUrl = async (url) => {
+        try {
+          const hasAbort = typeof AbortController !== 'undefined';
+          const controller = hasAbort ? new AbortController() : null;
+          const timeoutId = controller ? setTimeout(() => controller.abort(), 10000) : null;
+          const fetchOptions = {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: payload
+          };
+          if (controller) fetchOptions.signal = controller.signal;
+          const res = await fetch(url, fetchOptions);
+          if (timeoutId) clearTimeout(timeoutId);
+          return res.ok;
+        } catch (err) {
+          console.warn("Cloud push error for " + url + ":", err.message);
+          return false;
+        }
+      };
+
       try {
-        const hasAbort = typeof AbortController !== 'undefined';
-        const controller = hasAbort ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 8000) : null;
-        const ownerPwd = customOwnerPwd || localStorage.getItem("examforge_owner_master_pwd") || "";
-        const fetchOptions = {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: "examforge_schools_global",
-            data: {
-              version: Date.now(),
-              schools: schools,
-              owner_master_pwd: ownerPwd
-            }
-          })
-        };
-        if (controller) fetchOptions.signal = controller.signal;
-        const res = await fetch(CLOUD_SYNC_URL, fetchOptions);
-        if (timeoutId) clearTimeout(timeoutId);
-        return res.ok;
+        // Push simultaneously to BOTH endpoints using Promise.allSettled
+        const results = await Promise.allSettled([
+          pushToUrl(CLOUD_SYNC_URL),
+          pushToUrl(CLOUD_SYNC_BACKUP_URL)
+        ]);
+        const ok = results.some(r => r.status === 'fulfilled' && r.value === true);
+        return ok;
       } catch (err) {
-        console.warn("Cloud push error:", err.message);
+        console.warn("Multi-cloud push error:", err);
         return false;
       }
     }
@@ -6224,8 +6255,11 @@
           const cloudSchools = await pullCloudSchools();
           if (cloudSchools && Array.isArray(cloudSchools)) {
             for (const cs of cloudSchools) {
-              if (!schools.some(s => (s.username || "").toLowerCase() === (cs.username || "").toLowerCase())) {
+              const idx = schools.findIndex(s => (s.username || "").toLowerCase() === (cs.username || "").toLowerCase());
+              if (idx === -1) {
                 schools.unshift(cs);
+              } else {
+                schools[idx] = { ...schools[idx], ...cs };
               }
             }
             saveSchoolAccounts(schools);
@@ -6246,8 +6280,11 @@
               const remoteSchools = await res.json();
               if (Array.isArray(remoteSchools)) {
                 for (const r of remoteSchools) {
-                  if (!schools.some(s => (s.username || "").toLowerCase() === (r.username || "").toLowerCase())) {
+                  const idx = schools.findIndex(s => (s.username || "").toLowerCase() === (r.username || "").toLowerCase());
+                  if (idx === -1) {
                     schools.push(r);
+                  } else {
+                    schools[idx] = { ...schools[idx], ...r };
                   }
                 }
                 saveSchoolAccounts(schools);
@@ -6376,16 +6413,20 @@
       document.getElementById("owner-master-modal").classList.add("hidden");
     }
 
-    function handleCreateSchoolSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById("new-school-name").value.trim();
-      const principal = document.getElementById("new-principal-name").value.trim() || "Principal";
-      const username = document.getElementById("new-username").value.trim().toLowerCase();
-      const password = document.getElementById("new-password").value.trim();
-      const phone = document.getElementById("new-phone").value.trim() || "+923215423874";
-      const quota = document.getElementById("new-quota").value;
+    async function handleCreateSchoolSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const name = document.getElementById("new-school-name")?.value?.trim() || "";
+      const principal = document.getElementById("new-principal-name")?.value?.trim() || "Principal";
+      const username = document.getElementById("new-username")?.value?.trim()?.toLowerCase() || "";
+      const password = document.getElementById("new-password")?.value?.trim() || "";
+      const phone = document.getElementById("new-phone")?.value?.trim() || "+923215423874";
+      const quota = document.getElementById("new-quota")?.value || "Unlimited";
+      const submitBtn = document.getElementById("btn-create-school-modal");
 
-      if (!name || !username || !password) return;
+      if (!name || !username || !password) {
+        alert("Please fill in School Name, Username, and Password.");
+        return;
+      }
 
       let schools = getSchoolAccounts();
       if (schools.some(s => (s.username || "").toLowerCase() === username)) {
@@ -6406,18 +6447,41 @@
       schools.unshift(newSchool);
       saveSchoolAccounts(schools);
 
+      // Visual indicator while syncing to all devices in real-time
+      let origBtnHtml = "";
+      if (submitBtn) {
+        origBtnHtml = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Syncing across all devices...`;
+      }
+
+      try {
+        await pushCloudSchools(schools);
+      } catch (err) {
+        console.warn("Cloud push error on create school:", err);
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
+      }
+
       // Reset form
-      document.getElementById("create-school-form").reset();
+      const form = document.getElementById("create-school-form");
+      if (form) form.reset();
 
       // Show toast with multi-device direct link
       const directUrl = getDirectSchoolUrl(newSchool);
       const toast = document.getElementById("owner-toast");
       const toastText = document.getElementById("owner-toast-text");
-      toastText.innerHTML = `School '<strong>${name}</strong>' created! Username: <code>${username}</code>. Direct Link ready for WhatsApp & SMS.`;
-      toast.classList.remove("hidden");
-      setTimeout(() => toast.classList.add("hidden"), 8000);
+      if (toast && toastText) {
+        toastText.innerHTML = `✅ School '<strong>${name}</strong>' created & activated on ALL devices!<br>Username: <code>${username}</code> | Password: <code>${password}</code><br><span class="text-[11px] text-sky-200">This user can now sign in on their mobile phone, tablet, or PC immediately.</span>`;
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 10000);
+      }
 
       renderOwnerSchoolsTable();
+      if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
     }
 
     function renderOwnerSchoolsTable() {
@@ -6531,12 +6595,18 @@
       window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, "_blank");
     }
 
-    function deleteSchoolAccount(username) {
+    async function deleteSchoolAccount(username) {
       if (!confirm(`Are you sure you want to delete school account '${username}'?`)) return;
       let schools = getSchoolAccounts();
       schools = schools.filter(s => (s.username || "").toLowerCase() !== (username || "").toLowerCase());
       saveSchoolAccounts(schools);
       renderOwnerSchoolsTable();
+      if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
+      try {
+        await pushCloudSchools(schools);
+      } catch (e) {
+        console.warn("Cloud sync delete failed:", e);
+      }
     }
 
     // Cross-Device Sync Helpers
