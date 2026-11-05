@@ -41,6 +41,8 @@ class Settings(BaseSettings):
         "http://localhost:5000",
         "http://127.0.0.1:5000",
         "https://alikhan14756.github.io",
+        "https://alibuild.site",
+        "http://alibuild.site",
         "https://aivanolabs.site",
         "http://aivanolabs.site",
     ]

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://alibuild.site/sitemap.xml

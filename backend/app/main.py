@@ -24,18 +24,8 @@ app = FastAPI(
 # CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-        "http://localhost:5000",
-        "http://127.0.0.1:5000",
-        "https://alikhan14756.github.io",
-        "https://aivanolabs.site",
-        "http://aivanolabs.site",
-    ],
-    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https?://.*\.aivanolabs\.site|https?://.*\.github\.io|https?://.*\.vercel\.app)$",
+    allow_origins=settings.BACKEND_CORS_ORIGINS,
+    allow_origin_regex=r"^(https?://(localhost|127\.0\.0\.1)(:\d+)?|https?://.*\.alibuild\.site|https?://.*\.aivanolabs\.site|https?://.*\.github\.io|https?://.*\.pages\.dev|https?://.*\.vercel\.app)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

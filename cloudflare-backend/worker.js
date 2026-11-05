@@ -3,7 +3,7 @@
  * 100% Free Serverless Multi-Device Authentication & AI Generation
  * 
  * Works with:
- * - Cloudflare Pages / GitHub Pages (https://aivanolabs.site or alikhan14756.github.io)
+ * - Cloudflare Pages / GitHub Pages (https://alibuild.site or alikhan14756.github.io)
  * - Cloudflare D1 (Free Serverless SQLite Database)
  * - Groq / Gemini API (Free real question paper generation)
  */

@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ExamForge AI — Authentic KPK BISEP Examination Paper Generator</title>
+  <meta name="description" content="ExamForge AI — Authentic KPK BISEP Examination Paper Generator. Bilingual Urdu and English test creation for Classes 1-10. Created & Developed by Muhammad Ali (AliBuild).">
+  <meta name="author" content="Muhammad Ali (AliBuild)">
+  <meta name="keywords" content="ExamForge AI, KPK BISEP, Paper Generator, Peshawar Board, Examination Paper, Urdu, English, Muhammad Ali, AliBuild">
+  <meta property="og:title" content="ExamForge AI — Authentic KPK BISEP Examination Paper Generator">
+  <meta property="og:description" content="Create board-standard examination papers with authentic KPK textbooks, bilingual typography, and instant PDF/DOCX export.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alibuild.site/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ExamForge AI — KPK BISEP Paper Generator">
+  <meta name="twitter:description" content="Bilingual examination paper generator for KPK schools by Muhammad Ali.">
+  <link rel="canonical" href="https://alibuild.site/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/><polyline points='14 2 14 8 20 8'/><line x1='16' y1='13' x2='8' y2='13'/><line x1='16' y1='17' x2='8' y2='17'/><polyline points='10 9 9 9 8 9'/></svg>">
 
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -890,7 +902,7 @@
             </div>
             <div class="text-center font-extrabold text-slate-800">
               <span>Developed by: Muhammad Ali (AliBuild) • Website: </span>
-              <a href="https://aivanolabs.site" target="_blank" class="underline text-orange-600 font-black">aivanolabs.site</a>
+              <a href="https://alibuild.site" target="_blank" class="underline text-orange-600 font-black">alibuild.site</a>
               <span> | WhatsApp: +923215423874</span>
             </div>
             <div class="text-right text-[9px] text-slate-500 font-mono">
@@ -1004,7 +1016,7 @@
             </div>
             <div class="text-center font-extrabold text-slate-800">
               <span>Developed by: Muhammad Ali (AliBuild) • Website: </span>
-              <a href="https://aivanolabs.site" target="_blank" class="underline text-orange-600 font-black">aivanolabs.site</a>
+              <a href="https://alibuild.site" target="_blank" class="underline text-orange-600 font-black">alibuild.site</a>
               <span> | WhatsApp: +923215423874</span>
             </div>
             <div class="text-right text-[9px] text-slate-500 font-mono">
@@ -2027,6 +2039,16 @@
 
   <!-- SCRIPT DATA & APP CONTROLLER -->
   <script>
+    // High-security HTML entity escaping helper to prevent XSS injection
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
     // =========================================================================
     // 1. AUTHENTIC KPK TEXTBOOK BOARD SYLLABUS & BOOKS (CLASS 9TH & 10TH)
     // =========================================================================
@@ -4523,7 +4545,7 @@
           return "http://localhost:8000";
         }
         // Cloudflare Pages & Custom Domain native API functions support
-        if (window.location.origin && (window.location.hostname.includes("aivanolabs.site") || window.location.hostname.includes("pages.dev"))) {
+        if (window.location.origin && (window.location.hostname.includes("alibuild.site") || window.location.hostname.includes("aivanolabs.site") || window.location.hostname.includes("pages.dev"))) {
           return window.location.origin;
         }
         return "";
@@ -4594,9 +4616,9 @@
           b.textContent = text || "⚪ Offline";
           b.className = "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-800";
         } else {
-          const isAivano = typeof window !== "undefined" && window.location.hostname.includes("aivanolabs.site");
-          b.textContent = text || (currentUrl ? "🟢 Connected" : (isAivano ? "🟢 Cloudflare Native" : "⚪ Connect Cloudflare"));
-          b.className = (currentUrl || isAivano)
+          const isCloudNative = typeof window !== "undefined" && (window.location.hostname.includes("alibuild.site") || window.location.hostname.includes("aivanolabs.site") || window.location.hostname.includes("pages.dev"));
+          b.textContent = text || (currentUrl ? "🟢 Connected" : (isCloudNative ? "🟢 Cloudflare Native" : "⚪ Connect Cloudflare"));
+          b.className = (currentUrl || isCloudNative)
             ? "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800"
             : "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700";
         }
@@ -5531,7 +5553,7 @@
               <div class="flex-1 flex items-start space-x-2">
                 <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
                 <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
-                  ${q.text}
+                  ${escapeHtml(q.text)}
                 </div>
                 <button type="button" onclick="quickEditQuestionMarks('mcq', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-800 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-1.5 shadow-2xs" title="Click to change marks for MCQ ${idx + 1}">
                   [${qMarks} M ✏️]
@@ -5550,7 +5572,7 @@
               ${q.options.map((opt, optIdx) => `
                 <div class="flex items-center space-x-1.5">
                   <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
-                  <span contenteditable="true" onblur="updateMcqOption(${idx}, ${optIdx}, this.innerText)" class="editable-text text-[11px] font-medium">${opt}</span>
+                  <span contenteditable="true" onblur="updateMcqOption(${idx}, ${optIdx}, this.innerText)" class="editable-text text-[11px] font-medium">${escapeHtml(opt)}</span>
                 </div>
               `).join("")}
             </div>
@@ -5569,7 +5591,7 @@
             <div class="flex-1 flex items-start space-x-2">
               <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
               <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
-                ${q.text}
+                ${escapeHtml(q.text)}
               </div>
               <button type="button" onclick="quickEditQuestionMarks('short', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Short Question ${idx + 1}">
                 [${qMarks} Marks ✏️]
@@ -5598,7 +5620,7 @@
             <div class="flex-1 flex items-start space-x-2">
               <span class="font-black text-slate-900 pt-0.5">Q${idx + 1}.</span>
               <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
-                ${q.text}
+                ${escapeHtml(q.text)}
               </div>
               <button type="button" onclick="quickEditQuestionMarks('long', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Long Question ${idx + 1}">
                 [${qMarks} Marks ✏️]
@@ -6465,7 +6487,7 @@
       }
       if (waBtn) {
         const cleanPhone = "923215423874";
-        const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.includes("aivanolabs.site")) ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
+        const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.startsWith("file:") && window.location.origin !== "null") ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
         const msg = encodeURIComponent(`Assalam-o-Alaikum!\n\nYour ExamForge AI Portal account for *${name}* is active:\n*Website:* ${portalUrl}\n*Username:* ${username}\n*Password:* ${password}\n*Quota:* Unlimited Papers\n\n👉 *Direct 1-Click Login Link (Any Phone or Computer):*\n${directUrl}`);
         waBtn.href = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`;
       }
@@ -6890,10 +6912,10 @@
       tbody.innerHTML = schools.map((s, idx) => `
         <tr class="hover:bg-slate-50 transition border-b border-slate-100">
           <td class="py-2.5 px-3">
-            <div class="font-bold text-slate-900">${s.name}</div>
-            <div class="text-[10px] text-slate-500">${s.principal || "Principal"}</div>
+            <div class="font-bold text-slate-900">${escapeHtml(s.name)}</div>
+            <div class="text-[10px] text-slate-500">${escapeHtml(s.principal || "Principal")}</div>
           </td>
-          <td class="py-2.5 px-3 font-mono font-bold text-slate-800">${s.username}</td>
+          <td class="py-2.5 px-3 font-mono font-bold text-slate-800">${escapeHtml(s.username)}</td>
           <td class="py-2.5 px-3 font-mono text-slate-700 bg-slate-50 rounded">
             <div class="flex items-center space-x-1.5">
               <span id="school-pwd-${idx}" class="font-bold tracking-widest text-slate-400">••••••••</span>
@@ -6905,7 +6927,7 @@
           <td class="py-2.5 px-3">
             <span class="clay-badge-mint text-[10px] font-bold px-2 py-0.5 rounded-full">${s.quota || "Unlimited"}</span>
           </td>
-          <td class="py-2.5 px-3 font-mono text-slate-600">${s.phone || "—"}</td>
+          <td class="py-2.5 px-3 font-mono text-slate-600">${escapeHtml(s.phone || "—")}</td>
           <td class="py-2.5 px-3 text-right space-x-1 whitespace-nowrap">
             <button onclick="quickLoginAsSchool('${s.username}')" class="clay-btn-secondary px-2 py-1 text-[10px] sm:text-[11px] font-bold text-orange-700 hover:bg-orange-50 border-orange-300" title="Quickly test sign in as this school on this device">
               Test
@@ -6954,7 +6976,7 @@
     function getDirectSchoolUrl(school) {
       let baseUrl = "https://alikhan14756.github.io/paper_gen/";
       if (typeof window !== "undefined" && window.location) {
-        if (window.location.origin && window.location.origin !== "null" && !window.location.origin.includes("aivanolabs.site")) {
+        if (window.location.origin && window.location.origin !== "null" && !window.location.origin.startsWith("file:")) {
           const path = window.location.pathname || "/";
           baseUrl = `${window.location.origin}${path}`;
         }
@@ -6986,7 +7008,7 @@
 
       const directUrl = getDirectSchoolUrl(school);
       const cleanPhone = (school.phone || "923215423874").replace(/[^0-9]/g, "");
-      const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.includes("aivanolabs.site")) ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
+      const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.startsWith("file:") && window.location.origin !== "null") ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
       const msg = encodeURIComponent(`Assalam-o-Alaikum ${school.principal || "Principal"}!\n\nYour ExamForge AI Examination Portal account for *${school.name}* is active:\n\n*Portal Website:* ${portalUrl}\n*Username:* ${school.username}\n*Password:* ${school.password}\n*Quota:* ${school.quota || "Unlimited"} Papers\n\n👉 *Direct 1-Click Login Link (Any Mobile or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).\n\nOfficial Support: Muhammad Ali (AliBuild) - +923215423874`);
 
       window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`, "_blank");
@@ -7400,9 +7422,9 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
         } else {
           mcqList.innerHTML = magicPaperData.mcqs.map((q, idx) => `
             <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 space-y-1">
-              <div class="font-bold text-slate-800">Q${idx + 1}. ${q.text}</div>
+              <div class="font-bold text-slate-800">Q${idx + 1}. ${escapeHtml(q.text)}</div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-[10px] text-slate-600 pl-4">
-                ${q.options.map(opt => `<span>${opt}</span>`).join("")}
+                ${q.options.map(opt => `<span>${escapeHtml(opt)}</span>`).join("")}
               </div>
             </div>
           `).join("");
@@ -7416,7 +7438,7 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
         } else {
           shortList.innerHTML = magicPaperData.shorts.map((q, idx) => `
             <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 font-medium text-slate-800">
-              <strong>Q${idx + 1}.</strong> ${q.text}
+              <strong>Q${idx + 1}.</strong> ${escapeHtml(q.text)}
             </div>
           `).join("");
         }
@@ -7429,7 +7451,7 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
         } else {
           longList.innerHTML = magicPaperData.longs.map((q, idx) => `
             <div class="p-1.5 rounded border border-slate-100 hover:bg-slate-50 font-medium text-slate-800">
-              <strong>Q${idx + 1}.</strong> ${q.text}
+              <strong>Q${idx + 1}.</strong> ${escapeHtml(q.text)}
             </div>
           `).join("");
         }

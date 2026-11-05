@@ -2,7 +2,7 @@
 
 This guide shows you how to deploy your ExamForge AI website and backend **completely free forever** using the tools in your screenshot:
 1. **GitHub** (Code repository)
-2. **Cloudflare Pages** (Free frontend hosting for `index.html` with custom domain `aivanolabs.site`)
+2. **Cloudflare Pages** (Free frontend hosting for `index.html` with custom domain `alibuild.site`)
 3. **Cloudflare Workers** (Free global serverless API - replaces localhost FastAPI)
 4. **Cloudflare D1** (Free serverless SQLite database - replaces local `examforge.db`)
 5. **Gemini / Groq API** (Free AI paper question generator)
