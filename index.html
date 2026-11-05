@@ -1080,6 +1080,21 @@
             <button type="button" onclick="lockOwnerQuickSection()" class="text-[11px] font-bold text-slate-400 hover:text-red-600">Lock</button>
           </div>
 
+          <!-- Cloudflare Worker Quick Status & Connector -->
+          <div class="bg-sky-50 border border-sky-200 rounded-xl p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="cloud" class="w-4 h-4 text-sky-600"></i>
+              <span class="text-xs font-bold text-slate-800">Cloudflare Backend:</span>
+              <span id="quick-cf-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700">Checking...</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <input type="url" id="quick-cf-worker-url-input" placeholder="https://examforge-api.workers.dev" class="flex-1 sm:w-56 clay-input p-1.5 text-[11px] font-mono" />
+              <button type="button" onclick="saveAndTestCloudflareBackend(document.getElementById('quick-cf-worker-url-input').value)" class="clay-btn-primary px-2.5 py-1.5 text-[11px] font-bold shrink-0">
+                Connect
+              </button>
+            </div>
+          </div>
+
           <!-- Quick School Creator Form -->
           <div class="bg-orange-50/60 border border-orange-200/80 rounded-2xl p-4 space-y-3">
             <h5 class="text-xs font-black text-slate-900 flex items-center space-x-1.5">
@@ -1230,6 +1245,29 @@
           <i data-lucide="shield-check" class="w-4 h-4 text-orange-600"></i>
           <span>Change Master Password</span>
         </button>
+      </div>
+
+      <!-- CLOUDFLARE EDGE BACKEND CONFIGURATION CARD -->
+      <div class="clay-card-flat p-4 rounded-2xl border border-sky-200 bg-sky-50/60 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-sky-600 shrink-0">
+            <i data-lucide="cloud" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h5 class="text-xs font-black text-slate-900">Cloudflare Edge Backend & D1 Database</h5>
+              <span id="cf-status-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700">Checking...</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Connect your Cloudflare Worker URL for 24/7 cross-device multi-login and AI paper generation.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <input type="url" id="cf-worker-url-input" placeholder="https://examforge-api.<subdomain>.workers.dev" class="flex-1 md:w-72 clay-input p-2 text-xs font-mono text-slate-800" />
+          <button type="button" onclick="saveAndTestCloudflareBackend()" class="clay-btn-primary px-3 py-2 text-xs font-bold shrink-0 flex items-center space-x-1">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>Connect</span>
+          </button>
+        </div>
       </div>
 
       <!-- CREATE NEW SCHOOL ACCOUNT FORM -->
@@ -4363,6 +4401,69 @@
       }
     }
 
+    async function saveAndTestCloudflareBackend(customUrl) {
+      const inputMaster = document.getElementById("cf-worker-url-input");
+      const inputQuick = document.getElementById("quick-cf-worker-url-input");
+      let url = (customUrl !== undefined ? customUrl : (inputMaster && inputMaster.value ? inputMaster.value : (inputQuick ? inputQuick.value : "")) || "").trim().replace(/\/$/, "");
+
+      if (!url) {
+        localStorage.removeItem("examforge_backend_url");
+        if (typeof window !== "undefined") window.EXAMFORGE_API_URL = "";
+        updateCloudflareStatusUI(false, "Disconnected");
+        alert("Cloudflare backend disconnected. Running in standalone fallback mode.");
+        return;
+      }
+
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = "https://" + url;
+      }
+
+      updateCloudflareStatusUI(null, "Testing...");
+
+      try {
+        const res = await fetch(`${url}/health`, { method: "GET", headers: { "Accept": "application/json" } });
+        if (res.ok) {
+          localStorage.setItem("examforge_backend_url", url);
+          if (typeof window !== "undefined") window.EXAMFORGE_API_URL = url;
+          updateCloudflareStatusUI(true, "🟢 Connected");
+          await syncSchoolsFromCloudAndFile();
+          alert("✅ Connected to Cloudflare Edge Backend successfully!\n\nAll school accounts and logins will now sync across all devices 24/7.");
+        } else {
+          updateCloudflareStatusUI(false, "⚠️ Error: HTTP " + res.status);
+          alert("Cloudflare returned status " + res.status + ". Please verify worker code.");
+        }
+      } catch (err) {
+        updateCloudflareStatusUI(false, "❌ Offline / Unreachable");
+        alert("Could not reach Cloudflare Worker at:\n" + url + "\n\nMake sure your worker is deployed and public in Cloudflare.");
+      }
+    }
+
+    function updateCloudflareStatusUI(isConnected, text) {
+      const badges = [document.getElementById("cf-status-badge"), document.getElementById("quick-cf-status-badge")];
+      const inputs = [document.getElementById("cf-worker-url-input"), document.getElementById("quick-cf-worker-url-input")];
+      const currentUrl = localStorage.getItem("examforge_backend_url") || (typeof window !== "undefined" ? window.EXAMFORGE_API_URL : "") || "";
+
+      inputs.forEach(inp => {
+        if (inp) inp.value = currentUrl;
+      });
+
+      badges.forEach(b => {
+        if (!b) return;
+        if (isConnected === true) {
+          b.textContent = text || "🟢 Connected";
+          b.className = "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800";
+        } else if (isConnected === false) {
+          b.textContent = text || "⚪ Offline";
+          b.className = "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-800";
+        } else {
+          b.textContent = text || (currentUrl ? "🟢 Connected" : "⚪ Not Connected");
+          b.className = currentUrl 
+            ? "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800"
+            : "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700";
+        }
+      });
+    }
+
     // Registered School Directory Metadata (Passwords securely hashed with Bcrypt in backend DB)
     const DEFAULT_SCHOOL_ACCOUNTS = [
       {
@@ -5949,6 +6050,7 @@
       if (isOwnerAuth) {
         if (lockedView) lockedView.classList.add("hidden");
         if (unlockedView) unlockedView.classList.remove("hidden");
+        updateCloudflareStatusUI();
         renderOwnerQuickSchoolsList();
       } else {
         if (lockedView) lockedView.classList.remove("hidden");
@@ -6340,6 +6442,7 @@
     function openOwnerMasterModal() {
       if (sessionStorage.getItem("examforge_owner_auth") === "true") {
         document.getElementById("owner-master-modal").classList.remove("hidden");
+        updateCloudflareStatusUI();
         renderOwnerSchoolsTable();
         lucide.createIcons();
         return;
@@ -7962,6 +8065,7 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
 
     window.addEventListener("DOMContentLoaded", () => {
       initAppState();
+      if (typeof updateCloudflareStatusUI === 'function') updateCloudflareStatusUI();
       if (typeof renderShowcaseGrid === 'function') renderShowcaseGrid();
       lucide.createIcons();
     });

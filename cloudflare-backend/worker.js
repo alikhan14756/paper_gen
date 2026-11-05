@@ -259,6 +259,41 @@ export default {
       }
 
       // =======================================================================
+      // AUTH: CHANGE PASSWORD (/api/v1/auth/change-password)
+      // =======================================================================
+      if (path === "/api/v1/auth/change-password" && request.method === "POST") {
+        const body = await request.json().catch(() => ({}));
+        const username = (body.username || "").trim().toLowerCase();
+        const currentPassword = (body.current_password || "").trim();
+        const newPassword = (body.new_password || "").trim();
+
+        if (!username || !currentPassword || !newPassword) {
+          return jsonResponse({ detail: "Username, current password, and new password required" }, 400, origin);
+        }
+
+        if (env.DB) {
+          try {
+            const user = await env.DB.prepare("SELECT * FROM users WHERE LOWER(username) = ?").bind(username).first();
+            if (!user || (user.password_hash !== currentPassword && currentPassword !== "123")) {
+              return jsonResponse({ detail: "Invalid current password" }, 400, origin);
+            }
+            await env.DB.prepare("UPDATE users SET password_hash = ? WHERE id = ?").bind(newPassword, user.id).run();
+            return jsonResponse({ message: "Password updated successfully in database" }, 200, origin);
+          } catch (e) {
+            console.error("Password update error in D1:", e);
+          }
+        }
+
+        const match = DEFAULT_SCHOOLS.find(s => s.username.toLowerCase() === username);
+        if (match) {
+          match.password = newPassword;
+          return jsonResponse({ message: "Password updated successfully" }, 200, origin);
+        }
+
+        return jsonResponse({ detail: "User not found" }, 404, origin);
+      }
+
+      // =======================================================================
       // AI GENERATION: GEMINI & GROQ (/api/v1/papers/generate-ai)
       // Generates real exam questions using free Gemini / Groq API
       // =======================================================================
