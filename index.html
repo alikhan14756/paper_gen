@@ -5963,177 +5963,550 @@
       const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
       const marksBC = marksB + marksC;
 
+      const teacherName = (document.getElementById("paper-teacher-name-a")?.innerText || currentPaper.teacherName || "Prof. M. Tariq").trim();
+      const examDate = (document.getElementById("paper-exam-date-a")?.innerText || currentPaper.examDate || "2026-11-05").trim();
+
       if (typeof docx !== "undefined") {
         try {
-          const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } = docx;
+          const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } = docx;
 
           const noneBorder = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
           const noBorders = { top: noneBorder, bottom: noneBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder };
+          const doubleBorder = { style: BorderStyle.DOUBLE, size: 12, color: "0F172A" };
+          const thinBorder = { style: BorderStyle.SINGLE, size: 4, color: "CBD5E1" };
 
-          // ==========================================
-          // SECTION 1: SHEET 1 - OBJECTIVE TYPE (PAGE 1)
-          // ==========================================
-          const sheet1Children = [
-            new Paragraph({
-              children: [new TextRun({ text: currentPaper.schoolName.toUpperCase(), bold: true, size: 28 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 80 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`, bold: true, size: 22 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 80 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "PART — I (OBJECTIVE TYPE)", bold: true, size: 20 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 120 }
-            }),
+          // =========================================================================
+          // SHEET 1: OBJECTIVE EXAMINATION (SECTION A - STRICTLY PAGE 1)
+          // =========================================================================
+          const sheet1Children = [];
+
+          // 1. Classical 3-Column Paper Header (Logo Left, Title Center, Examiner Right)
+          const headerTable1 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: doubleBorder, bottom: doubleBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "★ EXAM SEAL ★", bold: true, size: 15, color: "64748B" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 30, after: 10 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: "KPK BISEP", bold: true, size: 13, color: "94A3B8" })],
+                        alignment: AlignmentType.CENTER
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 64, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: (currentPaper.schoolName || "EXAMINATION SYSTEM").toUpperCase(), bold: true, size: 24, color: "0F172A" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: `${currentPaper.examTitle || "Annual Examination"} — ${currentPaper.subject} Class ${currentPaper.grade}th`, bold: true, size: 18, color: "1E293B" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: "PART — I (OBJECTIVE TYPE)", bold: true, size: 16, color: "EA580C" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "EXAMINER:", bold: true, size: 13, color: "94A3B8" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: teacherName, bold: true, size: 15, color: "0F172A" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { after: 10 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: `Date: ${examDate}`, size: 13, color: "64748B" })],
+                        alignment: AlignmentType.RIGHT
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet1Children.push(headerTable1);
+
+          // 2. Roll No & Metadata Bar
+          const metaTable1 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: noneBorder, bottom: thinBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 36, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "Roll No: [  ][  ][  ][  ][  ][  ]", bold: true, size: 16, color: "0F172A" })],
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 28, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `Time: ${currentPaper.timeAllowedA || "20 Mins"}`, bold: true, size: 16, color: "0F172A" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "Code: 914-A", bold: true, size: 16, color: "0F172A" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `Marks: ${marksA}`, bold: true, size: 17, color: "EA580C" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet1Children.push(metaTable1);
+
+          // 3. Dark Section A Banner
+          const secABanner = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: noBorders,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 75, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "SECTION — A (Objective Multiple Choice Questions)", bold: true, size: 17, color: "FFFFFF" })],
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 25, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `[Marks: ${marksA}]`, bold: true, size: 17, color: "FBBF24" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet1Children.push(secABanner);
+
+          // 4. Instructions Note
+          sheet1Children.push(
             new Paragraph({
               children: [
-                new TextRun({ text: "Roll No: [    ][    ][    ][    ][    ][    ]          ", bold: true, size: 19 }),
-                new TextRun({ text: `Time: ${currentPaper.timeAllowedA || "20 Minutes"}          `, bold: true, size: 19 }),
-                new TextRun({ text: "Paper Code: 914-A          ", bold: true, size: 19 }),
-                new TextRun({ text: `Total Marks: ${marksA}`, bold: true, size: 19 }),
+                new TextRun({ text: "Note: Attempt all questions. Each question carries equal marks. Choose the correct option. Overwriting or multiple choices receive zero credit. Hand over after 20 minutes.", size: 14, italics: true, color: "475569" })
               ],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 120 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `SECTION — A (Objective Multiple Choice Questions)   [Marks: ${marksA}]`, bold: true, size: 21 })],
-              heading: HeadingLevel.HEADING_3,
-              spacing: { after: 60 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Note: Attempt all questions. All questions carry equal marks. Choose one correct option. Cutting, overwriting or multiple choices receive zero credit. Hand over after 20 minutes.", italics: true, size: 18 })],
-              spacing: { after: 120 }
+              spacing: { before: 15, after: 25 }
             })
-          ];
+          );
 
-          // 15 MCQs with clean 2-column borderless options table (NO per-question marks)
+          // 5. MCQs (Compact layout guaranteeing strictly 1 Page fit)
           currentPaper.mcqs.forEach((q, idx) => {
             sheet1Children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 20 }),
-                  new TextRun({ text: q.text, size: 20 }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 17, color: "0F172A" }),
+                  new TextRun({ text: q.text, bold: true, size: 17, color: "1E293B" }),
                 ],
-                spacing: { before: 60, after: 30 }
+                spacing: { before: 18, after: 6 }
               })
             );
 
-            // Clean 2x2 options grid in Word
-            const optTable = new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              borders: noBorders,
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      width: { size: 50, type: WidthType.PERCENTAGE },
-                      borders: noBorders,
-                      children: [new Paragraph({ children: [new TextRun({ text: `(A) ${q.options[0] || ""}`, size: 19 })], spacing: { after: 20 } })]
-                    }),
-                    new TableCell({
-                      width: { size: 50, type: WidthType.PERCENTAGE },
-                      borders: noBorders,
-                      children: [new Paragraph({ children: [new TextRun({ text: `(B) ${q.options[1] || ""}`, size: 19 })], spacing: { after: 20 } })]
-                    })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      width: { size: 50, type: WidthType.PERCENTAGE },
-                      borders: noBorders,
-                      children: [new Paragraph({ children: [new TextRun({ text: `(C) ${q.options[2] || ""}`, size: 19 })], spacing: { after: 20 } })]
-                    }),
-                    new TableCell({
-                      width: { size: 50, type: WidthType.PERCENTAGE },
-                      borders: noBorders,
-                      children: [new Paragraph({ children: [new TextRun({ text: `(D) ${q.options[3] || ""}`, size: 19 })], spacing: { after: 20 } })]
-                    })
-                  ]
-                })
-              ]
-            });
+            // Determine if options fit on 1 row (4 columns) or 2 rows (2 columns)
+            const maxOptLen = Math.max(...(q.options || []).map(o => (o || "").length));
+            let optTable;
+
+            if (maxOptLen <= 26) {
+              optTable = new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                borders: noBorders,
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 25, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(A) ${q.options[0] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      }),
+                      new TableCell({
+                        width: { size: 25, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(B) ${q.options[1] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      }),
+                      new TableCell({
+                        width: { size: 25, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(C) ${q.options[2] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      }),
+                      new TableCell({
+                        width: { size: 25, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(D) ${q.options[3] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      })
+                    ]
+                  })
+                ]
+              });
+            } else {
+              optTable = new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                borders: noBorders,
+                rows: [
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 50, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(A) ${q.options[0] || ""}`, size: 15, color: "334155" })], spacing: { after: 6 } })]
+                      }),
+                      new TableCell({
+                        width: { size: 50, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(B) ${q.options[1] || ""}`, size: 15, color: "334155" })], spacing: { after: 6 } })]
+                      })
+                    ]
+                  }),
+                  new TableRow({
+                    children: [
+                      new TableCell({
+                        width: { size: 50, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(C) ${q.options[2] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      }),
+                      new TableCell({
+                        width: { size: 50, type: WidthType.PERCENTAGE },
+                        borders: noBorders,
+                        children: [new Paragraph({ children: [new TextRun({ text: `(D) ${q.options[3] || ""}`, size: 15, color: "334155" })], spacing: { after: 0 } })]
+                      })
+                    ]
+                  })
+                ]
+              });
+            }
             sheet1Children.push(optTable);
           });
 
-          sheet1Children.push(
-            new Paragraph({
-              children: [new TextRun({ text: "[ End of Objective Paper • Collect after 20 Minutes ]", italics: true, size: 18 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { before: 120 }
-            })
-          );
+          // 6. Page 1 Footer
+          const footerTable1 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: doubleBorder, bottom: noneBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "[ Page 1 of 2 ]", bold: true, size: 13, color: "64748B" })],
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "ExamForge AI • Developed by Muhammad Ali (AliBuild) • alibuild.site", bold: true, size: 13, color: "334155" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 20, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "BISEP Authentic Standard", size: 12, color: "94A3B8" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet1Children.push(footerTable1);
 
-          // ==========================================
-          // SECTION 2: SHEET 2 - SUBJECTIVE TYPE (PAGE 2)
-          // ==========================================
+          // =========================================================================
+          // SHEET 2: SUBJECTIVE EXAMINATION (SECTIONS B & C - STRICTLY PAGE 2)
+          // =========================================================================
+          const sheet2Children = [];
+
+          // 1. Classical Header for Sheet 2
+          const headerTable2 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: doubleBorder, bottom: doubleBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "★ EXAM SEAL ★", bold: true, size: 15, color: "64748B" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 30, after: 10 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: "KPK BISEP", bold: true, size: 13, color: "94A3B8" })],
+                        alignment: AlignmentType.CENTER
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 64, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: (currentPaper.schoolName || "EXAMINATION SYSTEM").toUpperCase(), bold: true, size: 24, color: "0F172A" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: `${currentPaper.examTitle || "Annual Examination"} — ${currentPaper.subject} Class ${currentPaper.grade}th`, bold: true, size: 18, color: "1E293B" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: "PART — II (SUBJECTIVE TYPE)", bold: true, size: 16, color: "EA580C" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 18, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "EXAMINER:", bold: true, size: 13, color: "94A3B8" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: teacherName, bold: true, size: 15, color: "0F172A" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { after: 10 }
+                      }),
+                      new Paragraph({
+                        children: [new TextRun({ text: `Date: ${examDate}`, size: 13, color: "64748B" })],
+                        alignment: AlignmentType.RIGHT
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet2Children.push(headerTable2);
+
+          // 2. Meta Bar for Sheet 2
+          const metaTable2 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: noneBorder, bottom: thinBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 40, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `Time: ${currentPaper.timeAllowedBC || "2 Hours 40 Minutes"}`, bold: true, size: 16, color: "0F172A" })],
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "Paper Code: 914-A", bold: true, size: 16, color: "0F172A" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true, size: 17, color: "EA580C" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 15, after: 15 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet2Children.push(metaTable2);
+
+          // 3. Section B Dark Banner
           const totalShorts = currentPaper.shorts.length;
           const attemptShorts = Math.min(currentPaper.attemptShorts || 9, totalShorts);
-          const totalLongs = currentPaper.longs.length;
-          const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
 
-          const sheet2Children = [
-            new Paragraph({
-              children: [new TextRun({ text: currentPaper.schoolName.toUpperCase(), bold: true, size: 28 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 80 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `${currentPaper.examTitle} — ${currentPaper.subject} (Class ${currentPaper.grade}th)`, bold: true, size: 22 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 80 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "PART — II (SUBJECTIVE TYPE)", bold: true, size: 20 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 120 }
-            }),
+          const secBBanner = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: noBorders,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 75, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "SECTION — B (Short Conceptual Questions)", bold: true, size: 17, color: "FFFFFF" })],
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 25, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `[Marks: ${marksB}]`, bold: true, size: 17, color: "FBBF24" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet2Children.push(secBBanner);
+
+          sheet2Children.push(
             new Paragraph({
               children: [
-                new TextRun({ text: `Time: ${currentPaper.timeAllowedBC || "2 Hours 40 Minutes"}          `, bold: true, size: 19 }),
-                new TextRun({ text: `Paper Code: 914-A          `, bold: true, size: 19 }),
-                new TextRun({ text: `Total Subjective Marks: ${marksBC}`, bold: true, size: 19 }),
+                new TextRun({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts}. All questions carry equal marks. Write concise, precise answers on answer book.`, size: 14, italics: true, color: "475569" })
               ],
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 120 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `SECTION — B (Short Conceptual Questions)   [Marks: ${marksB}]`, bold: true, size: 22 })],
-              heading: HeadingLevel.HEADING_3,
-              spacing: { before: 100, after: 60 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `Note: Attempt any ${attemptShorts} questions out of ${totalShorts}. All questions carry equal marks. Answer concisely.`, italics: true, size: 18 })],
-              spacing: { after: 80 }
+              spacing: { before: 15, after: 20 }
             })
-          ];
+          );
 
           // Short Questions (NO per-question marks)
           currentPaper.shorts.forEach((q, idx) => {
             sheet2Children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 21 }),
-                  new TextRun({ text: q.text, size: 21 }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 17, color: "0F172A" }),
+                  new TextRun({ text: q.text, size: 17, color: "1E293B" }),
                 ],
-                spacing: { before: 60, after: 40 }
+                spacing: { before: 12, after: 8 }
               })
             );
           });
 
+          // 4. Section C Dark Banner
+          const totalLongs = currentPaper.longs.length;
+          const attemptLongs = Math.min(currentPaper.attemptLongs || 3, totalLongs);
+
+          const secCBanner = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: noBorders,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 75, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "SECTION — C (Descriptive Long Questions)", bold: true, size: 17, color: "FFFFFF" })],
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 25, type: WidthType.PERCENTAGE },
+                    shading: { fill: "0F172A" },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: `[Marks: ${marksC}]`, bold: true, size: 17, color: "FBBF24" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20, after: 20 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet2Children.push(secCBanner);
+
           sheet2Children.push(
             new Paragraph({
-              children: [new TextRun({ text: `SECTION — C (Descriptive Long Questions)   [Marks: ${marksC}]`, bold: true, size: 22 })],
-              heading: HeadingLevel.HEADING_3,
-              spacing: { before: 140, after: 60 }
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs}. All questions carry equal marks. Show diagrams and complete steps.`, italics: true, size: 18 })],
-              spacing: { after: 80 }
+              children: [
+                new TextRun({ text: `Note: Attempt any ${attemptLongs} questions out of ${totalLongs}. All questions carry equal marks. Show complete derivations, formulas & diagrams.`, size: 14, italics: true, color: "475569" })
+              ],
+              spacing: { before: 15, after: 20 }
             })
           );
 
@@ -6142,29 +6515,66 @@
             sheet2Children.push(
               new Paragraph({
                 children: [
-                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 21 }),
-                  new TextRun({ text: q.text, size: 21 }),
+                  new TextRun({ text: `Q${idx + 1}. `, bold: true, size: 17, color: "0F172A" }),
+                  new TextRun({ text: q.text, size: 17, color: "1E293B" }),
                 ],
-                spacing: { before: 60, after: 40 }
+                spacing: { before: 14, after: 10 }
               })
             );
           });
 
-          sheet2Children.push(
-            new Paragraph({
-              children: [new TextRun({ text: "[ End of Subjective Paper • ExamForge AI • Developed by Muhammad Ali (alibuild.site) ]", italics: true, size: 17 })],
-              alignment: AlignmentType.CENTER,
-              spacing: { before: 160 }
-            })
-          );
+          // 5. Page 2 Footer
+          const footerTable2 = new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: { top: doubleBorder, bottom: noneBorder, left: noneBorder, right: noneBorder, insideHorizontal: noneBorder, insideVertical: noneBorder },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "[ Page 2 of 2 ]", bold: true, size: 13, color: "64748B" })],
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "ExamForge AI • Developed by Muhammad Ali (AliBuild) • alibuild.site", bold: true, size: 13, color: "334155" })],
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  }),
+                  new TableCell({
+                    width: { size: 20, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    children: [
+                      new Paragraph({
+                        children: [new TextRun({ text: "BISEP Authentic Standard", size: 12, color: "94A3B8" })],
+                        alignment: AlignmentType.RIGHT,
+                        spacing: { before: 20 }
+                      })
+                    ]
+                  })
+                ]
+              })
+            ]
+          });
+          sheet2Children.push(footerTable2);
 
-          // Build Document with Distinct Sections -> Sheet 1 is Page 1, Sheet 2 is Page 2
+          // Build Multi-Section Document with Calibrated Margins
           const doc = new Document({
             sections: [
               {
                 properties: {
                   page: {
-                    margin: { top: 720, right: 720, bottom: 720, left: 720 }
+                    margin: { top: 360, right: 432, bottom: 360, left: 432 }
                   }
                 },
                 children: sheet1Children
@@ -6172,7 +6582,7 @@
               {
                 properties: {
                   page: {
-                    margin: { top: 720, right: 720, bottom: 720, left: 720 }
+                    margin: { top: 360, right: 432, bottom: 360, left: 432 }
                   }
                 },
                 children: sheet2Children
@@ -6195,33 +6605,164 @@
     function exportToWordDoc() {
       if (!currentPaper) return;
 
-      const sheetA = document.getElementById("paper-sheet-a")?.innerHTML || "";
-      const sheetBC = document.getElementById("paper-sheet-bc")?.innerHTML || "";
-      const answerKey = document.getElementById("paper-answer-key")?.innerHTML || "";
+      const marksA = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : currentPaper.mcqs.length * 1;
+      const marksB = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
+      const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      const marksBC = marksB + marksC;
+
+      const teacherName = (document.getElementById("paper-teacher-name-a")?.innerText || currentPaper.teacherName || "Prof. M. Tariq").trim();
+      const examDate = (document.getElementById("paper-exam-date-a")?.innerText || currentPaper.examDate || "2026-11-05").trim();
       const fileName = `${currentPaper.subject}_Class_${currentPaper.grade}th_ExamPaper.doc`.replace(/\s+/g, '_');
 
       const header = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head><meta charset='utf-8'><title>${fileName}</title>
       <style>
-        body { font-family: 'Times New Roman', Arial, 'Jameel Noori Nastaleeq', sans-serif; font-size: 11pt; line-height: 1.4; }
-        .no-print { display: none !important; }
-        .editable-text { font-weight: inherit; }
-        h3, h4 { text-align: center; margin: 4px 0; }
+        body { font-family: 'Times New Roman', Arial, serif; font-size: 10pt; line-height: 1.2; margin: 0; padding: 0; }
+        .page-sheet { border: 3px double #0f172a; padding: 12px 16px; margin: 0 0 20px 0; background: #ffffff; }
+        .hdr-table { width: 100%; border-collapse: collapse; border-bottom: 2px solid #0f172a; margin-bottom: 8px; }
+        .hdr-table td { padding: 4px; vertical-align: middle; }
+        .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; border-bottom: 1px solid #cbd5e1; font-size: 9.5pt; font-weight: bold; }
+        .banner { background: #0f172a; color: #ffffff; padding: 5px 8px; font-weight: bold; font-size: 9.5pt; margin: 6px 0; display: table; width: 100%; }
+        .mcq-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; font-size: 8.5pt; }
+        .mcq-table td { padding: 1px 4px; }
+        .footer-table { width: 100%; border-collapse: collapse; border-top: 2px solid #0f172a; margin-top: 10px; font-size: 8pt; color: #64748b; font-weight: bold; }
         .page-break { page-break-before: always; mso-break-type: section-break; clear: both; }
       </style></head><body>`;
-      const footer = "</body></html>";
 
-      const combined = `
-        <div class="paper-sheet-1">${sheetA}</div>
-        <div class="page-break" style="page-break-before: always; mso-break-type: section-break;"><br clear="all" style="page-break-before:always" /></div>
-        <div class="paper-sheet-2">${sheetBC}</div>
-        <div class="page-break" style="page-break-before: always; mso-break-type: section-break;"><br clear="all" style="page-break-before:always" /></div>
-        <div class="paper-answer-key">${answerKey}</div>
+      const sheet1Html = `
+        <div class="page-sheet">
+          <table class="hdr-table">
+            <tr>
+              <td width="20%" align="center" style="font-size: 8pt; color: #64748b; font-weight: bold;">★ EXAM SEAL ★<br>KPK BISEP</td>
+              <td width="60%" align="center">
+                <h2 style="margin: 0; font-size: 13pt; text-transform: uppercase; color: #0f172a;">${escapeHtml(currentPaper.schoolName)}</h2>
+                <h3 style="margin: 2px 0; font-size: 10.5pt; color: #1e293b;">${escapeHtml(currentPaper.examTitle)} — ${escapeHtml(currentPaper.subject)} (Class ${escapeHtml(currentPaper.grade)}th)</h3>
+                <div style="font-size: 9pt; font-weight: bold; color: #ea580c;">PART — I (OBJECTIVE TYPE)</div>
+              </td>
+              <td width="20%" align="right" style="font-size: 8.5pt;">
+                <strong>Examiner:</strong> ${escapeHtml(teacherName)}<br>
+                <span style="color: #64748b;">Date: ${escapeHtml(examDate)}</span>
+              </td>
+            </tr>
+          </table>
+
+          <table class="meta-table">
+            <tr>
+              <td width="35%">Roll No: [  ][  ][  ][  ][  ][  ]</td>
+              <td width="30%" align="center">Time: ${escapeHtml(currentPaper.timeAllowedA || "20 Mins")}</td>
+              <td width="15%" align="center">Code: 914-A</td>
+              <td width="20%" align="right" style="color: #ea580c;">Total Marks: ${marksA}</td>
+            </tr>
+          </table>
+
+          <table width="100%" style="background: #0f172a; color: #ffffff; padding: 4px 8px; margin: 4px 0; font-weight: bold; font-size: 9.5pt;">
+            <tr>
+              <td align="left">SECTION — A (Objective Multiple Choice Questions)</td>
+              <td align="right" style="color: #fbbf24;">[Marks: ${marksA}]</td>
+            </tr>
+          </table>
+
+          <div style="font-size: 8pt; color: #475569; font-style: italic; margin-bottom: 6px;">
+            Note: Attempt all questions. Each question carries equal marks. Choose the correct option. Overwriting or multiple choices receive zero credit. Hand over after 20 minutes.
+          </div>
+
+          ${currentPaper.mcqs.map((q, idx) => `
+            <div style="margin-bottom: 3px;">
+              <div style="font-weight: bold; font-size: 9pt; color: #0f172a;">Q${idx + 1}. ${escapeHtml(q.text)}</div>
+              <table class="mcq-table">
+                <tr>
+                  <td width="25%">(A) ${escapeHtml(q.options[0] || "")}</td>
+                  <td width="25%">(B) ${escapeHtml(q.options[1] || "")}</td>
+                  <td width="25%">(C) ${escapeHtml(q.options[2] || "")}</td>
+                  <td width="25%">(D) ${escapeHtml(q.options[3] || "")}</td>
+                </tr>
+              </table>
+            </div>
+          `).join("")}
+
+          <table class="footer-table">
+            <tr>
+              <td width="30%">[ Page 1 of 2 ]</td>
+              <td width="40%" align="center">ExamForge AI • Developed by Muhammad Ali (AliBuild) • alibuild.site</td>
+              <td width="30%" align="right">BISEP Authentic Standard</td>
+            </tr>
+          </table>
+        </div>
       `;
 
-      const sourceHTML = header + combined + footer;
+      const sheet2Html = `
+        <div class="page-break"><br clear="all" style="page-break-before:always; mso-break-type:section-break;" /></div>
+        <div class="page-sheet">
+          <table class="hdr-table">
+            <tr>
+              <td width="20%" align="center" style="font-size: 8pt; color: #64748b; font-weight: bold;">★ EXAM SEAL ★<br>KPK BISEP</td>
+              <td width="60%" align="center">
+                <h2 style="margin: 0; font-size: 13pt; text-transform: uppercase; color: #0f172a;">${escapeHtml(currentPaper.schoolName)}</h2>
+                <h3 style="margin: 2px 0; font-size: 10.5pt; color: #1e293b;">${escapeHtml(currentPaper.examTitle)} — ${escapeHtml(currentPaper.subject)} (Class ${escapeHtml(currentPaper.grade)}th)</h3>
+                <div style="font-size: 9pt; font-weight: bold; color: #ea580c;">PART — II (SUBJECTIVE TYPE)</div>
+              </td>
+              <td width="20%" align="right" style="font-size: 8.5pt;">
+                <strong>Examiner:</strong> ${escapeHtml(teacherName)}<br>
+                <span style="color: #64748b;">Date: ${escapeHtml(examDate)}</span>
+              </td>
+            </tr>
+          </table>
+
+          <table class="meta-table">
+            <tr>
+              <td width="40%">Time: ${escapeHtml(currentPaper.timeAllowedBC || "2 Hours 40 Minutes")}</td>
+              <td width="30%" align="center">Paper Code: 914-A</td>
+              <td width="30%" align="right" style="color: #ea580c;">Total Subjective Marks: ${marksBC}</td>
+            </tr>
+          </table>
+
+          <table width="100%" style="background: #0f172a; color: #ffffff; padding: 4px 8px; margin: 4px 0; font-weight: bold; font-size: 9.5pt;">
+            <tr>
+              <td align="left">SECTION — B (Short Conceptual Questions)</td>
+              <td align="right" style="color: #fbbf24;">[Marks: ${marksB}]</td>
+            </tr>
+          </table>
+
+          <div style="font-size: 8pt; color: #475569; font-style: italic; margin-bottom: 6px;">
+            Note: Attempt any questions from this section. All questions carry equal marks. Write concise, precise answers on answer book.
+          </div>
+
+          ${currentPaper.shorts.map((q, idx) => `
+            <div style="margin-bottom: 4px; font-size: 9pt;">
+              <strong>Q${idx + 1}.</strong> ${escapeHtml(q.text)}
+            </div>
+          `).join("")}
+
+          <table width="100%" style="background: #0f172a; color: #ffffff; padding: 4px 8px; margin: 8px 0 4px 0; font-weight: bold; font-size: 9.5pt;">
+            <tr>
+              <td align="left">SECTION — C (Descriptive Long Questions)</td>
+              <td align="right" style="color: #fbbf24;">[Marks: ${marksC}]</td>
+            </tr>
+          </table>
+
+          <div style="font-size: 8pt; color: #475569; font-style: italic; margin-bottom: 6px;">
+            Note: Attempt required questions. Show complete steps, derivations, and neat labeled diagrams where applicable.
+          </div>
+
+          ${currentPaper.longs.map((q, idx) => `
+            <div style="margin-bottom: 5px; font-size: 9pt;">
+              <strong>Q${idx + 1}.</strong> ${escapeHtml(q.text)}
+            </div>
+          `).join("")}
+
+          <table class="footer-table">
+            <tr>
+              <td width="30%">[ Page 2 of 2 ]</td>
+              <td width="40%" align="center">ExamForge AI • Developed by Muhammad Ali (AliBuild) • alibuild.site</td>
+              <td width="30%" align="right">BISEP Authentic Standard</td>
+            </tr>
+          </table>
+        </div>
+      `;
+
+      const sourceHTML = header + sheet1Html + sheet2Html + "</body></html>";
       const blob = new Blob(['\ufeff' + sourceHTML], { type: 'application/msword;charset=utf-8' });
-      
+
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = fileName;
