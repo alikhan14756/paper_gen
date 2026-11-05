@@ -1077,7 +1077,14 @@
                 <span>Cloud Multi-Device Sync Active</span>
               </span>
             </div>
-            <button type="button" onclick="lockOwnerQuickSection()" class="text-[11px] font-bold text-slate-400 hover:text-red-600">Lock</button>
+            <div class="flex items-center space-x-2">
+              <button type="button" onclick="resetToOnlyThreeSchools()" class="text-[10px] font-bold text-red-600 hover:underline flex items-center space-x-0.5">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                <span>Reset to 3 Schools</span>
+              </button>
+              <span class="text-slate-300">|</span>
+              <button type="button" onclick="lockOwnerQuickSection()" class="text-[11px] font-bold text-slate-400 hover:text-red-600">Lock</button>
+            </div>
           </div>
 
           <!-- Cloudflare Worker Quick Status & Connector -->
@@ -1217,10 +1224,16 @@
           <h3 class="text-xl sm:text-2xl font-black text-slate-900">Muhammad Ali's School Management Section</h3>
           <p class="text-xs text-slate-500">Create login accounts for schools with direct usernames & passwords. No verification hurdles.</p>
         </div>
-        <div class="text-right text-xs">
-          <p class="font-extrabold text-slate-900">Muhammad Ali (AliBuild)</p>
-          <p class="text-slate-500 font-mono text-[11px]">alikhanwebdeveloper@gmail.com</p>
-          <p class="text-emerald-600 font-bold text-[11px]">WhatsApp: +923215423874</p>
+        <div class="flex flex-col sm:items-end justify-center gap-1.5 text-xs">
+          <div class="text-right">
+            <p class="font-extrabold text-slate-900">Muhammad Ali (AliBuild)</p>
+            <p class="text-slate-500 font-mono text-[11px]">alikhanwebdeveloper@gmail.com</p>
+            <p class="text-emerald-600 font-bold text-[11px]">WhatsApp: +923215423874</p>
+          </div>
+          <button type="button" onclick="resetToOnlyThreeSchools()" class="clay-btn-secondary px-2.5 py-1 text-[11px] font-bold text-red-600 border-red-200 hover:bg-red-50 flex items-center space-x-1">
+            <i data-lucide="trash-2" class="w-3 h-3 text-red-500"></i>
+            <span>Purge Old & Keep 3 Schools</span>
+          </button>
         </div>
       </div>
 
@@ -4387,7 +4400,10 @@
         if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
           return "http://localhost:8000";
         }
-        // In production on HTTPS (aivanolabs.site / GitHub Pages), do not fall back to localhost
+        // Cloudflare Pages & Custom Domain native API functions support
+        if (window.location.origin && (window.location.hostname.includes("aivanolabs.site") || window.location.hostname.includes("pages.dev"))) {
+          return window.location.origin;
+        }
         return "";
       }
       return "";
@@ -4456,8 +4472,9 @@
           b.textContent = text || "⚪ Offline";
           b.className = "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-red-800";
         } else {
-          b.textContent = text || (currentUrl ? "🟢 Connected" : "⚪ Not Connected");
-          b.className = currentUrl 
+          const isAivano = typeof window !== "undefined" && window.location.hostname.includes("aivanolabs.site");
+          b.textContent = text || (currentUrl ? "🟢 Connected" : (isAivano ? "🟢 Cloudflare Native" : "⚪ Connect Cloudflare"));
+          b.className = (currentUrl || isAivano)
             ? "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800"
             : "px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-200 text-slate-700";
         }
@@ -4495,6 +4512,11 @@
       }
     ];
 
+    const STALE_DEMO_USERNAMES = new Set([
+      "aps", "city", "beaconhouse", "bloomfield", "lgs", "frontier", "roots", 
+      "army", "alpha", "beta", "school-a", "school-b", "active", "suspended", "regen", "mims"
+    ]);
+
     function getSchoolAccounts() {
       let stored = [];
       try {
@@ -4502,10 +4524,34 @@
       } catch (e) {
         stored = [];
       }
+      
       const map = new Map();
       DEFAULT_SCHOOL_ACCOUNTS.forEach(s => map.set((s.username || "").toLowerCase(), s));
-      stored.forEach(s => map.set((s.username || "").toLowerCase(), s));
-      return Array.from(map.values());
+
+      stored.forEach(s => {
+        const u = (s.username || "").trim().toLowerCase();
+        if (u && !STALE_DEMO_USERNAMES.has(u)) {
+          if (map.has(u)) {
+            map.set(u, { ...map.get(u), ...s });
+          } else {
+            map.set(u, s);
+          }
+        }
+      });
+
+      const result = Array.from(map.values());
+      try {
+        localStorage.setItem("examforge_school_accounts", JSON.stringify(result));
+      } catch (e) {}
+      return result;
+    }
+
+    function resetToOnlyThreeSchools() {
+      if (!confirm("Are you sure you want to remove all other schools and keep ONLY the 3 official verified schools (PMS, ICS, Ganapur)?")) return;
+      localStorage.setItem("examforge_school_accounts", JSON.stringify(DEFAULT_SCHOOL_ACCOUNTS));
+      renderOwnerSchoolsTable();
+      if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
+      alert("✅ All demo schools removed! Exactly 3 official schools remain.");
     }
 
     function saveSchoolAccounts(schools) {
