@@ -180,3 +180,52 @@ def test_scenario_f_role_boundaries_school_admin_cannot_access_owner_console():
     )
     assert res.status_code == 403
     assert "privileges required" in res.text.lower()
+
+def test_scenario_g_change_password_endpoint(db_session):
+    """
+    Test G: Authenticated users (both schools and owner) can change their password securely.
+    Uses an isolated test user to guarantee zero side-effects.
+    """
+    # 1. Create a dedicated test user
+    uid = uuid.uuid4().hex[:6]
+    test_user = User(
+        email=f"pwdtest_{uid}@example.com",
+        username=f"pwdtest_{uid}",
+        hashed_password=hash_password("InitialPass123!"),
+        full_name="Password Test Admin",
+        role="school_admin",
+        is_active=True,
+        is_email_verified=True,
+    )
+    db_session.add(test_user)
+    db_session.commit()
+
+    # 2. Login as the test user
+    login_res = client.post("/api/auth/login", json={"username_or_email": f"pwdtest_{uid}", "password": "InitialPass123!"})
+    assert login_res.status_code == 200
+    token = login_res.json()["access_token"]
+
+    # 3. Try with wrong current password -> 400
+    res_bad = client.post("/api/auth/change-password",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"current_password": "WrongPassword999!", "new_password": "NewSecretPassword2026!"}
+    )
+    assert res_bad.status_code == 400
+    assert "Current password is incorrect" in res_bad.json()["detail"]
+
+    # 4. Successful password change
+    res_ok = client.post("/api/auth/change-password",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"current_password": "InitialPass123!", "new_password": "NewSecretPassword2026!"}
+    )
+    assert res_ok.status_code == 200
+    assert res_ok.json()["success"] is True
+
+    # 5. Old password fails
+    old_login = client.post("/api/auth/login", json={"username_or_email": f"pwdtest_{uid}", "password": "InitialPass123!"})
+    assert old_login.status_code == 401
+
+    # 6. New password succeeds
+    new_login = client.post("/api/auth/login", json={"username_or_email": f"pwdtest_{uid}", "password": "NewSecretPassword2026!"})
+    assert new_login.status_code == 200
+

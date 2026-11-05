@@ -29,6 +29,7 @@ from app.schemas.auth import (
     OwnerVerificationsResponse,
     OwnerCreateSchoolRequest,
     OwnerCreateSchoolResponse,
+    ChangePasswordRequest,
 )
 from app.services.email.mailer import EmailService
 from app.services.communication.otp_service import OTPService
@@ -834,3 +835,25 @@ def owner_create_school_with_credentials(
         quota=req.quota or "Unlimited",
         createdAt=school.created_at.isoformat() if school.created_at else datetime.now(timezone.utc).isoformat(),
     )
+
+
+@router.post("/change-password")
+def change_password(
+    data: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(data.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect.",
+        )
+    if len(data.new_password) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be at least 3 characters long.",
+        )
+    current_user.hashed_password = hash_password(data.new_password)
+    db.commit()
+    return {"success": True, "message": "Password changed successfully."}
+

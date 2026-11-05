@@ -59,6 +59,10 @@ class OwnerCreateSchoolResponse(BaseModel):
     quota: str
     createdAt: str
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 class SchoolBriefResponse(BaseModel):
     id: str
     name: str

@@ -4340,13 +4340,33 @@
     let guestPapersGenerated = 0;
     const MAX_GUEST_PAPERS = 5;
 
-    // Multi-Device Built-In Registered School Accounts Matrix
+    // Centralized Backend API Base URL Configuration
+    function getApiBaseUrl() {
+      if (typeof window !== "undefined") {
+        if (window.EXAMFORGE_API_URL) return window.EXAMFORGE_API_URL.replace(/\/$/, "");
+        const custom = localStorage.getItem("examforge_backend_url");
+        if (custom) return custom.replace(/\/$/, "");
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+          return "http://localhost:8000";
+        }
+      }
+      return "http://localhost:8000";
+    }
+
+    function setApiBaseUrl(url) {
+      if (!url) {
+        localStorage.removeItem("examforge_backend_url");
+      } else {
+        localStorage.setItem("examforge_backend_url", url.trim().replace(/\/$/, ""));
+      }
+    }
+
+    // Registered School Directory Metadata (Passwords securely hashed with Bcrypt in backend DB)
     const DEFAULT_SCHOOL_ACCOUNTS = [
       {
         name: "Peshawar Model School",
         principal: "Director Academics",
         username: "pms",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4355,7 +4375,6 @@
         name: "Islamia College School & College Peshawar",
         principal: "Prof. Tariq Khan",
         username: "ics",
-        password: "456",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4364,7 +4383,6 @@
         name: "Peshawar Cambridge School",
         principal: "Mr. Farhan Ahmad",
         username: "pcs",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4373,7 +4391,6 @@
         name: "Army Public School & College Peshawar",
         principal: "Brig. (R) Asad Ullah",
         username: "aps",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4382,7 +4399,6 @@
         name: "Government Centennial Model High School",
         principal: "Headmaster Sahib",
         username: "ghs",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4391,7 +4407,6 @@
         name: "Lahore Grammar School (LGS)",
         principal: "Academic Principal",
         username: "lgs",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4400,7 +4415,6 @@
         name: "Principal Demonstration Portal",
         principal: "School Principal",
         username: "principal",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4409,7 +4423,6 @@
         name: "ExamForge Test School",
         principal: "Vice Principal",
         username: "test",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
         createdAt: "2026-11-01T12:00:00.000Z"
@@ -4418,27 +4431,8 @@
         name: "ExamForge School Portal",
         principal: "Administrator",
         username: "school",
-        password: "123",
         quota: "Unlimited",
         phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Peshawar Model School (Legacy)",
-        principal: "Dr. Ahmad Raza",
-        username: "peshawarmodel",
-        password: "Model2026!",
-        quota: "Unlimited",
-        phone: "+923215423874",
-        createdAt: "2026-11-01T12:00:00.000Z"
-      },
-      {
-        name: "Islamia College School (Legacy)",
-        principal: "Prof. Farooq Khan",
-        username: "islamia",
-        password: "Islamia2026!",
-        quota: "Unlimited",
-        phone: "+923339123456",
         createdAt: "2026-11-01T12:00:00.000Z"
       }
     ];
@@ -4464,121 +4458,42 @@
       }
     }
 
-    // Multi-Region Redundant Cloud Storage Endpoints (guarantees 100% login across all devices)
-    const CLOUD_SYNC_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1978284d8001f";
-    const CLOUD_SYNC_BACKUP_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1ab786b1d415a";
-
-    async function fetchSingleCloud(url, timeoutMs = 8000) {
-      try {
-        const hasAbort = typeof AbortController !== 'undefined';
-        const controller = hasAbort ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
-        const fetchOptions = controller ? { signal: controller.signal } : {};
-        const res = await fetch(url + "?t=" + Date.now(), fetchOptions);
-        if (timeoutId) clearTimeout(timeoutId);
-        if (!res.ok) return null;
-        const json = await res.json();
-        if (json && json.data) {
-          if (json.data.owner_master_pwd) {
-            localStorage.setItem("examforge_owner_master_pwd", json.data.owner_master_pwd);
-          }
-          if (Array.isArray(json.data.schools)) {
-            return json.data.schools;
-          }
-        }
-      } catch (err) {
-        console.warn("Fetch cloud error for " + url + ":", err.message);
-      }
-      return null;
-    }
-
-    async function pullCloudSchools() {
-      // 1. Try Primary Cloud endpoint
-      let schools = await fetchSingleCloud(CLOUD_SYNC_URL, 8000);
-      if (schools && schools.length) return schools;
-
-      // 2. Fall back immediately to Redundant Backup Cloud endpoint
-      const backupSchools = await fetchSingleCloud(CLOUD_SYNC_BACKUP_URL, 8000);
-      if (backupSchools && backupSchools.length) return backupSchools;
-
-      return schools || backupSchools || null;
-    }
-
-    async function pushCloudSchools(schools, customOwnerPwd = null) {
-      const ownerPwd = customOwnerPwd || localStorage.getItem("examforge_owner_master_pwd") || "";
-      const payload = JSON.stringify({
-        name: "examforge_schools_global",
-        data: {
-          version: Date.now(),
-          schools: schools,
-          owner_master_pwd: ownerPwd
-        }
-      });
-
-      const pushToUrl = async (url) => {
-        try {
-          const hasAbort = typeof AbortController !== 'undefined';
-          const controller = hasAbort ? new AbortController() : null;
-          const timeoutId = controller ? setTimeout(() => controller.abort(), 10000) : null;
-          const fetchOptions = {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: payload
-          };
-          if (controller) fetchOptions.signal = controller.signal;
-          const res = await fetch(url, fetchOptions);
-          if (timeoutId) clearTimeout(timeoutId);
-          return res.ok;
-        } catch (err) {
-          console.warn("Cloud push error for " + url + ":", err.message);
-          return false;
-        }
-      };
-
-      try {
-        // Push simultaneously to BOTH endpoints using Promise.allSettled
-        const results = await Promise.allSettled([
-          pushToUrl(CLOUD_SYNC_URL),
-          pushToUrl(CLOUD_SYNC_BACKUP_URL)
-        ]);
-        const ok = results.some(r => r.status === 'fulfilled' && r.value === true);
-        return ok;
-      } catch (err) {
-        console.warn("Multi-cloud push error:", err);
-        return false;
-      }
-    }
-
     async function syncSchoolsFromCloudAndFile() {
-      // 1. Sync from real-time cloud database
+      // 1. Sync live school directory from centralized FastAPI backend
       try {
-        const cloudSchools = await pullCloudSchools();
-        if (cloudSchools && Array.isArray(cloudSchools)) {
-          let current = getSchoolAccounts();
-          let updated = false;
-          for (const s of cloudSchools) {
-            const existing = current.find(c => (c.username || "").toLowerCase() === (s.username || "").toLowerCase());
-            if (!existing) {
-              current.unshift(s);
-              updated = true;
-            } else if (existing.password !== s.password || existing.quota !== s.quota || existing.name !== s.name) {
-              existing.password = s.password;
-              existing.quota = s.quota;
-              existing.name = s.name;
-              if (s.principal) existing.principal = s.principal;
-              if (s.phone) existing.phone = s.phone;
-              updated = true;
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/schools`, {
+          headers: { "Accept": "application/json" }
+        });
+        if (res.ok) {
+          const apiSchools = await res.json();
+          if (Array.isArray(apiSchools)) {
+            let current = getSchoolAccounts();
+            let updated = false;
+            for (const s of apiSchools) {
+              const u = (s.slug || s.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+              const existing = current.find(c => (c.username || "").toLowerCase() === u);
+              if (!existing) {
+                current.unshift({
+                  name: s.name,
+                  principal: s.principal_name || "Principal",
+                  username: u,
+                  quota: "Unlimited",
+                  phone: s.phone_number || "+923215423874",
+                  createdAt: new Date().toISOString()
+                });
+                updated = true;
+              }
             }
-          }
-          if (updated) {
-            saveSchoolAccounts(current);
-            if (typeof renderOwnerSchoolsTable === "function") renderOwnerSchoolsTable();
-            if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
+            if (updated) {
+              saveSchoolAccounts(current);
+              if (typeof renderOwnerSchoolsTable === "function") renderOwnerSchoolsTable();
+              if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
+            }
           }
         }
       } catch (e) {}
 
-      // 2. Sync from static repo schools.json as backup
+      // 2. Fallback: static schools.json metadata
       try {
         const res = await fetch('./schools.json?v=' + Date.now());
         if (res.ok) {
@@ -6078,12 +5993,38 @@
       lucide.createIcons();
     }
 
-    function handleOwnerQuickUnlock(e) {
+    async function handleOwnerQuickUnlock(e) {
       if (e && e.preventDefault) e.preventDefault();
       const pinInput = document.getElementById("owner-quick-pin");
       const errBox = document.getElementById("owner-quick-unlock-err");
       const pin = pinInput ? pinInput.value.trim() : "";
 
+      if (!pin) return;
+
+      // 1. Try real FastAPI backend owner login
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username_or_email: "alikhan",
+            password: pin
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          sessionStorage.setItem("examforge_owner_auth", "true");
+          sessionStorage.setItem("examforge_owner_token", data.access_token);
+          if (errBox) errBox.classList.add("hidden");
+          if (pinInput) pinInput.value = "";
+          updateOwnerQuickSectionState();
+          return;
+        }
+      } catch (netErr) {
+        console.warn("Backend auth offline, checking fallback master key:", netErr);
+      }
+
+      // 2. Offline master fallback
       if (isOwnerPasswordValid(pin)) {
         sessionStorage.setItem("examforge_owner_auth", "true");
         if (errBox) errBox.classList.add("hidden");
@@ -6091,7 +6032,7 @@
         updateOwnerQuickSectionState();
       } else {
         if (errBox) {
-          errBox.textContent = "Invalid Owner Master Key. Please enter 14756 or contact Muhammad Ali.";
+          errBox.textContent = "Invalid Owner Master Key or password. Please verify credentials.";
           errBox.classList.remove("hidden");
         }
       }
@@ -6099,6 +6040,7 @@
 
     function lockOwnerQuickSection() {
       sessionStorage.removeItem("examforge_owner_auth");
+      sessionStorage.removeItem("examforge_owner_token");
       updateOwnerQuickSectionState();
     }
 
@@ -6119,43 +6061,67 @@
 
       if (!name || !username || !password) return;
 
-      let schools = getSchoolAccounts();
-      if (schools.some(s => (s.username || "").toLowerCase() === username)) {
-        alert(`Username '${username}' is already taken. Please choose a unique username.`);
-        return;
-      }
-
-      const newSchool = {
-        name,
-        principal: "Principal",
-        username,
-        password,
-        phone: "+923215423874",
-        quota: "Unlimited",
-        createdAt: new Date().toISOString()
-      };
-
-      schools.unshift(newSchool);
-      saveSchoolAccounts(schools);
-
-      // Visual indicator while syncing to live cloud database
       const originalText = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Syncing across all devices...`;
+      btn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Creating permanent backend account...`;
+
+      const ownerToken = sessionStorage.getItem("examforge_owner_token") || "";
+      let createdOnServer = false;
+      let serverError = "";
 
       try {
-        await pushCloudSchools(schools);
-      } catch (err) {
-        console.warn("Cloud push error:", err);
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(ownerToken ? { "Authorization": `Bearer ${ownerToken}` } : {})
+          },
+          body: JSON.stringify({
+            school_name: name,
+            username: username,
+            password: password,
+            principal_name: "Principal",
+            phone_number: "+923215423874",
+            quota: "Unlimited"
+          })
+        });
+
+        if (res.ok) {
+          createdOnServer = true;
+        } else {
+          const err = await res.json().catch(() => null);
+          serverError = (err && err.detail) || "Failed to create school account on server.";
+        }
+      } catch (netErr) {
+        console.warn("Backend create school error:", netErr);
+        serverError = `Cannot connect to backend server at ${getApiBaseUrl()}. Please verify FastAPI is running.`;
       }
 
       btn.disabled = false;
       btn.innerHTML = originalText;
 
+      if (!createdOnServer) {
+        alert("Failed to register school: " + serverError);
+        return;
+      }
+
+      // Add to local UI directory
+      let schools = getSchoolAccounts();
+      const newSchool = {
+        name,
+        principal: "Principal",
+        username,
+        phone: "+923215423874",
+        quota: "Unlimited",
+        createdAt: new Date().toISOString()
+      };
+      schools.unshift(newSchool);
+      saveSchoolAccounts(schools);
+
       // Show result card with 1-click link
-      const directUrl = getDirectSchoolUrl(newSchool);
+      const directUrl = getDirectSchoolUrl({ ...newSchool, password });
       if (resDesc) {
-        resDesc.innerHTML = `Login ready: <strong>Username:</strong> <code>${username}</code> | <strong>Password:</strong> <code>${password}</code>.<br><span class="text-[10px] text-emerald-800">✅ Synced to cloud. This account now works on mobile phones, tablets, and computers immediately!</span>`;
+        resDesc.innerHTML = `<strong>Account Created & Activated!</strong><br><strong>Username:</strong> <code>${username}</code> | <strong>Password:</strong> <code>${password}</code>.<br><span class="text-[10px] text-emerald-800">✅ Committed permanently to centralized database. Works across all devices and browsers immediately!</span>`;
       }
       if (copyBtn) {
         copyBtn.onclick = () => copyDirectSchoolLink(username);
@@ -6163,7 +6129,7 @@
       if (waBtn) {
         const cleanPhone = "923215423874";
         const portalUrl = (typeof window !== "undefined" && window.location && window.location.href && !window.location.href.includes("aivanolabs.site")) ? window.location.href.split("?")[0] : "https://alikhan14756.github.io/paper_gen/";
-        const msg = encodeURIComponent(`Assalam-o-Alaikum!\n\nYour ExamForge AI Portal account for *${name}* is active:\n*Website:* ${portalUrl}\n*Username:* ${username}\n*Password:* ${password}\n*Quota:* Unlimited Papers\n\n👉 *Direct 1-Click Login Link (Any Phone or Computer):*\n${directUrl}\n\n(Tapping this link automatically signs in your school portal without typing passwords).`);
+        const msg = encodeURIComponent(`Assalam-o-Alaikum!\n\nYour ExamForge AI Portal account for *${name}* is active:\n*Website:* ${portalUrl}\n*Username:* ${username}\n*Password:* ${password}\n*Quota:* Unlimited Papers\n\n👉 *Direct 1-Click Login Link (Any Phone or Computer):*\n${directUrl}`);
         waBtn.href = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}`;
       }
       if (resBox) resBox.classList.remove("hidden");
@@ -6237,98 +6203,79 @@
         return;
       }
 
-      // 1. Check local registered accounts (Built-in + LocalStorage)
-      let schools = getSchoolAccounts();
-      let matched = schools.find(s => 
-        (s.username || "").trim().toLowerCase() === username && 
-        (s.password || "").trim() === password
-      );
+      let origBtnHtml = submitBtn ? submitBtn.innerHTML : "";
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Authenticating with secure server...`;
+      }
 
-      // 2. If NOT matched locally, check the real-time cloud server (handles accounts created on another device!)
-      if (!matched) {
-        let origBtnHtml = submitBtn ? submitBtn.innerHTML : "";
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Authenticating with cloud server...`;
-        }
+      // 1. Centralized FastAPI Backend Authentication (PostgreSQL/SQLite via Bcrypt)
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username_or_email: username,
+            password: password
+          })
+        });
 
-        try {
-          const cloudSchools = await pullCloudSchools();
-          if (cloudSchools && Array.isArray(cloudSchools)) {
-            for (const cs of cloudSchools) {
-              const idx = schools.findIndex(s => (s.username || "").toLowerCase() === (cs.username || "").toLowerCase());
-              if (idx === -1) {
-                schools.unshift(cs);
-              } else {
-                schools[idx] = { ...schools[idx], ...cs };
-              }
-            }
-            saveSchoolAccounts(schools);
-            matched = schools.find(s => 
-              (s.username || "").trim().toLowerCase() === username && 
-              (s.password || "").trim() === password
-            );
+        if (res.ok) {
+          const data = await res.json();
+          sessionStorage.setItem("examforge_token", data.access_token);
+          if (data.user.role === "super_owner" || data.user.role === "super_admin") {
+            sessionStorage.setItem("examforge_owner_auth", "true");
+            sessionStorage.setItem("examforge_owner_token", data.access_token);
           }
-        } catch (fetchErr) {
-          console.warn("Cloud fallback check error:", fetchErr);
-        }
 
-        // Also check static repo schools.json as backup
-        if (!matched) {
-          try {
-            const res = await fetch('./schools.json?v=' + Date.now());
-            if (res.ok) {
-              const remoteSchools = await res.json();
-              if (Array.isArray(remoteSchools)) {
-                for (const r of remoteSchools) {
-                  const idx = schools.findIndex(s => (s.username || "").toLowerCase() === (r.username || "").toLowerCase());
-                  if (idx === -1) {
-                    schools.push(r);
-                  } else {
-                    schools[idx] = { ...schools[idx], ...r };
-                  }
-                }
-                saveSchoolAccounts(schools);
-                matched = schools.find(s => 
-                  (s.username || "").trim().toLowerCase() === username && 
-                  (s.password || "").trim() === password
-                );
-              }
-            }
-          } catch (e) {}
-        }
+          currentUser = {
+            id: data.user.id,
+            schoolName: data.user.school_name || data.user.full_name,
+            username: data.user.username || data.user.email,
+            role: data.user.role,
+            quota: "Unlimited"
+          };
+          localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
 
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = origBtnHtml;
+          const schoolNameInput = document.getElementById("gen-school-name");
+          if (schoolNameInput) schoolNameInput.value = currentUser.schoolName;
+
+          const grade = document.getElementById("gen-grade")?.value || "9";
+          const subject = document.getElementById("gen-subject")?.value || "Physics";
+          generatePaperFromSyllabus(grade, subject);
+
+          updateAuthUI();
+          closeSchoolLoginModal();
+          scrollToSection("generator");
+          alert(`Welcome, ${currentUser.schoolName}! Portal signed in successfully.`);
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+          }
+          return;
+        } else {
+          const err = await res.json().catch(() => null);
+          const detail = (err && err.detail) || "Invalid username or password.";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+          }
+          if (errorMsg) {
+            errorMsg.textContent = detail;
+            errorMsg.classList.remove("hidden");
+          }
+          return;
         }
+      } catch (netErr) {
+        console.warn("Backend auth connection error:", netErr);
       }
 
-      if (matched) {
-        currentUser = {
-          schoolName: matched.name,
-          username: matched.username,
-          role: "school",
-          quota: matched.quota || "Unlimited"
-        };
-        localStorage.setItem("examforge_active_user", JSON.stringify(currentUser));
-        
-        // Update generator school name
-        const schoolNameInput = document.getElementById("gen-school-name");
-        if (schoolNameInput) schoolNameInput.value = matched.name;
-        
-        const grade = document.getElementById("gen-grade")?.value || "9";
-        const subject = document.getElementById("gen-subject")?.value || "Physics";
-        generatePaperFromSyllabus(grade, subject);
-
-        updateAuthUI();
-        closeSchoolLoginModal();
-        scrollToSection("generator");
-        alert(`Welcome, ${matched.name}! Your school portal is signed in with ${matched.quota} paper generation access.`);
-        return;
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origBtnHtml;
       }
 
-      // 3. Check if user is logging in as Site Owner / Admin
+      // 2. Fallback check if owner credentials typed in school login
       if (["admin", "owner", "alikhan", "alikhan14756"].includes(username) && isOwnerPasswordValid(password)) {
         sessionStorage.setItem("examforge_owner_auth", "true");
         switchLoginModalTab("owner");
@@ -6337,7 +6284,7 @@
       }
 
       if (errorMsg) {
-        errorMsg.textContent = "Invalid username or password. Please verify your credentials or create an account in the Owner Section.";
+        errorMsg.innerHTML = `⚠️ Cannot connect to ExamForge backend at <code>${getApiBaseUrl()}</code>.<br>Please verify the FastAPI server is running or check server connection.`;
         errorMsg.classList.remove("hidden");
       }
     }
@@ -6391,11 +6338,36 @@
       if (modal) modal.classList.add("hidden");
     }
 
-    function handleOwnerLoginSubmit(e) {
+    async function handleOwnerLoginSubmit(e) {
       e.preventDefault();
       const input = document.getElementById("owner-master-password")?.value || "";
       const errBox = document.getElementById("owner-login-error");
 
+      // 1. Try real FastAPI backend owner login
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username_or_email: "alikhan",
+            password: input
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          sessionStorage.setItem("examforge_owner_auth", "true");
+          sessionStorage.setItem("examforge_owner_token", data.access_token);
+          closeOwnerLoginModal();
+          document.getElementById("owner-master-modal").classList.remove("hidden");
+          renderOwnerSchoolsTable();
+          lucide.createIcons();
+          return;
+        }
+      } catch (err) {
+        console.warn("Backend owner login error, trying master key:", err);
+      }
+
+      // 2. Offline master fallback
       if (isOwnerPasswordValid(input)) {
         sessionStorage.setItem("examforge_owner_auth", "true");
         closeOwnerLoginModal();
@@ -6404,7 +6376,7 @@
         lucide.createIcons();
       } else {
         if (errBox) {
-          errBox.textContent = "Incorrect Master Password. Please use '14756' or 'OwnerPass2026!' to unlock.";
+          errBox.textContent = "Incorrect Master Password. Please enter valid owner credentials.";
           errBox.classList.remove("hidden");
         }
       }
@@ -6429,37 +6401,43 @@
         return;
       }
 
-      let schools = getSchoolAccounts();
-      if (schools.some(s => (s.username || "").toLowerCase() === username)) {
-        alert(`Username '${username}' is already assigned to a school. Please choose a unique username.`);
-        return;
-      }
-
-      const newSchool = {
-        name,
-        principal,
-        username,
-        password,
-        phone,
-        quota,
-        createdAt: new Date().toISOString()
-      };
-
-      schools.unshift(newSchool);
-      saveSchoolAccounts(schools);
-
-      // Visual indicator while syncing to all devices in real-time
       let origBtnHtml = "";
       if (submitBtn) {
         origBtnHtml = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Syncing across all devices...`;
+        submitBtn.innerHTML = `<span class="inline-block animate-spin mr-1.5">⚡</span> Creating permanent backend account...`;
       }
 
+      const ownerToken = sessionStorage.getItem("examforge_owner_token") || "";
+      let createdOnServer = false;
+      let serverError = "";
+
       try {
-        await pushCloudSchools(schools);
-      } catch (err) {
-        console.warn("Cloud push error on create school:", err);
+        const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/owner/create-school`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(ownerToken ? { "Authorization": `Bearer ${ownerToken}` } : {})
+          },
+          body: JSON.stringify({
+            school_name: name,
+            username: username,
+            password: password,
+            principal_name: principal,
+            phone_number: phone,
+            quota: quota
+          })
+        });
+
+        if (res.ok) {
+          createdOnServer = true;
+        } else {
+          const err = await res.json().catch(() => null);
+          serverError = (err && err.detail) || "Failed to create school account on server.";
+        }
+      } catch (netErr) {
+        console.warn("Backend create school error:", netErr);
+        serverError = `Cannot connect to backend server at ${getApiBaseUrl()}. Please verify FastAPI is running.`;
       }
 
       if (submitBtn) {
@@ -6467,19 +6445,30 @@
         submitBtn.innerHTML = origBtnHtml;
       }
 
+      if (!createdOnServer) {
+        alert("Failed to register school: " + serverError);
+        return;
+      }
+
+      let schools = getSchoolAccounts();
+      const newSchool = {
+        name,
+        principal,
+        username,
+        phone,
+        quota,
+        createdAt: new Date().toISOString()
+      };
+      schools.unshift(newSchool);
+      saveSchoolAccounts(schools);
+
       // Reset form
       const form = document.getElementById("create-school-form");
       if (form) form.reset();
 
       // Show toast with multi-device direct link
-      const directUrl = getDirectSchoolUrl(newSchool);
-      const toast = document.getElementById("owner-toast");
-      const toastText = document.getElementById("owner-toast-text");
-      if (toast && toastText) {
-        toastText.innerHTML = `✅ School '<strong>${name}</strong>' created & activated on ALL devices!<br>Username: <code>${username}</code> | Password: <code>${password}</code><br><span class="text-[11px] text-sky-200">This user can now sign in on their mobile phone, tablet, or PC immediately.</span>`;
-        toast.classList.remove("hidden");
-        setTimeout(() => toast.classList.add("hidden"), 10000);
-      }
+      const directUrl = getDirectSchoolUrl({ ...newSchool, password });
+      alert(`School Account Created Successfully!\n\nSchool: ${name}\nUsername: ${username}\nPassword: ${password}\n\n✅ This account is permanently saved in the backend database and can log in from any phone or PC.`);
 
       renderOwnerSchoolsTable();
       if (typeof renderOwnerQuickSchoolsList === "function") renderOwnerQuickSchoolsList();
@@ -7364,9 +7353,9 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
       if (errBox) errBox.classList.add("hidden");
       if (succBox) succBox.classList.add("hidden");
 
-      if (newPwd.length < 4) {
+      if (newPwd.length < 3) {
         if (errBox) {
-          errBox.textContent = "New password must be at least 4 characters long.";
+          errBox.textContent = "New password must be at least 3 characters long.";
           errBox.classList.remove("hidden");
         }
         return;
@@ -7382,152 +7371,97 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
 
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Saving & Syncing Everywhere...</span>`;
+        submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Updating Password in Database...</span>`;
         lucide.createIcons();
       }
 
-      try {
-        if (role === "owner") {
-          if (!isOwnerPasswordValid(curr)) {
-            if (errBox) {
-              errBox.textContent = "Current owner master password is incorrect.";
-              errBox.classList.remove("hidden");
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
-              lucide.createIcons();
-            }
-            return;
-          }
+      // Check for user/owner token
+      let token = sessionStorage.getItem("examforge_token") || sessionStorage.getItem("examforge_owner_token");
 
-          localStorage.setItem("examforge_owner_master_pwd", newPwd);
-          const schools = getSchoolAccounts();
-          await pushCloudSchools(schools, newPwd);
-
-          if (succBox) {
-            succBox.textContent = "Master Owner Password successfully updated! Your new password is now active across all devices.";
-            succBox.classList.remove("hidden");
-          }
-          setTimeout(() => {
-            closeChangePasswordModal();
-          }, 1800);
-        } else {
-          let activeSchool = JSON.parse(sessionStorage.getItem("examforge_active_school") || "null");
-          let username = activeSchool?.username;
-          if (!username) {
-            username = document.getElementById("change-pwd-username")?.value?.trim()?.toLowerCase();
-          }
-
-          if (!username) {
-            if (errBox) {
-              errBox.textContent = "Please enter your school username.";
-              errBox.classList.remove("hidden");
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
-              lucide.createIcons();
-            }
-            return;
-          }
-
-          let schools = getSchoolAccounts();
-          const target = schools.find(s => (s.username || "").toLowerCase() === username.toLowerCase());
-
-          if (!target) {
-            if (errBox) {
-              errBox.textContent = `School account '${username}' not found. Please verify the username.`;
-              errBox.classList.remove("hidden");
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
-              lucide.createIcons();
-            }
-            return;
-          }
-
-          if (target.password !== curr) {
-            if (errBox) {
-              errBox.textContent = "Current password is incorrect.";
-              errBox.classList.remove("hidden");
-            }
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
-              lucide.createIcons();
-            }
-            return;
-          }
-
-          target.password = newPwd;
-          saveSchoolAccounts(schools);
-
-          if (activeSchool && (activeSchool.username || "").toLowerCase() === username.toLowerCase()) {
-            activeSchool.password = newPwd;
-            sessionStorage.setItem("examforge_active_school", JSON.stringify(activeSchool));
-          }
-
-          await pushCloudSchools(schools);
-
-          if (succBox) {
-            succBox.textContent = `Password for '${target.name || username}' updated successfully and synced across all devices!`;
-            succBox.classList.remove("hidden");
-          }
-          setTimeout(() => {
-            closeChangePasswordModal();
-          }, 1800);
+      // If no token stored, attempt login first to obtain token
+      if (!token) {
+        let authUsername = "alikhan";
+        if (role !== "owner") {
+          let activeSchool = JSON.parse(localStorage.getItem("examforge_active_user") || "null");
+          authUsername = activeSchool?.username || document.getElementById("change-pwd-username")?.value?.trim()?.toLowerCase() || "";
         }
-      } catch (err) {
+        if (authUsername) {
+          try {
+            const loginRes = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username_or_email: authUsername, password: curr })
+            });
+            if (loginRes.ok) {
+              const data = await loginRes.json();
+              token = data.access_token;
+            }
+          } catch (e) {}
+        }
+      }
+
+      try {
+        if (token) {
+          const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/change-password`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              current_password: curr,
+              new_password: newPwd
+            })
+          });
+
+          if (res.ok) {
+            if (succBox) {
+              succBox.textContent = "Password successfully updated in centralized database! Your new password is now active across all devices.";
+              succBox.classList.remove("hidden");
+            }
+            setTimeout(() => {
+              closeChangePasswordModal();
+            }, 1800);
+            return;
+          } else {
+            const err = await res.json().catch(() => null);
+            if (errBox) {
+              errBox.textContent = (err && err.detail) || "Failed to change password. Please check your current password.";
+              errBox.classList.remove("hidden");
+            }
+            return;
+          }
+        } else {
+          // If offline and owner
+          if (role === "owner" && isOwnerPasswordValid(curr)) {
+            localStorage.setItem("examforge_owner_master_pwd", newPwd);
+            if (succBox) {
+              succBox.textContent = "Owner master password updated locally!";
+              succBox.classList.remove("hidden");
+            }
+            setTimeout(() => {
+              closeChangePasswordModal();
+            }, 1800);
+            return;
+          }
+
+          if (errBox) {
+            errBox.textContent = "Current password is incorrect or unable to authenticate with backend server.";
+            errBox.classList.remove("hidden");
+          }
+        }
+      } catch (netErr) {
         if (errBox) {
-          errBox.textContent = "Error saving password: " + err.message;
+          errBox.textContent = "Network error connecting to backend at " + getApiBaseUrl();
           errBox.classList.remove("hidden");
         }
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password & Sync Devices</span>`;
+          submitBtn.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i><span>Update Password</span>`;
           lucide.createIcons();
         }
       }
-    }
-
-    // =========================================================================
-    // 8.6 KPK DIGITAL TEXTBOOK LIBRARY (CLASSES 1ST TO 10TH)
-    // =========================================================================
-
-    // EMBEDDED KPK COMPLETE CATALOG (70 BOOKS - WORKS OFFLINE AND FILE://)
-    const KPK_CATALOG_EMBEDDED = [{"id": "kpk-c1-english", "grade": "1", "subject": "English", "title": "Primary English Book 1", "language": "en", "chaptersCount": 6, "chapters": ["Alphabet Fun & Phonics", "Greetings and Manners", "My Family & Home", "Animals and Birds Around Us", "Colors, Shapes & Numbers", "Stories & Poems"], "fileName": "kpk_textbook_class1_english.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-urdu", "grade": "1", "subject": "Urdu", "title": "اردو لازمی برائے جماعت اول", "language": "ur", "chaptersCount": 6, "chapters": ["حروف تہجی اور صوتیات", "آسان الفاظ سازی", "میرا گھر اور پیارا خاندان", "پھل اور سبزیاں", "پیارے نبی صلی اللہ علیہ وآلہ وسلم", "چھوٹی نظمیں اور کہانیاں"], "fileName": "kpk_textbook_class1_urdu.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-mathematics", "grade": "1", "subject": "Mathematics", "title": "Mathematics Class 1", "language": "en", "chaptersCount": 6, "chapters": ["Counting Numbers 1 to 100", "Addition within 20", "Subtraction within 20", "Shapes and Patterns", "Measurement of Length & Weight", "Pakistani Currency & Money"], "fileName": "kpk_textbook_class1_mathematics.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-general_knowledge", "grade": "1", "subject": "General Knowledge", "title": "General Knowledge Class 1", "language": "en", "chaptersCount": 6, "chapters": ["All About Myself", "Our Senses & Body Parts", "Good Habits & Cleanliness", "Our Loving Earth & Plants", "Weather & Seasons", "Our Country Pakistan"], "fileName": "kpk_textbook_class1_general_knowledge.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_general_knowledge.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c1-islamiyat", "grade": "1", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت اول", "language": "ur", "chaptersCount": 6, "chapters": ["کلمہ طیبہ اور اللہ تعالیٰ کی وحدانیت", "اللہ تعالیٰ کی نعمتیں", "پیارے نبی صلی اللہ علیہ وآلہ وسلم کا تعارف", "قرآنی سورتیں (سورۃ الفاتحہ و اخلاص)", "سچائی اور والدین کی خدمت", "مسجد کے آداب"], "fileName": "kpk_textbook_class1_islamiyat.pdf", "pdfPath": "books/class_1/kpk_textbook_class1_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-english", "grade": "2", "subject": "English", "title": "Primary English Book 2", "language": "en", "chaptersCount": 6, "chapters": ["Everyday Greetings & Dialogues", "My School & Friends", "Cleanliness & Health", "Wonderful Nature & Seasons", "Helping Others & Community Helpers", "Fun with Action Words & Verbs"], "fileName": "kpk_textbook_class2_english.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-urdu", "grade": "2", "subject": "Urdu", "title": "اردو لازمی برائے جماعت دوم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد باری تعالیٰ", "نعت رسول مقبول (ص)", "محنت کا پھل", "ہمارا خوبصورت سکول", "وطن کی محبت", "آؤ صفائی رکھیں"], "fileName": "kpk_textbook_class2_urdu.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-mathematics", "grade": "2", "subject": "Mathematics", "title": "Mathematics Class 2", "language": "en", "chaptersCount": 6, "chapters": ["Numbers up to 1000", "Addition with Regrouping", "Subtraction with Borrowing", "Introduction to Multiplication (Tables 2-5)", "Division Concepts", "Fractions: Halves & Quarters"], "fileName": "kpk_textbook_class2_mathematics.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-general_knowledge", "grade": "2", "subject": "General Knowledge", "title": "General Knowledge Class 2", "language": "en", "chaptersCount": 6, "chapters": ["Living Things & Non-Living Things", "Plants and Their Seeds", "Animal Habitats", "Solar System & The Sun", "Safety at Home & Road", "Great Leader Quaid-e-Azam"], "fileName": "kpk_textbook_class2_general_knowledge.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_general_knowledge.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c2-islamiyat", "grade": "2", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت دوم", "language": "ur", "chaptersCount": 6, "chapters": ["ارکان اسلام", "نماز اور وضو کا طریقہ", "سیرت طیبہ اور اخلاق حسنہ", "قرآنی سورتیں (سورۃ الکوثر و الناس)", "سچ بولنا اور امانت داری", "ہمسایوں کے حقوق"], "fileName": "kpk_textbook_class2_islamiyat.pdf", "pdfPath": "books/class_2/kpk_textbook_class2_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-english", "grade": "3", "subject": "English", "title": "English Class 3", "language": "en", "chaptersCount": 6, "chapters": ["The Brave Boy", "A Visit to the Zoo", "Health is Wealth", "The Clever Farmer", "Our National Flag", "Poems: The Wind and The Stars"], "fileName": "kpk_textbook_class3_english.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_english.pdf", "fileSizeKb": 37.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-urdu", "grade": "3", "subject": "Urdu", "title": "اردو لازمی جماعت سوم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد و نعت", "ہمارا پرچم", "ایمانداری کا انعام", "پشاور کا تاریخی شہر", "تندرستی ہزار نعمت ہے", "قائداعظم کی زندگی"], "fileName": "kpk_textbook_class3_urdu.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-general_science", "grade": "3", "subject": "General Science", "title": "General Science Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Structure and Functions of Living Things", "Habitats and Ecosystems", "Matter and Its States", "Forces: Push and Pull", "Sound and Heat Energy", "Earth and Its Natural Resources"], "fileName": "kpk_textbook_class3_general_science.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_general_science.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-mathematics", "grade": "3", "subject": "Mathematics", "title": "Mathematics Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Four-Digit Whole Numbers", "Multiplication up to 3 Digits", "Long Division Methods", "Proper & Improper Fractions", "Perimeter and Area of Shapes", "Data Handling and Bar Graphs"], "fileName": "kpk_textbook_class3_mathematics.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-social_studies", "grade": "3", "subject": "Social Studies", "title": "Social Studies Class 3", "language": "en", "chaptersCount": 6, "chapters": ["Maps and Directions", "Villages and Cities of KP", "Our Diverse Cultures & Festivals", "Government and Public Services", "Famous Historical Places of Pakistan", "Being a Good Citizen"], "fileName": "kpk_textbook_class3_social_studies.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_social_studies.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c3-islamiyat", "grade": "3", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت سوم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالرسالت", "نماز کے اوقات اور فرائض", "سیرت النبی (ص): سفر طائف", "حفظ و ترجمہ دعائیں", "بڑوں کا احترام اور چھوٹوں پر شفقت", "دیانت داری اور رزق حلال"], "fileName": "kpk_textbook_class3_islamiyat.pdf", "pdfPath": "books/class_3/kpk_textbook_class3_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-english", "grade": "4", "subject": "English", "title": "English Class 4", "language": "en", "chaptersCount": 6, "chapters": ["An Inspiring Journey", "Amazing Inventions of Science", "Safety and First Aid", "The Legend of Mount Everest", "Our Beautiful Peshawar Valley", "Poem: The Rainbow"], "fileName": "kpk_textbook_class4_english.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-urdu", "grade": "4", "subject": "Urdu", "title": "اردو لازمی جماعت چہارم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد اور شکر گزاری", "سیرت طیبہ: دیانت و امانت", "خیبر پختونخوا کے حسین وادیاں", "علم کی اہمیت", "وقت کی پابندی", "قومی ہیرو: نشان حیدر"], "fileName": "kpk_textbook_class4_urdu.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-general_science", "grade": "4", "subject": "General Science", "title": "General Science Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Human Body Systems & Organs", "Animal and Plant Classification", "Ecosystems and Food Chains", "Matter and Kinetic Theory", "Forms of Energy and Electricity", "The Earth, Moon and Solar Eclipse"], "fileName": "kpk_textbook_class4_general_science.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_general_science.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-mathematics", "grade": "4", "subject": "Mathematics", "title": "Mathematics Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Whole Numbers up to 1,000,000", "Factors and Multiples (HCF & LCM)", "Operations on Fractions", "Decimals and Percentages", "Angles, Triangles & Quadrilaterals", "Averages and Information Handling"], "fileName": "kpk_textbook_class4_mathematics.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_mathematics.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-social_studies", "grade": "4", "subject": "Social Studies", "title": "Social Studies Class 4", "language": "en", "chaptersCount": 6, "chapters": ["Geography of Khyber Pakhtunkhwa", "Climate and Natural Vegetation", "Citizenship and Pakistani Laws", "Economic Activities: Farming & Mining", "Ancient Indus Valley Civilization", "Communication and Transport"], "fileName": "kpk_textbook_class4_social_studies.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_social_studies.pdf", "fileSizeKb": 37.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c4-islamiyat", "grade": "4", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت چہارم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالکتب (آسمانی کتابیں)", "طہارت، پاکیزگی اور وضو", "غزوہ بدر کے اہم اسباق", "قرآنی سورتیں (سورۃ الفلق و العصر)", "حسن اخلاق اور برداشت", "ماحول کی حفاظت"], "fileName": "kpk_textbook_class4_islamiyat.pdf", "pdfPath": "books/class_4/kpk_textbook_class4_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-english", "grade": "5", "subject": "English", "title": "English Compulsory Class 5", "language": "en", "chaptersCount": 6, "chapters": ["Hazrat Umar Farooq (R.A) and Justice", "The Power of Education", "Environmental Conservation", "A Trip to Swat Valley", "The Digital Age & Internet", "Poem: The Way Through the Woods"], "fileName": "kpk_textbook_class5_english.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-urdu", "grade": "5", "subject": "Urdu", "title": "اردو لازمی جماعت پنجم", "language": "ur", "chaptersCount": 6, "chapters": ["حمدِ الٰہی", "نعتِ رسولِ آخر الزماں", "علامہ اقبال کا پیغام نوجوانوں کے نام", "خیبر پاس کی تاریخی اہمیت", "کھیلوں کی اہمیت", "احساسِ ذمہ داری"], "fileName": "kpk_textbook_class5_urdu.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_urdu.pdf", "fileSizeKb": 37.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-general_science", "grade": "5", "subject": "General Science", "title": "General Science Class 5", "language": "en", "chaptersCount": 7, "chapters": ["Classification of Living Organisms (Vertebrates & Invertebrates)", "Microorganisms: Bacteria and Viruses", "Seed Structure and Germination", "Pollution and Environmental Degradation", "Physical and Chemical Changes of Matter", "Light, Sound and Reflection", "Earth in the Solar System"], "fileName": "kpk_textbook_class5_general_science.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-mathematics", "grade": "5", "subject": "Mathematics", "title": "Mathematics Class 5", "language": "en", "chaptersCount": 6, "chapters": ["Numbers up to Billions & Operations", "HCF and LCM by Prime Factorization", "Fractional Equations & Word Problems", "Decimals, Ratios and Percentages", "Unitary Method and Distance-Speed", "Geometry: Angles, Bisectors and Circles"], "fileName": "kpk_textbook_class5_mathematics.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_mathematics.pdf", "fileSizeKb": 38.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-social_studies", "grade": "5", "subject": "Social Studies", "title": "Social Studies Class 5", "language": "en", "chaptersCount": 6, "chapters": ["World Map and Major Continents", "Pakistan's Physical Features & Deserts", "The 1973 Constitution Overview", "Trade, Currency and Economy", "History: Gandhara Civilization in Peshawar", "Global Peace and Human Rights"], "fileName": "kpk_textbook_class5_social_studies.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_social_studies.pdf", "fileSizeKb": 38.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c5-islamiyat", "grade": "5", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت پنجم", "language": "ur", "chaptersCount": 6, "chapters": ["ایمان بالآخرت اور عقیدہ توحید", "روزہ اور زکوٰۃ کے معاشرتی فوائد", "سیرت طیبہ: فتح مکہ اور عفو و درگزر", "قرآنی سورتیں مع ترجمہ و تفسیر", "اسلام میں خواتین کے حقوق", "صلہ رحمی اور مہمان نوازی"], "fileName": "kpk_textbook_class5_islamiyat.pdf", "pdfPath": "books/class_5/kpk_textbook_class5_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-english", "grade": "6", "subject": "English", "title": "English Class 6", "language": "en", "chaptersCount": 6, "chapters": ["A Fair Deal (Islamic Ethics)", "The Karakoram Highway", "Dignity of Labor", "Water Scarcity & Conservation", "The Wonders of Space Exploration", "Poem: Leisure by W.H. Davies"], "fileName": "kpk_textbook_class6_english.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-urdu", "grade": "6", "subject": "Urdu", "title": "اردو لازمی جماعت ششم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد باری تعالیٰ (حفیظ جالندھری)", "نعت رسول کریم صلی اللہ علیہ وآلہ وسلم", "تحریکِ پاکستان اور خیبر پختونخوا", "محنت میں عظمت ہے", "کمپیوٹر اور جدید دور", "قومی ترانہ اور اس کی عظمت"], "fileName": "kpk_textbook_class6_urdu.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-general_science", "grade": "6", "subject": "General Science", "title": "General Science Class 6", "language": "en", "chaptersCount": 7, "chapters": ["Cellular Organization of Plants & Animals", "Sense Organs & Nervous Coordination", "Photosynthesis and Respiration", "Air and Atmospheric Gases", "Elements, Compounds and Mixtures", "Energy Forms & Transfer", "Force and Machines"], "fileName": "kpk_textbook_class6_general_science.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_general_science.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-mathematics", "grade": "6", "subject": "Mathematics", "title": "Mathematics Class 6", "language": "en", "chaptersCount": 7, "chapters": ["Sets and Set Operations", "Whole Numbers and Integers", "Factors, Multiples & Prime Numbers", "Ratio and Proportion", "Financial Arithmetic (Profit, Loss, Zakat)", "Introduction to Algebra & Expressions", "Geometry: Angles, Polygons, Perimeter & Area"], "fileName": "kpk_textbook_class6_mathematics.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_mathematics.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-history", "grade": "6", "subject": "History", "title": "History Class 6", "language": "en", "chaptersCount": 4, "chapters": ["Indus Valley Civilization (Mohenjo-daro & Harappa)", "Aryan Civilization and Vedic Culture", "Gandhara Civilization and Buddhist Heritage", "Arrival of Muslims: Muhammad bin Qasim in Sindh"], "fileName": "kpk_textbook_class6_history.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-geography", "grade": "6", "subject": "Geography", "title": "Geography Class 6", "language": "en", "chaptersCount": 4, "chapters": ["Earth as a Planet and Coordinates", "Movements of Earth: Rotation and Revolution", "Major Landforms: Mountains, Plateaus, Plains", "Oceans, Seas and River Systems of the World"], "fileName": "kpk_textbook_class6_geography.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_geography.pdf", "fileSizeKb": 26.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-computer_education", "grade": "6", "subject": "Computer Education", "title": "Computer Education Class 6", "language": "en", "chaptersCount": 5, "chapters": ["Introduction to Computers and Processing", "Computer Hardware & Peripheral Devices", "Operating Systems: Windows & File Management", "Word Processing: Microsoft Word Basics", "Internet & Web Browsing Safety"], "fileName": "kpk_textbook_class6_computer_education.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c6-islamiyat", "grade": "6", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ششم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید اور اس کے فضائل", "عقیدہ رسالت اور ختم نبوت", "حج کی فرضیت اور فلسفہ", "سیرت طیبہ: مواخات مدینہ", "اسلام کا نظام عدل", "حقوق العباد اور معاشرتی ذمہ داریاں"], "fileName": "kpk_textbook_class6_islamiyat.pdf", "pdfPath": "books/class_6/kpk_textbook_class6_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-english", "grade": "7", "subject": "English", "title": "English Class 7", "language": "en", "chaptersCount": 6, "chapters": ["Kindness to Animals", "The Historic Bala Hissar Fort", "Disaster Preparedness", "Renewable Energy for Green Pakistan", "The Quaid on Youth Leadership", "Poem: My Mother"], "fileName": "kpk_textbook_class7_english.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_english.pdf", "fileSizeKb": 37.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-urdu", "grade": "7", "subject": "Urdu", "title": "اردو لازمی جماعت ہفتم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد اور معرفتِ الٰہی", "نعتِ رسولِ مجتبیٰ", "سر سید احمد خان اور علی گڑھ تحریک", "پاکستان کے اہم قدرتی وسائل", "صحت اور ماحولیاتی آلودگی", "اردو محاورات اور قواعد"], "fileName": "kpk_textbook_class7_urdu.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-general_science", "grade": "7", "subject": "General Science", "title": "General Science Class 7", "language": "en", "chaptersCount": 7, "chapters": ["Human Organ Systems (Digestive & Circulatory)", "Transport in Plants and Transpiration", "Reproduction in Plants (Pollination & Fertilization)", "Atomic Structure and Periodic Table", "Physical and Chemical Changes", "Transmission of Heat (Conduction, Convection, Radiation)", "Sound Waves"], "fileName": "kpk_textbook_class7_general_science.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-mathematics", "grade": "7", "subject": "Mathematics", "title": "Mathematics Class 7", "language": "en", "chaptersCount": 7, "chapters": ["Sets and Venn Diagrams", "Rational Numbers and Operations", "Decimals and Square Roots", "Financial Mathematics: Taxes, Zakat and Ushr", "Algebraic Expressions, Identities & Factorization", "Linear Equations in One Variable", "Practical Geometry & Circles"], "fileName": "kpk_textbook_class7_mathematics.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_mathematics.pdf", "fileSizeKb": 43.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-history", "grade": "7", "subject": "History", "title": "History Class 7", "language": "en", "chaptersCount": 4, "chapters": ["Establishment of Delhi Sultanate (Slave Dynasty to Lodhis)", "Sultanate Administration and Architecture", "Founding of the Mughal Empire (Babur and Humayun)", "Reign of Akbar the Great and Religious Policies"], "fileName": "kpk_textbook_class7_history.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-geography", "grade": "7", "subject": "Geography", "title": "Geography Class 7", "language": "en", "chaptersCount": 4, "chapters": ["Atmosphere: Composition and Layers", "Atmospheric Temperature and Pressure Belts", "Atmospheric Moisture: Humidity, Clouds, Rainfall", "Settlements: Urbanization and Rural Patterns"], "fileName": "kpk_textbook_class7_geography.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_geography.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-computer_education", "grade": "7", "subject": "Computer Education", "title": "Computer Education Class 7", "language": "en", "chaptersCount": 5, "chapters": ["Computer Software: System vs Application", "Input and Output Technology Advances", "Spreadsheets: Microsoft Excel Fundamentals", "Multimedia, Graphics and Presentation Software", "Cyber Security and Ethics"], "fileName": "kpk_textbook_class7_computer_education.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c7-islamiyat", "grade": "7", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ہفتم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید: فہم و تدبر", "نماز باجماعت اور جمعہ کی اہمیت", "سیرت طیبہ: صلح حدیبیہ اور اس کے دور رس نتائج", "جہاد فی سبیل اللہ کا حقیقی تصور", "حقوق اللہ اور حقوق العباد کا توازن", "اسلامی ریاست اور اقلیتوں کے حقوق"], "fileName": "kpk_textbook_class7_islamiyat.pdf", "pdfPath": "books/class_7/kpk_textbook_class7_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-english", "grade": "8", "subject": "English", "title": "English Class 8", "language": "en", "chaptersCount": 6, "chapters": ["Tolerance of the Holy Prophet (PBUH)", "The Wonder of Shogran & Kaghan", "Clean Drinking Water", "Artificial Intelligence and Future Jobs", "Sir Syed's Educational Revolution", "Poem: A Nation's Strength"], "fileName": "kpk_textbook_class8_english.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_english.pdf", "fileSizeKb": 37.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-urdu", "grade": "8", "subject": "Urdu", "title": "اردو لازمی جماعت ہشتم", "language": "ur", "chaptersCount": 6, "chapters": ["حمد (مولانا حالی)", "نعت (امیر مینائی)", "خیبر پختونخوا کے قابل فخر سپوت", "محنت، جستجو اور کامیابی", "پاکستان کا ایٹمی پروگرام", "ڈراما: سچ کی جیت"], "fileName": "kpk_textbook_class8_urdu.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_urdu.pdf", "fileSizeKb": 37.3, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-general_science", "grade": "8", "subject": "General Science", "title": "General Science Class 8", "language": "en", "chaptersCount": 7, "chapters": ["Human Nervous System & Brain Anatomy", "Cell Division: Mitosis and Meiosis", "Biotechnology and Genetic Engineering", "Pollutants and Global Warming (Greenhouse Effect)", "Chemical Reactions and Chemical Equations", "Acids, Bases, Alkalis and Salts", "Force, Pressure and Hydraulics"], "fileName": "kpk_textbook_class8_general_science.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_general_science.pdf", "fileSizeKb": 43.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-mathematics", "grade": "8", "subject": "Mathematics", "title": "Mathematics Class 8", "language": "en", "chaptersCount": 7, "chapters": ["Real Numbers and Number System", "Square Roots and Cube Roots", "Number Systems: Base 2, Base 5, Base 8, Base 10", "Financial Arithmetic: Banking, Compound Interest & Insurance", "Polynomials: Division and Identities", "Simultaneous Linear Equations", "Surface Area and Volume of Cylinders & Cones"], "fileName": "kpk_textbook_class8_mathematics.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_mathematics.pdf", "fileSizeKb": 43.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-history", "grade": "8", "subject": "History", "title": "History Class 8", "language": "en", "chaptersCount": 4, "chapters": ["Consolidation of the Mughal Empire under Jahangir and Shah Jahan", "Aurangzeb Alamgir and Decline of Mughals", "Arrival of European Traders & British East India Company", "War of Independence 1857 & End of Mughal Rule"], "fileName": "kpk_textbook_class8_history.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_history.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-geography", "grade": "8", "subject": "Geography", "title": "Geography Class 8", "language": "en", "chaptersCount": 4, "chapters": ["Internal Structure of the Earth and Plate Tectonics", "Earthquakes and Volcanic Activity", "Weathering, Mass Wasting and Erosion by Rivers & Wind", "Major Ocean Currents of the World"], "fileName": "kpk_textbook_class8_geography.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_geography.pdf", "fileSizeKb": 27.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-computer_education", "grade": "8", "subject": "Computer Education", "title": "Computer Education Class 8", "language": "en", "chaptersCount": 5, "chapters": ["Networks and Communications: LAN, WAN, Topologies", "Data Transmission Media: Fiber Optics & Wireless", "Computer Security: Viruses, Malware, Antivirus", "Algorithms and Flowcharts", "Introduction to Programming Concepts"], "fileName": "kpk_textbook_class8_computer_education.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_computer_education.pdf", "fileSizeKb": 32.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c8-islamiyat", "grade": "8", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت ہشتم", "language": "ur", "chaptersCount": 6, "chapters": ["قرآن مجید کا تعارف اور اعجاز", "عقائد: توحید، رسالت اور آخرت کے اثرات", "سیرت طیبہ: غزوہ تبوک اور حجة الوداع", "امربالمعروف اور نہی عن المنکر", "اسلام کا معاشی عدل", "اخوت و مساوات اور تکریم انسانیت"], "fileName": "kpk_textbook_class8_islamiyat.pdf", "pdfPath": "books/class_8/kpk_textbook_class8_islamiyat.pdf", "fileSizeKb": 37.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-english", "grade": "9", "subject": "English", "title": "English Compulsory Class 9", "language": "en", "chaptersCount": 11, "chapters": ["Hazrat Muhammad (PBUH) - An Embodiment of Justice", "Daffodils by William Wordsworth", "Media and Its Impact", "Hazrat Asma (R.A)", "Stopping by Woods on a Snowy Evening", "The Quaid's Vision and Pakistan", "Sultan Ahmad Mosque", "Peace by Dr. Hartmann", "All is Not Lost", "Drug Addiction", "Noise in the Environment"], "fileName": "kpk_textbook_class9_english.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_english.pdf", "fileSizeKb": 65.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-urdu", "grade": "9", "subject": "Urdu", "title": "اردو لازمی جماعت نہم", "language": "ur", "chaptersCount": 9, "chapters": ["ہجرت نبوی صلی اللہ علیہ وآلہ وسلم", "کاہلی (سر سید احمد خان)", "اخلاق نبوی صلی اللہ علیہ وآلہ وسلم", "شاعروں کے لطیفے", "نصوح اور سلیم کی گفتگو", "پنچایت (منشی پریم چند)", "آرام و سکون", "امتحان", "حمد و نعت"], "fileName": "kpk_textbook_class9_urdu.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_urdu.pdf", "fileSizeKb": 53.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-mathematics", "grade": "9", "subject": "Mathematics", "title": "Mathematics Science Class 9", "language": "en", "chaptersCount": 12, "chapters": ["Matrices and Determinants", "Real and Complex Numbers", "Logarithms and Laws of Logs", "Algebraic Expressions and Algebraic Formulas", "Factorization and Remainder Theorem", "Algebraic Manipulation (HCF & LCM)", "Linear Equations and Inequalities", "Linear Graphs and Applications", "Introduction to Coordinate Geometry", "Congruent Triangles & Parallelograms", "Line Bisectors and Angle Bisectors", "Practical Geometry - Triangles"], "fileName": "kpk_textbook_class9_mathematics.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_mathematics.pdf", "fileSizeKb": 71.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-physics", "grade": "9", "subject": "Physics", "title": "Physics Class 9", "language": "en", "chaptersCount": 9, "chapters": ["Physical Quantities and Measurement (Vernier & Micrometer)", "Kinematics: Velocity, Acceleration, Equations of Motion", "Dynamics: Newton's Laws, Momentum, Friction", "Turning Effect of Forces: Torque, Equilibrium & Center of Mass", "Gravitation: Law of Universal Gravitation & Satellites", "Work and Energy: Kinetic, Potential, Power, Efficiency", "Properties of Matter: Elasticity, Density, Pressure, Pascal's Principle", "Thermal Properties of Matter: Specific Heat, Latent Heat", "Transfer of Heat: Conduction, Convection, Radiation, Greenhouse Effect"], "fileName": "kpk_textbook_class9_physics.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_physics.pdf", "fileSizeKb": 54.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-chemistry", "grade": "9", "subject": "Chemistry", "title": "Chemistry Class 9", "language": "en", "chaptersCount": 8, "chapters": ["Fundamentals of Chemistry: Atomic Mass, Mole Concept, Avogadro's Number", "Structure of Atoms: Rutherford, Bohr Model, Electronic Configuration", "Periodic Table and Periodicity of Properties (Electronegativity, Ionization Energy)", "Structure of Molecules: Ionic, Covalent, Coordinate & Hydrogen Bonding", "Physical States of Matter: Boyle's Law, Charles's Law, Evaporation, Boiling Point", "Solutions: Saturated Solutions, Molarity, Solubility", "Electrochemistry: Oxidation, Reduction, Daniell Cell, Rusting", "Chemical Reactivity: Metals and Non-Metals"], "fileName": "kpk_textbook_class9_chemistry.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_chemistry.pdf", "fileSizeKb": 49.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-biology", "grade": "9", "subject": "Biology", "title": "Biology Class 9", "language": "en", "chaptersCount": 9, "chapters": ["Introduction to Biology & Divisions", "Solving a Biological Problem (Scientific Method)", "Biodiversity and Five Kingdom Classification", "Cells and Tissues: Microscopy, Organelles, Plant vs Animal", "Cell Cycle: Mitosis and Meiosis", "Enzymes: Mechanism, Characteristics & Factors", "Bioenergetics: Photosynthesis, Respiration & ATP", "Nutrition in Plants and Humans", "Transport in Plants and Humans (Blood & Heart)"], "fileName": "kpk_textbook_class9_biology.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_biology.pdf", "fileSizeKb": 54.7, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-computer_science", "grade": "9", "subject": "Computer Science", "title": "Computer Science Class 9", "language": "en", "chaptersCount": 5, "chapters": ["Fundamentals of Computer: History, Generations, Hardware Architecture", "Fundamentals of Operating System: Functions, Windows GUI & Process Management", "Office Automation: Microsoft Word, Excel, PowerPoint Mastery", "Data Communication and Networking: Transmission Media, Protocols, Topologies", "Computer Security and Ethics: Threats, Viruses, Cyber Laws and Data Protection"], "fileName": "kpk_textbook_class9_computer_science.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_computer_science.pdf", "fileSizeKb": 32.9, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-pakistan_studies", "grade": "9", "subject": "Pakistan Studies", "title": "Pakistan Studies Class 9", "language": "en", "chaptersCount": 4, "chapters": ["Ideological Basis of Pakistan: Two-Nation Theory & Quaid's Statements", "Making of Pakistan (1906 to 1947, 1940 Lahore Resolution)", "Land and Environment of Pakistan: Mountains, Plains, Climate, Deserts", "History of Pakistan Part I: Early Problems & 1956/1962 Constitutions"], "fileName": "kpk_textbook_class9_pakistan_studies.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_pakistan_studies.pdf", "fileSizeKb": 27.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c9-islamiyat", "grade": "9", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت نہم", "language": "ur", "chaptersCount": 5, "chapters": ["سورۃ الانفال (آیات 1 تا 75 مع مکمل ترجمہ و تفسیر)", "منتخب احادیث نبویہ (1 تا 10 مع تشریح)", "موضوعاتی مطالعہ: قرآن مجید کا تعارف و حفاظت", "عقیدہ توحید، رسالت اور آخرت", "اخلاق حسنہ: سچائی، عدل، عفو و درگزر"], "fileName": "kpk_textbook_class9_islamiyat.pdf", "pdfPath": "books/class_9/kpk_textbook_class9_islamiyat.pdf", "fileSizeKb": 32.1, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-english", "grade": "10", "subject": "English", "title": "English Compulsory Class 10", "language": "en", "chaptersCount": 12, "chapters": ["Hazrat Muhammad (PBUH) An Embodiment of Justice", "Chinese New Year", "Try Again by W.E. Hickson", "First Aid: Cuts, Scrapes & Emergencies", "The Rain by W.H. Davies", "Television vs Newspapers", "Little by Little One Walks Far", "Peace (Poem)", "Selecting the Right Career", "A World Without Books", "Great Expectations by Charles Dickens", "Faithfulness"], "fileName": "kpk_textbook_class10_english.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_english.pdf", "fileSizeKb": 70.8, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-urdu", "grade": "10", "subject": "Urdu", "title": "اردو لازمی جماعت دہم", "language": "ur", "chaptersCount": 9, "chapters": ["مرزا محمد سعید (شاہد احمد دہلوی)", "نظریہ پاکستان (ڈاکٹر غلام مصطفیٰ خان)", "پرستان کی شہزادی", "اردو ادب میں عید الفطر", "مجھے میرے دوستوں سے بچاؤ", "ملمع (ہاجرہ مسرور)", "میدانِ کربلا میں صبح کا منظر (میر انیس)", "فاطمہ بنت عبداللہ (علامہ اقبال)", "غزلیات حسرت موہانی، جگر و فراق"], "fileName": "kpk_textbook_class10_urdu.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_urdu.pdf", "fileSizeKb": 53.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-mathematics", "grade": "10", "subject": "Mathematics", "title": "Mathematics Science Class 10", "language": "en", "chaptersCount": 12, "chapters": ["Quadratic Equations: Factorization, Completing Square, Quadratic Formula", "Theory of Quadratic Equations: Discriminant, Nature of Roots, Cube Roots of Unity", "Variations: Direct & Inverse Variations, Joint Variation, Theorem on Proportions", "Partial Fractions: Proper, Improper, Linear & Quadratic Factors", "Sets and Functions: Binary Relations, Functions, De Morgan's Laws", "Basic Statistics: Frequency Distribution, Mean, Median, Mode, Variance, Standard Deviation", "Introduction to Trigonometry: Measurement of Angles, Trigonometric Ratios, Fundamental Identities", "Projection of a Side of a Triangle & Hero's Formula", "Chords of a Circle & Theorems", "Tangent to a Circle & Theorems", "Chords and Arcs", "Practical Geometry - Circles"], "fileName": "kpk_textbook_class10_mathematics.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_mathematics.pdf", "fileSizeKb": 71.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-physics", "grade": "10", "subject": "Physics", "title": "Physics Class 10", "language": "en", "chaptersCount": 9, "chapters": ["Simple Harmonic Motion and Waves: Pendulum, Mass-Spring, Wave Equations", "Sound: Propagation, Speed, Echo, Audible Frequency Range, Ultrasound", "Geometrical Optics: Reflection, Refraction, Lenses, Total Internal Reflection, Optical Instruments", "Electrostatics: Coulomb's Law, Electric Field, Potential, Capacitors", "Current Electricity: Ohm's Law, Resistance, Series/Parallel, Electric Power, Joule's Law", "Electromagnetism: Magnetic Effect of Current, Electromagnetic Induction, Transformer", "Basic Electronics: Thermionic Emission, Logic Gates (AND, OR, NOT, NAND, NOR)", "Information and Communication Technology (ICT): Components, Internet, Storage", "Atomic and Nuclear Physics: Radioactivity, Half-life, Nuclear Fission and Fusion"], "fileName": "kpk_textbook_class10_physics.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_physics.pdf", "fileSizeKb": 55.1, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-chemistry", "grade": "10", "subject": "Chemistry", "title": "Chemistry Class 10", "language": "en", "chaptersCount": 8, "chapters": ["Chemical Equilibrium: Dynamic Equilibrium, Law of Mass Action, Equilibrium Constant", "Acids, Bases and Salts: Arrhenius, Bronsted-Lowry, Lewis Concepts, pH Scale, Buffer Solutions", "Organic Chemistry: Classification, Functional Groups, Homologous Series, Alkanes, Alkenes, Alkynes", "Hydrocarbons: Preparation and Chemical Reactions of Alkanes, Alkenes and Alkynes", "Biochemistry: Carbohydrates, Proteins, Lipids, Nucleic Acids (DNA & RNA), Vitamins", "The Atmosphere: Layers (Troposphere, Stratosphere), Greenhouse Effect, Acid Rain, Ozone Depletion", "Water: Hardness of Water, Water-borne Diseases, Water Purification", "Chemical Industries: Metallurgy of Copper, Solvay's Process, Urea Manufacturing"], "fileName": "kpk_textbook_class10_chemistry.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_chemistry.pdf", "fileSizeKb": 49.6, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-biology", "grade": "10", "subject": "Biology", "title": "Biology Class 10", "language": "en", "chaptersCount": 9, "chapters": ["Gaseous Exchange: In Plants and Respiratory System in Humans", "Homeostasis: Osmoregulation, Thermoregulation, Excretory System in Humans, Kidney Stones & Dialysis", "Coordination and Control: Nervous System, Reflex Action, Endocrine System, Hormones", "Support and Movement: Human Skeleton, Joints, Muscles & Movement Disorders", "Reproduction: Asexual and Sexual Reproduction in Plants and Animals, Pollination, STDs", "Inheritance: Mendel's Laws, Chromosomes and Genes, DNA Replication, Variation", "Man and His Environment: Ecosystem, Food Web, Biogeochemical Cycles, Symbiosis, Environmental Conservation", "Biotechnology: Fermentation, Genetic Engineering, Insulin Production, Single Cell Protein", "Pharmacology: Medicinal Drugs, Antibiotics, Vaccines, Sedatives & Narcotics"], "fileName": "kpk_textbook_class10_biology.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_biology.pdf", "fileSizeKb": 55.2, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-computer_science", "grade": "10", "subject": "Computer Science", "title": "Computer Science Class 10", "language": "en", "chaptersCount": 7, "chapters": ["Problem Solving and Algorithm Design: Flowcharts and Pseudo-code", "Basics of Programming in C Language: Syntax, Data Types, Variables, Constants", "Input and Output Handling in C: printf, scanf, Escape Sequences, Format Specifiers", "Control Structures in C: if, if-else, switch, Conditional Operator", "Loop Structures in C: for loop, while loop, do-while loop, Nested Loops", "Functions in C: Built-in Functions, User-Defined Functions, Parameter Passing", "Working with Logic and Arrays in C Programming"], "fileName": "kpk_textbook_class10_computer_science.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_computer_science.pdf", "fileSizeKb": 44.0, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-pakistan_studies", "grade": "10", "subject": "Pakistan Studies", "title": "Pakistan Studies Class 10", "language": "en", "chaptersCount": 4, "chapters": ["History of Pakistan Part II: 1971 War, 1973 Constitution, Z.A. Bhutto, Zia Era, 1988-1999, Musharraf Era to Present", "Foreign Policy and International Relations: Pakistan's Relations with China, USA, Muslim World, SAARC & UN", "Economic Development of Pakistan: Agriculture, Major Crops, Industries, Energy Resources, Foreign Trade & CPEC", "Population, Society and Culture of Pakistan: Demographics, Languages (Pashto, Hindko, Urdu), Education & Health"], "fileName": "kpk_textbook_class10_pakistan_studies.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_pakistan_studies.pdf", "fileSizeKb": 27.4, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}, {"id": "kpk-c10-islamiyat", "grade": "10", "subject": "Islamiyat", "title": "اسلامیات لازمی جماعت دہم", "language": "ur", "chaptersCount": 6, "chapters": ["سورۃ الاحزاب (آیات 1 تا 73 مع مکمل ترجمہ و تشریح)", "منتخب احادیث نبویہ (11 تا 20 مع تشریح)", "موضوعاتی مطالعہ: جہاد فی سبیل اللہ کی حکمت و احکام", "خاندانی زندگی اور معاشرتی آداب", "صحابہ کرام اور ائمہ مجتہدین کا تعارف", "اسلام کا نظام اخلاق اور عفت و حیا"], "fileName": "kpk_textbook_class10_islamiyat.pdf", "pdfPath": "books/class_10/kpk_textbook_class10_islamiyat.pdf", "fileSizeKb": 37.5, "publisher": "Khyber Pakhtunkhwa Textbook Board Peshawar", "academicYear": "2026"}];
-
-    let currentTbGradeFilter = "all";
-    let allKpkCatalogBooks = [];
-
-    async function loadTextbookCatalog() {
-      if (allKpkCatalogBooks.length > 0) return allKpkCatalogBooks;
-      if (typeof KPK_CATALOG_EMBEDDED !== 'undefined' && Array.isArray(KPK_CATALOG_EMBEDDED) && KPK_CATALOG_EMBEDDED.length > 0) {
-        allKpkCatalogBooks = KPK_CATALOG_EMBEDDED;
-        return allKpkCatalogBooks;
-      }
-      try {
-        const res = await fetch("./books/kpk_textbooks_catalog.json");
-        if (res.ok) {
-          allKpkCatalogBooks = await res.json();
-          return allKpkCatalogBooks;
-        }
-      } catch (e) {
-        console.warn("Could not load local catalog json:", e);
-      }
-      return [];
-    }
-
-    async function openTextbookLibraryModal() {
-      const modal = document.getElementById("textbook-library-modal");
-      if (!modal) return;
-      modal.classList.remove("hidden");
-      await loadTextbookCatalog();
-      renderTextbookLibraryGrid();
-      lucide.createIcons();
     }
 
     function closeTextbookLibraryModal() {
