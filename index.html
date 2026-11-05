@@ -24,18 +24,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    html, body {
-      max-width: 100vw;
-      overflow-x: hidden;
-      position: relative;
-      margin: 0;
-      padding: 0;
+    html {
+      overflow-x: clip;
     }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f8fafc;
       color: #0f172a;
       width: 100%;
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
     }
     * {
       box-sizing: border-box;
@@ -221,9 +220,10 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-orange-100 selection:text-orange-900">
 
   <!-- TOP NAVBAR -->
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200/80 px-3 sm:px-8 py-2.5 sm:py-3 shadow-sm no-print">
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200/80 px-3 sm:px-6 py-2.5 shadow-sm no-print">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 w-full">
-      <div class="flex items-center space-x-2 sm:space-x-2.5 shrink-0">
+      <!-- Logo + Title -->
+      <div class="flex items-center space-x-2 shrink-0">
         <div class="h-8 w-8 sm:h-9 sm:w-9 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-500/30 shrink-0">
           <i data-lucide="sparkles" class="w-4 h-4 sm:w-4.5 sm:h-4.5"></i>
         </div>
@@ -236,45 +236,42 @@
         </div>
       </div>
 
-      <!-- Action buttons & Auth states (Strictly single-line, flex-nowrap, no overflow onto second line) -->
-      <div class="flex items-center gap-1 sm:gap-2 flex-nowrap shrink-0 overflow-x-auto no-scrollbar py-0.5">
+      <!-- DESKTOP ACTIONS (Screens >= 1024px) -->
+      <div class="hidden lg:flex items-center gap-1.5 xl:gap-2 shrink-0">
         <!-- Guest status indicator -->
-        <div id="nav-guest-status" class="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 shrink-0 whitespace-nowrap">
+        <div id="nav-guest-status" class="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 shrink-0">
           <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-600"></i>
           <span id="guest-quota-badge">Guest Free Access</span>
         </div>
 
-        <!-- KPK Textbooks Library Quick Button (Classes 1st to 10th) -->
-        <button onclick="openTextbookLibraryModal()" class="clay-btn-secondary bg-emerald-50/90 border-emerald-300 text-emerald-800 hover:bg-emerald-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Browse all 70 KPK Textbooks for Class 1st to 10th">
+        <!-- KPK Books -->
+        <button onclick="openTextbookLibraryModal()" class="clay-btn-secondary bg-emerald-50/90 border-emerald-300 text-emerald-800 hover:bg-emerald-100 px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0" title="Browse all 70 KPK Textbooks for Class 1st to 10th">
           <i data-lucide="book-open" class="w-3.5 h-3.5 text-emerald-600"></i>
-          <span class="hidden md:inline">KPK Books (1-10)</span>
-          <span class="md:hidden">Books</span>
+          <span>KPK Books (1-10)</span>
         </button>
 
-        <!-- Paper Generator Quick Navigation -->
-        <button onclick="scrollToSection('generator')" class="clay-btn-secondary bg-orange-50/80 border-orange-200 text-orange-800 hover:bg-orange-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Jump to Paper Generator">
+        <!-- Paper Generator -->
+        <button onclick="scrollToSection('generator')" class="clay-btn-secondary bg-orange-50/80 border-orange-200 text-orange-800 hover:bg-orange-100 px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0" title="Jump to Paper Generator">
           <i data-lucide="file-text" class="w-3.5 h-3.5 text-orange-600"></i>
-          <span class="hidden sm:inline">Generator</span>
-          <span class="sm:hidden">Gen</span>
+          <span>Generator</span>
         </button>
 
-        <!-- Magic Tool Button -->
-        <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2 sm:px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0 whitespace-nowrap" title="Upload picture of handwritten paper and convert to Word">
+        <!-- Magic Tool -->
+        <button onclick="openMagicOcrModal()" class="clay-btn-secondary bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:from-purple-100 hover:to-indigo-100 px-2.5 py-1.5 text-xs font-black flex items-center space-x-1 shrink-0" title="Upload picture of handwritten paper and convert to Word">
           <i data-lucide="wand-2" class="w-3.5 h-3.5 text-purple-600"></i>
           <span>Magic</span>
           <span class="bg-purple-600 text-white text-[8px] font-black px-1 py-0.5 rounded-full uppercase">OCR</span>
         </button>
 
-        <!-- School Signed In Status (Hidden by default) -->
-        <div id="nav-school-status" class="hidden flex items-center gap-1 sm:gap-1.5 shrink-0">
+        <!-- School Signed In Status -->
+        <div id="nav-school-status" class="hidden flex items-center gap-1.5 shrink-0">
           <div class="clay-card-flat px-2 py-1 rounded-xl flex items-center space-x-1.5 border border-orange-200 bg-orange-50/50 shrink-0">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[90px] sm:max-w-[130px] truncate">School Portal</span>
+            <span id="nav-school-name" class="text-xs font-black text-slate-900 max-w-[120px] truncate">School Portal</span>
           </div>
-          <!-- Change Password Button for Logged in School -->
-          <button onclick="openChangePasswordModal('school')" title="Change School Password" class="px-2 py-1.5 rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 transition border border-orange-200 shrink-0 flex items-center space-x-1 text-xs font-bold whitespace-nowrap">
+          <button onclick="openChangePasswordModal('school')" title="Change School Password" class="px-2 py-1.5 rounded-xl bg-orange-50 text-orange-700 hover:bg-orange-100 transition border border-orange-200 shrink-0 flex items-center space-x-1 text-xs font-bold">
             <i data-lucide="key-round" class="w-3.5 h-3.5 text-orange-600"></i>
-            <span class="hidden lg:inline">Password</span>
+            <span>Password</span>
           </button>
           <button onclick="handleSchoolLogout()" title="Sign Out" class="p-1.5 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition border border-slate-200 shrink-0">
             <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
@@ -282,17 +279,73 @@
         </div>
 
         <!-- School Sign In Button -->
-        <button onclick="openSchoolLoginModal('school')" id="btn-nav-login" class="clay-btn-secondary px-2 sm:px-2.5 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0 whitespace-nowrap">
+        <button onclick="openSchoolLoginModal('school')" id="btn-nav-login" class="clay-btn-secondary px-2.5 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0">
           <i data-lucide="log-in" class="w-3.5 h-3.5 text-slate-700"></i>
-          <span class="hidden sm:inline">School Sign In</span>
-          <span class="sm:hidden">Sign In</span>
+          <span>School Sign In</span>
         </button>
 
         <!-- Muhammad Ali Owner Portal Button -->
-        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-2.5 sm:px-3 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0 whitespace-nowrap shadow-sm">
+        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-3 py-1.5 text-xs font-bold flex items-center space-x-1 shrink-0 shadow-sm">
           <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Owner Portal</span>
-          <span class="sm:hidden">Owner</span>
+          <span>Owner Portal</span>
+        </button>
+      </div>
+
+      <!-- MOBILE / TABLET RIGHT ACTIONS (Screens < 1024px) -->
+      <div class="flex lg:hidden items-center gap-1.5 shrink-0">
+        <!-- Quick Owner Button -->
+        <button onclick="openOwnerMasterModal()" class="clay-btn-primary px-2.5 py-1.5 text-xs font-bold flex items-center space-x-1 shadow-sm shrink-0">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          <span>Owner</span>
+        </button>
+
+        <!-- Mobile Hamburger Button -->
+        <button type="button" onclick="toggleMobileNavMenu()" class="p-2 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition shrink-0" aria-label="Toggle navigation menu">
+          <i data-lucide="menu" id="mobile-menu-icon" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- MOBILE DROPDOWN DRAWER (Collapsible, no horizontal overflow) -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-slate-200/90 mt-2.5 pt-3 space-y-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="openTextbookLibraryModal(); closeMobileNavMenu();" class="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs font-bold flex items-center space-x-2">
+          <i data-lucide="book-open" class="w-4 h-4 text-emerald-600"></i>
+          <span>KPK Books (1-10)</span>
+        </button>
+        <button onclick="scrollToSection('generator'); closeMobileNavMenu();" class="p-2.5 rounded-xl border border-orange-200 bg-orange-50 text-orange-800 text-xs font-bold flex items-center space-x-2">
+          <i data-lucide="file-text" class="w-4 h-4 text-orange-600"></i>
+          <span>Paper Generator</span>
+        </button>
+        <button onclick="openMagicOcrModal(); closeMobileNavMenu();" class="p-2.5 rounded-xl border border-purple-200 bg-purple-50 text-purple-800 text-xs font-bold flex items-center space-x-2">
+          <i data-lucide="wand-2" class="w-4 h-4 text-purple-600"></i>
+          <span>Magic OCR Tool</span>
+        </button>
+        <button onclick="openEditMarksModal(); closeMobileNavMenu();" class="p-2.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-xs font-bold flex items-center space-x-2">
+          <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
+          <span>Change Marks</span>
+        </button>
+      </div>
+
+      <div class="pt-1 flex flex-col gap-1.5">
+        <!-- School Login / Account in Mobile -->
+        <div id="nav-school-status-mobile" class="hidden flex items-center justify-between p-2 rounded-xl bg-orange-50 border border-orange-200">
+          <div class="flex items-center space-x-1.5">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span id="nav-school-name-mobile" class="text-xs font-bold text-slate-900">School Portal</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <button onclick="openChangePasswordModal('school'); closeMobileNavMenu();" class="px-2 py-1 text-[11px] font-bold rounded-lg bg-white border border-slate-200 text-slate-700">Key</button>
+            <button onclick="handleSchoolLogout(); closeMobileNavMenu();" class="p-1 text-red-600 hover:bg-red-100 rounded-lg"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+          </div>
+        </div>
+        <button onclick="openSchoolLoginModal('school'); closeMobileNavMenu();" id="btn-nav-login-mobile" class="w-full py-2.5 px-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 text-xs font-bold flex items-center justify-center space-x-2">
+          <i data-lucide="log-in" class="w-4 h-4 text-slate-600"></i>
+          <span>School Account Sign In</span>
+        </button>
+        <button onclick="openChangePasswordModal(); closeMobileNavMenu();" class="w-full py-2 px-3 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold flex items-center justify-center space-x-2">
+          <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+          <span>Change Account / Master Password</span>
         </button>
       </div>
     </div>
@@ -793,7 +846,9 @@
           <div class="space-y-4">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — A (Objective Multiple Choice Questions)</span>
-              <span>Marks: <span id="sec-a-marks" contenteditable="true" onblur="updateSectionMarks('A', this.innerText)" class="editable-text text-amber-300">15</span></span>
+              <button type="button" onclick="openEditMarksModal('A')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section A Marks">
+                <span>Marks:</span> <span id="sec-a-marks">15</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
+              </button>
             </div>
 
             <div id="sec-a-container" class="space-y-4 text-xs">
@@ -850,7 +905,9 @@
           <div class="space-y-3 pt-2">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — B (Short Conceptual Questions)</span>
-              <span>Marks: <span id="sec-b-marks" contenteditable="true" onblur="updateSectionMarks('B', this.innerText)" class="editable-text text-amber-300">36</span></span>
+              <button type="button" onclick="openEditMarksModal('B')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section B Marks">
+                <span>Marks:</span> <span id="sec-b-marks">36</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
+              </button>
             </div>
             <p id="sec-b-note" class="text-[11px] font-bold text-slate-700 italic px-1">
               Note: Attempt any 9 questions. All questions carry equal marks (4 Marks each).
@@ -865,7 +922,9 @@
           <div class="space-y-3 pt-3">
             <div class="bg-slate-900 text-white px-3.5 py-1.5 rounded text-xs font-black tracking-wide flex items-center justify-between">
               <span>SECTION — C (Descriptive Long Questions)</span>
-              <span>Marks: <span id="sec-c-marks" contenteditable="true" onblur="updateSectionMarks('C', this.innerText)" class="editable-text text-amber-300">24</span></span>
+              <button type="button" onclick="openEditMarksModal('C')" class="bg-amber-400/20 hover:bg-amber-400/40 text-amber-300 font-mono font-black px-2 py-0.5 rounded border border-amber-400/50 cursor-pointer inline-flex items-center space-x-1" title="Click to change Section C Marks">
+                <span>Marks:</span> <span id="sec-c-marks">24</span> <i data-lucide="edit-3" class="w-3 h-3 ml-1 text-amber-200"></i>
+              </button>
             </div>
             <p id="sec-c-note" class="text-[11px] font-bold text-slate-700 italic px-1">
               Note: Attempt any 3 questions. All questions carry equal marks (8 Marks each).
@@ -1555,6 +1614,108 @@
       </div>
     </div>
   </footer>
+
+  <!-- COMPREHENSIVE MARKS & WEIGHTAGE EDITOR MODAL -->
+  <div id="edit-marks-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
+    <div class="clay-card max-w-lg w-full p-6 sm:p-8 relative space-y-5 animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
+      <button onclick="closeEditMarksModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="space-y-1 border-b border-slate-200 pb-3">
+        <div class="inline-flex items-center space-x-1.5 clay-badge-orange px-2.5 py-0.5 rounded-full text-[11px] font-black mb-1">
+          <i data-lucide="award" class="w-3.5 h-3.5 text-orange-600"></i>
+          <span>Custom Marks & Scoring Scheme</span>
+        </div>
+        <h4 class="text-xl font-black text-slate-900">Change Paper & Section Marks</h4>
+        <p class="text-xs text-slate-500">Customize the exact marks for every section and question. All totals and Word export will update automatically.</p>
+      </div>
+
+      <form id="edit-marks-form" onsubmit="handleApplyCustomMarksModal(event)" class="space-y-4">
+        
+        <!-- Total Marks & Presets -->
+        <div class="clay-card-flat p-3 rounded-xl space-y-2 bg-orange-50/50 border border-orange-200">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-slate-900">Total Paper Marks:</span>
+            <span id="modal-marks-total-badge" class="clay-badge-orange text-xs font-mono font-black px-2.5 py-0.5 rounded-full">75 Marks</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button type="button" onclick="setModalMarksPreset(50)" class="py-1 px-2 text-xs font-bold rounded-lg border border-slate-200 bg-white hover:bg-orange-50 text-slate-700">50 M</button>
+            <button type="button" onclick="setModalMarksPreset(75)" class="py-1 px-2 text-xs font-bold rounded-lg border border-orange-500 bg-orange-100 text-orange-900 font-black">75 M</button>
+            <button type="button" onclick="setModalMarksPreset(100)" class="py-1 px-2 text-xs font-bold rounded-lg border border-slate-200 bg-white hover:bg-orange-50 text-slate-700">100 M</button>
+            <button type="button" onclick="setModalMarksPreset(25)" class="py-1 px-2 text-xs font-bold rounded-lg border border-slate-200 bg-white hover:bg-orange-50 text-slate-700">25 M</button>
+          </div>
+        </div>
+
+        <!-- Section Marks Allocation Inputs -->
+        <div class="space-y-3 text-xs">
+          <!-- Section A -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white gap-2">
+            <div>
+              <span class="font-extrabold text-slate-900 block">Section A: Objective (MCQs) Marks</span>
+              <span class="text-[10px] text-slate-500">Total marks assigned to Section A</span>
+            </div>
+            <div class="flex items-center space-x-1 shrink-0">
+              <input type="number" id="modal-marks-sec-a" min="1" max="100" value="15" oninput="recalcModalTotal()" class="w-16 clay-input p-1.5 text-center font-bold text-xs" />
+              <span class="font-bold text-slate-400">M</span>
+            </div>
+          </div>
+
+          <!-- Section B -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white gap-2">
+            <div>
+              <span class="font-extrabold text-slate-900 block">Section B: Short Questions Marks</span>
+              <span class="text-[10px] text-slate-500">Total marks assigned to Section B</span>
+            </div>
+            <div class="flex items-center space-x-1 shrink-0">
+              <input type="number" id="modal-marks-sec-b" min="1" max="100" value="36" oninput="recalcModalTotal()" class="w-16 clay-input p-1.5 text-center font-bold text-xs" />
+              <span class="font-bold text-slate-400">M</span>
+            </div>
+          </div>
+
+          <!-- Section C -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 bg-white gap-2">
+            <div>
+              <span class="font-extrabold text-slate-900 block">Section C: Long Questions Marks</span>
+              <span class="text-[10px] text-slate-500">Total marks assigned to Section C</span>
+            </div>
+            <div class="flex items-center space-x-1 shrink-0">
+              <input type="number" id="modal-marks-sec-c" min="0" max="100" value="24" oninput="recalcModalTotal()" class="w-16 clay-input p-1.5 text-center font-bold text-xs" />
+              <span class="font-bold text-slate-400">M</span>
+            </div>
+          </div>
+
+          <!-- Marks Per Individual Question -->
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div class="p-2 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
+              <label class="block text-[10px] font-bold text-slate-700">Marks per Short Q:</label>
+              <input type="number" id="modal-marks-per-short" min="1" max="20" value="4" class="w-full clay-input p-1.5 text-center font-bold text-xs" />
+            </div>
+            <div class="p-2 rounded-xl border border-slate-200 bg-slate-50 space-y-1">
+              <label class="block text-[10px] font-bold text-slate-700">Marks per Long Q:</label>
+              <input type="number" id="modal-marks-per-long" min="1" max="30" value="8" class="w-full clay-input p-1.5 text-center font-bold text-xs" />
+            </div>
+          </div>
+
+          <!-- Marks Display Style -->
+          <div class="space-y-1 pt-1">
+            <label class="block text-[11px] font-bold text-slate-700">Marks Display Style:</label>
+            <select id="modal-marks-display-style" class="w-full clay-input p-2 text-xs font-bold text-slate-800">
+              <option value="school-per-question">🏫 School Style: Show marks badge on every question [4 Marks ✏️]</option>
+              <option value="bisep-header-only">🏛 BISEP Style: Show marks in section headers only</option>
+              <option value="compact-score">📝 Minimalist: Show compact marks (4) at end</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full clay-btn-primary py-3 px-4 text-xs font-black flex items-center justify-center space-x-2 shadow-md">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Apply Marks & Recalculate Paper</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
 
   <!-- CHANGE PASSWORD MODAL (UNIVERSAL FOR SCHOOL & OWNER) -->
   <div id="change-password-modal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 no-print">
@@ -4551,7 +4712,17 @@
           activeModeLabel.textContent = `School: ${currentUser.schoolName} (Unlimited Mode)`;
           activeModeLabel.className = "clay-badge-orange font-bold px-2.5 py-1 rounded-full text-[11px]";
         }
+        const schoolStatusMob = document.getElementById("nav-school-status-mobile");
+        const loginBtnMob = document.getElementById("btn-nav-login-mobile");
+        const navSchoolNameMob = document.getElementById("nav-school-name-mobile");
+        if (schoolStatusMob) schoolStatusMob.classList.remove("hidden");
+        if (loginBtnMob) loginBtnMob.classList.add("hidden");
+        if (navSchoolNameMob) navSchoolNameMob.textContent = currentUser.schoolName;
       } else {
+        const schoolStatusMob = document.getElementById("nav-school-status-mobile");
+        const loginBtnMob = document.getElementById("btn-nav-login-mobile");
+        if (schoolStatusMob) schoolStatusMob.classList.add("hidden");
+        if (loginBtnMob) loginBtnMob.classList.remove("hidden");
         if (guestStatus) guestStatus.classList.remove("hidden");
         if (schoolStatus) schoolStatus.classList.add("hidden");
         if (loginBtn) loginBtn.classList.remove("hidden");
@@ -5152,10 +5323,16 @@
       if (document.getElementById("paper-head-exam-bc")) document.getElementById("paper-head-exam-bc").innerText = examTitleFull;
       if (document.getElementById("paper-head-time-bc")) document.getElementById("paper-head-time-bc").innerText = currentPaper.timeAllowedBC || "2 Hours 40 Minutes";
 
-      // Render Section A (MCQs) - No per-question marks badge
+      // Render Section A (MCQs) - With clickable marks badge on every question
       const secAContainer = document.getElementById("sec-a-container");
+      const marksStyle = currentPaper.marksStyle || 'school-per-question';
+      const perShortMarks = currentPaper.perShortMarks || 4;
+      const perLongMarks = currentPaper.perLongMarks || 8;
+
       if (secAContainer) {
-        secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => `
+        secAContainer.innerHTML = currentPaper.mcqs.map((q, idx) => {
+          const qMarks = q.marks !== undefined ? q.marks : 1;
+          return `
           <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group space-y-2">
             <div class="flex items-start justify-between gap-2">
               <div class="flex-1 flex items-start space-x-2">
@@ -5163,14 +5340,20 @@
                 <div contenteditable="true" onblur="updateQuestionContent('mcq', ${idx}, this.innerText)" class="editable-text font-bold text-slate-900 flex-1 leading-relaxed">
                   ${q.text}
                 </div>
+                <button type="button" onclick="quickEditQuestionMarks('mcq', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-800 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-1.5 shadow-2xs" title="Click to change marks for MCQ ${idx + 1}">
+                  [${qMarks} M ✏️]
+                </button>
               </div>
               <div class="flex items-center space-x-1 shrink-0 no-print">
+                <button onclick="quickEditQuestionMarks('mcq', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
+                  <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                </button>
                 <button onclick="removeQuestion('mcq', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pl-6 text-slate-700">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1.5 sm:gap-2 pl-2 sm:pl-6 text-slate-700 break-words">
               ${q.options.map((opt, optIdx) => `
                 <div class="flex items-center space-x-1.5">
                   <span class="w-3.5 h-3.5 rounded-full border border-slate-500 shrink-0 inline-block"></span>
@@ -5179,21 +5362,15 @@
               `).join("")}
             </div>
           </div>
-        `).join("");
+        `;
+        }).join("");
       }
 
-      // Render Section B (Short Questions)
+      // Render Section B (Short Questions) - With clickable marks badge on every question
       const secBContainer = document.getElementById("sec-b-container");
-      const marksStyle = currentPaper.marksStyle || 'bisep-header-only';
-      const perShortMarks = currentPaper.perShortMarks || 4;
-
       if (secBContainer) {
         secBContainer.innerHTML = currentPaper.shorts.map((q, idx) => {
-          const qMarks = q.marks || perShortMarks;
-          const marksBadgeHtml = marksStyle === 'school-per-question'
-            ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('short', ${idx}, this.innerText)" class="marks-badge-editable bg-slate-100 hover:bg-orange-100 text-slate-800 text-[10px] font-black px-2 py-0.5 rounded border border-slate-300 shrink-0 ml-2" title="Click to edit marks for this question">[${qMarks} Marks]</span>`
-            : (marksStyle === 'compact-score' ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('short', ${idx}, this.innerText)" class="font-bold text-slate-500 text-[11px] shrink-0 ml-2">(${qMarks})</span>` : '');
-
+          const qMarks = q.marks !== undefined ? q.marks : perShortMarks;
           return `
           <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
@@ -5201,9 +5378,14 @@
               <div contenteditable="true" onblur="updateQuestionContent('short', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
                 ${q.text}
               </div>
-              ${marksBadgeHtml}
+              <button type="button" onclick="quickEditQuestionMarks('short', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Short Question ${idx + 1}">
+                [${qMarks} Marks ✏️]
+              </button>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
+              <button onclick="quickEditQuestionMarks('short', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+              </button>
               <button onclick="removeQuestion('short', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
@@ -5213,17 +5395,11 @@
         }).join("");
       }
 
-      // Render Section C (Long Questions)
+      // Render Section C (Long Questions) - With clickable marks badge on every question
       const secCContainer = document.getElementById("sec-c-container");
-      const perLongMarks = currentPaper.perLongMarks || 8;
-
       if (secCContainer) {
         secCContainer.innerHTML = currentPaper.longs.map((q, idx) => {
-          const qMarks = q.marks || perLongMarks;
-          const marksBadgeHtml = marksStyle === 'school-per-question'
-            ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('long', ${idx}, this.innerText)" class="marks-badge-editable bg-slate-100 hover:bg-orange-100 text-slate-800 text-[10px] font-black px-2 py-0.5 rounded border border-slate-300 shrink-0 ml-2" title="Click to edit marks for this question">[${qMarks} Marks]</span>`
-            : (marksStyle === 'compact-score' ? `<span contenteditable="true" onblur="updateSpecificQuestionMarks('long', ${idx}, this.innerText)" class="font-bold text-slate-500 text-[11px] shrink-0 ml-2">(${qMarks})</span>` : '');
-
+          const qMarks = q.marks !== undefined ? q.marks : perLongMarks;
           return `
           <div class="p-2.5 rounded-lg border border-transparent hover:border-slate-200 transition group flex items-start justify-between gap-3">
             <div class="flex-1 flex items-start space-x-2">
@@ -5231,9 +5407,14 @@
               <div contenteditable="true" onblur="updateQuestionContent('long', ${idx}, this.innerText)" class="editable-text font-medium text-slate-900 flex-1 leading-relaxed">
                 ${q.text}
               </div>
-              ${marksBadgeHtml}
+              <button type="button" onclick="quickEditQuestionMarks('long', ${idx})" class="marks-badge-editable bg-amber-50 hover:bg-orange-100 text-orange-900 text-[10px] font-black px-2 py-0.5 rounded border border-amber-200 shrink-0 ml-2 shadow-2xs" title="Click to change marks for Long Question ${idx + 1}">
+                [${qMarks} Marks ✏️]
+              </button>
             </div>
             <div class="flex items-center space-x-1.5 shrink-0 no-print">
+              <button onclick="quickEditQuestionMarks('long', ${idx})" title="Edit Marks" class="p-1 text-slate-400 hover:text-orange-600 transition">
+                <i data-lucide="award" class="w-3.5 h-3.5"></i>
+              </button>
               <button onclick="removeQuestion('long', ${idx})" title="Delete Question" class="p-1 text-slate-300 hover:text-red-600 transition">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
@@ -5255,9 +5436,31 @@
     function recalculateMarks() {
       if (!currentPaper) return;
 
-      const marksA = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : currentPaper.mcqs.length * 1;
-      const marksB = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
-      const marksC = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      // Calculate Section A marks
+      let marksA = currentPaper.secAMarks;
+      if (marksA === undefined) {
+        marksA = currentPaper.mcqs.reduce((sum, q) => sum + (q.marks !== undefined ? q.marks : 1), 0);
+        currentPaper.secAMarks = marksA;
+      }
+
+      // Calculate Section B marks
+      let marksB = currentPaper.secBMarks;
+      if (marksB === undefined) {
+        const attemptB = Math.min(currentPaper.attemptShorts || 9, currentPaper.shorts.length);
+        const perShort = currentPaper.perShortMarks || 4;
+        marksB = currentPaper.shorts.slice(0, attemptB).reduce((sum, q) => sum + (q.marks !== undefined ? q.marks : perShort), 0);
+        currentPaper.secBMarks = marksB;
+      }
+
+      // Calculate Section C marks
+      let marksC = currentPaper.secCMarks;
+      if (marksC === undefined) {
+        const attemptC = Math.min(currentPaper.attemptLongs || 3, currentPaper.longs.length);
+        const perLong = currentPaper.perLongMarks || 8;
+        marksC = currentPaper.longs.slice(0, attemptC).reduce((sum, q) => sum + (q.marks !== undefined ? q.marks : perLong), 0);
+        currentPaper.secCMarks = marksC;
+      }
+
       const marksBC = marksB + marksC;
       const grandTotal = marksA + marksBC;
 
@@ -5267,6 +5470,7 @@
       if (document.getElementById("sec-b-marks")) document.getElementById("sec-b-marks").textContent = marksB;
       if (document.getElementById("sec-c-marks")) document.getElementById("sec-c-marks").textContent = marksC;
       if (document.getElementById("paper-head-marks-bc")) document.getElementById("paper-head-marks-bc").textContent = marksBC;
+      if (document.getElementById("toolbar-total-marks-label")) document.getElementById("toolbar-total-marks-label").textContent = grandTotal;
 
       // Update Section Notes with Explicit Choice
       const totalShorts = currentPaper.shorts.length;
@@ -7533,6 +7737,169 @@ Q3. (a) Define kinetic energy and derive its mathematical formula K.E = 1/2 mv^2
         `;
       }).join("");
 
+      lucide.createIcons();
+    }
+
+
+    // =========================================================================
+    // 8.9 INDIVIDUAL QUESTION & SECTION MARKS CONTROLLERS
+    // =========================================================================
+    function quickEditQuestionMarks(type, index) {
+      if (!currentPaper) return;
+      let list = type === 'mcq' ? currentPaper.mcqs : (type === 'short' ? currentPaper.shorts : currentPaper.longs);
+      let currentVal = list[index]?.marks !== undefined
+        ? list[index].marks
+        : (type === 'mcq' ? 1 : (type === 'short' ? (currentPaper.perShortMarks || 4) : (currentPaper.perLongMarks || 8)));
+
+      const label = type === 'mcq' ? `MCQ ${index + 1}` : (type === 'short' ? `Short Question ${index + 1}` : `Long Question ${index + 1}`);
+      const input = prompt(`Enter new marks for ${label}:`, currentVal);
+      if (input !== null) {
+        const val = parseInt(input.trim(), 10);
+        if (!isNaN(val) && val >= 0) {
+          list[index].marks = val;
+
+          // Recompute section totals automatically
+          if (type === 'mcq') {
+            currentPaper.secAMarks = currentPaper.mcqs.reduce((s, q) => s + (q.marks !== undefined ? q.marks : 1), 0);
+          } else if (type === 'short') {
+            const attempt = Math.min(currentPaper.attemptShorts || 9, currentPaper.shorts.length);
+            currentPaper.secBMarks = currentPaper.shorts.slice(0, attempt).reduce((s, q) => s + (q.marks !== undefined ? q.marks : (currentPaper.perShortMarks || 4)), 0);
+          } else if (type === 'long') {
+            const attempt = Math.min(currentPaper.attemptLongs || 3, currentPaper.longs.length);
+            currentPaper.secCMarks = currentPaper.longs.slice(0, attempt).reduce((s, q) => s + (q.marks !== undefined ? q.marks : (currentPaper.perLongMarks || 8)), 0);
+          }
+
+          autoSaveCurrentPaper();
+          renderPaperDOM();
+        }
+      }
+    }
+
+    function quickEditSectionMarks(section) {
+      openEditMarksModal(section);
+    }
+
+    function openEditMarksModal(focusSection = null) {
+      const modal = document.getElementById("edit-marks-modal");
+      if (!modal || !currentPaper) {
+        if (!currentPaper) alert("Please generate an examination paper first.");
+        return;
+      }
+
+      document.getElementById("modal-marks-sec-a").value = currentPaper.secAMarks !== undefined ? currentPaper.secAMarks : (currentPaper.mcqs.length * 1);
+      document.getElementById("modal-marks-sec-b").value = currentPaper.secBMarks !== undefined ? currentPaper.secBMarks : 36;
+      document.getElementById("modal-marks-sec-c").value = currentPaper.secCMarks !== undefined ? currentPaper.secCMarks : 24;
+      document.getElementById("modal-marks-per-short").value = currentPaper.perShortMarks || 4;
+      document.getElementById("modal-marks-per-long").value = currentPaper.perLongMarks || 8;
+      document.getElementById("modal-marks-display-style").value = currentPaper.marksStyle || "school-per-question";
+
+      recalcModalTotal();
+      modal.classList.remove("hidden");
+      lucide.createIcons();
+
+      setTimeout(() => {
+        if (focusSection === 'A') document.getElementById("modal-marks-sec-a")?.focus();
+        else if (focusSection === 'B') document.getElementById("modal-marks-sec-b")?.focus();
+        else if (focusSection === 'C') document.getElementById("modal-marks-sec-c")?.focus();
+      }, 100);
+    }
+
+    function closeEditMarksModal() {
+      const modal = document.getElementById("edit-marks-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function recalcModalTotal() {
+      const a = parseInt(document.getElementById("modal-marks-sec-a")?.value, 10) || 0;
+      const b = parseInt(document.getElementById("modal-marks-sec-b")?.value, 10) || 0;
+      const c = parseInt(document.getElementById("modal-marks-sec-c")?.value, 10) || 0;
+      const total = a + b + c;
+      const badge = document.getElementById("modal-marks-total-badge");
+      if (badge) badge.textContent = `${total} Total Marks`;
+    }
+
+    function setModalMarksPreset(preset) {
+      if (preset === 50) {
+        document.getElementById("modal-marks-sec-a").value = 10;
+        document.getElementById("modal-marks-sec-b").value = 24;
+        document.getElementById("modal-marks-sec-c").value = 16;
+        document.getElementById("modal-marks-per-short").value = 3;
+        document.getElementById("modal-marks-per-long").value = 8;
+      } else if (preset === 100) {
+        document.getElementById("modal-marks-sec-a").value = 20;
+        document.getElementById("modal-marks-sec-b").value = 48;
+        document.getElementById("modal-marks-sec-c").value = 32;
+        document.getElementById("modal-marks-per-short").value = 4;
+        document.getElementById("modal-marks-per-long").value = 8;
+      } else if (preset === 25) {
+        document.getElementById("modal-marks-sec-a").value = 5;
+        document.getElementById("modal-marks-sec-b").value = 12;
+        document.getElementById("modal-marks-sec-c").value = 8;
+        document.getElementById("modal-marks-per-short").value = 2;
+        document.getElementById("modal-marks-per-long").value = 4;
+      } else {
+        document.getElementById("modal-marks-sec-a").value = 15;
+        document.getElementById("modal-marks-sec-b").value = 36;
+        document.getElementById("modal-marks-sec-c").value = 24;
+        document.getElementById("modal-marks-per-short").value = 4;
+        document.getElementById("modal-marks-per-long").value = 8;
+      }
+      recalcModalTotal();
+    }
+
+    function handleApplyCustomMarksModal(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (!currentPaper) return;
+
+      const a = parseInt(document.getElementById("modal-marks-sec-a")?.value, 10) || 15;
+      const b = parseInt(document.getElementById("modal-marks-sec-b")?.value, 10) || 36;
+      const c = parseInt(document.getElementById("modal-marks-sec-c")?.value, 10) || 24;
+      const perShort = parseInt(document.getElementById("modal-marks-per-short")?.value, 10) || 4;
+      const perLong = parseInt(document.getElementById("modal-marks-per-long")?.value, 10) || 8;
+      const style = document.getElementById("modal-marks-display-style")?.value || "school-per-question";
+
+      currentPaper.secAMarks = a;
+      currentPaper.secBMarks = b;
+      currentPaper.secCMarks = c;
+      currentPaper.perShortMarks = perShort;
+      currentPaper.perLongMarks = perLong;
+      currentPaper.marksStyle = style;
+
+      // Update question models
+      currentPaper.shorts.forEach(q => { q.marks = perShort; });
+      currentPaper.longs.forEach(q => { q.marks = perLong; });
+
+      closeEditMarksModal();
+      autoSaveCurrentPaper();
+      renderPaperDOM();
+    }
+
+    // =========================================================================
+    // 8.10 MOBILE NAVIGATION MENU TOGGLE CONTROLLER
+    // =========================================================================
+    let mobileNavMenuOpen = false;
+    function toggleMobileNavMenu() {
+      mobileNavMenuOpen = !mobileNavMenuOpen;
+      const drawer = document.getElementById("mobile-nav-drawer");
+      const icon = document.getElementById("mobile-menu-icon");
+      if (drawer) {
+        if (mobileNavMenuOpen) {
+          drawer.classList.remove("hidden");
+          if (icon) icon.setAttribute("data-lucide", "x");
+        } else {
+          drawer.classList.add("hidden");
+          if (icon) icon.setAttribute("data-lucide", "menu");
+        }
+        lucide.createIcons();
+      }
+    }
+
+    function closeMobileNavMenu() {
+      mobileNavMenuOpen = false;
+      const drawer = document.getElementById("mobile-nav-drawer");
+      const icon = document.getElementById("mobile-menu-icon");
+      if (drawer) drawer.classList.add("hidden");
+      if (icon) icon.setAttribute("data-lucide", "menu");
       lucide.createIcons();
     }
 
